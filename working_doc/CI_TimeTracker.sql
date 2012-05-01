@@ -1,145 +1,67 @@
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-
-
-
 -- ------------------
 -- TimeTracker tables
 -- ------------------
 
+-- phpMyAdmin SQL Dump
+-- version 3.3.7deb7
+-- http://www.phpmyadmin.net
+--
+-- Serveur: localhost
+-- Généré le : Mar 01 Mai 2012 à 09:46
+-- Version du serveur: 5.1.61
+-- Version de PHP: 5.3.3-7+squeeze8
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+--
+-- Base de données: `CI_TimeTracker`
+--
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `activities`
+-- Structure de la table `activities`
 --
+
 CREATE TABLE IF NOT EXISTS `activities` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(100) COLLATE utf8_bin NOT NULL,
   `description` text COLLATE utf8_bin NOT NULL,
-  `start_UNIX` datetime NOT NULL,
+  `start_UNIX` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `start_LOCAL` datetime NOT NULL,
-  `duration` int(11) NOT NULL,
-  `categorie_ID` int(11) unsigned NOT NULL,
-  PRIMARY KEY (`ID`)
+  `duration` int(11) unsigned NOT NULL,
+  `running` int(1) unsigned NOT NULL,
+  `categorie_ID` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `categories`
+-- Structure de la table `categories`
 --
+
 CREATE TABLE IF NOT EXISTS `categories` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `slug` varchar(100) COLLATE utf8_bin NOT NULL,
   `title` varchar(100) COLLATE utf8_bin NOT NULL,
   `description` text COLLATE utf8_bin NOT NULL,
+  `show` int(1) unsigned NOT NULL DEFAULT '1',
+  `parent` int(10) unsigned DEFAULT NULL,
   `user_ID` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`ID`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `l_activities_tags`
---
-CREATE TABLE IF NOT EXISTS `l_activities_tags` (
-  `activity_ID` int(10) unsigned NOT NULL,
-  `tag_ID` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`activity_ID`,`tag_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `l_categories_shared`
---
-CREATE TABLE IF NOT EXISTS `l_categories_shared` (
-  `categorie_ID` int(10) unsigned NOT NULL,
-  `shared_ID` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`categorie_ID`,`shared_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `l_isinvitedtoshare`
---
-CREATE TABLE IF NOT EXISTS `l_isinvitedtoshare` (
-  `user_ID` int(10) unsigned NOT NULL,
-  `shared_ID` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`user_ID`,`shared_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `shared`
---
-CREATE TABLE IF NOT EXISTS `shared` (
-  `ID` int(11) NOT NULL,
-  `message` text COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tags`
---
-CREATE TABLE IF NOT EXISTS `tags` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `tag` varchar(100) COLLATE utf8_bin NOT NULL,
-  `user_ID` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `values`
---
-CREATE TABLE IF NOT EXISTS `values` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `value` varchar(200) COLLATE utf8_bin NOT NULL,
-  `activity_ID` int(10) unsigned NOT NULL,
-  `value_type_ID` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `values_types`
---
-CREATE TABLE IF NOT EXISTS `values_types` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(100) COLLATE utf8_bin NOT NULL,
-  `desc` text COLLATE utf8_bin NOT NULL,
-  `type` varchar(100) COLLATE utf8_bin NOT NULL,
-  `user_ID` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
-
-
-
-
-
--- -----------------
--- Tank Auth tables
--- -----------------
-
--- --------------------------------------------------------
-
---
--- Table structure for table `ci_sessions`
+-- Structure de la table `ci_sessions`
 --
 
 CREATE TABLE IF NOT EXISTS `ci_sessions` (
@@ -154,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `login_attempts`
+-- Structure de la table `login_attempts`
 --
 
 CREATE TABLE IF NOT EXISTS `login_attempts` (
@@ -168,36 +90,69 @@ CREATE TABLE IF NOT EXISTS `login_attempts` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user_autologin`
+-- Structure de la table `l_activities_tags`
 --
 
-CREATE TABLE IF NOT EXISTS `user_autologin` (
-  `key_id` char(32) COLLATE utf8_bin NOT NULL,
-  `user_id` int(11) NOT NULL DEFAULT '0',
-  `user_agent` varchar(150) COLLATE utf8_bin NOT NULL,
-  `last_ip` varchar(40) COLLATE utf8_bin NOT NULL,
-  `last_login` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`key_id`,`user_id`)
+CREATE TABLE IF NOT EXISTS `l_activities_tags` (
+  `activity_ID` int(10) unsigned NOT NULL,
+  `tag_ID` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`activity_ID`,`tag_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user_profiles`
+-- Structure de la table `l_categories_shared`
 --
 
-CREATE TABLE IF NOT EXISTS `user_profiles` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `country` varchar(20) COLLATE utf8_bin DEFAULT NULL,
-  `website` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+CREATE TABLE IF NOT EXISTS `l_categories_shared` (
+  `categorie_ID` int(10) unsigned NOT NULL,
+  `shared_ID` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`categorie_ID`,`shared_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Structure de la table `l_isinvitedtoshare`
+--
+
+CREATE TABLE IF NOT EXISTS `l_isinvitedtoshare` (
+  `user_ID` int(10) unsigned NOT NULL,
+  `shared_ID` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`user_ID`,`shared_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `shared`
+--
+
+CREATE TABLE IF NOT EXISTS `shared` (
+  `ID` int(11) NOT NULL,
+  `message` text COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `tags`
+--
+
+CREATE TABLE IF NOT EXISTS `tags` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `tag` varchar(100) COLLATE utf8_bin NOT NULL,
+  `show` int(1) unsigned NOT NULL DEFAULT '1',
+  `user_ID` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `users`
 --
 
 CREATE TABLE IF NOT EXISTS `users` (
@@ -218,3 +173,61 @@ CREATE TABLE IF NOT EXISTS `users` (
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `user_autologin`
+--
+
+CREATE TABLE IF NOT EXISTS `user_autologin` (
+  `key_id` char(32) COLLATE utf8_bin NOT NULL,
+  `user_id` int(11) NOT NULL DEFAULT '0',
+  `user_agent` varchar(150) COLLATE utf8_bin NOT NULL,
+  `last_ip` varchar(40) COLLATE utf8_bin NOT NULL,
+  `last_login` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`key_id`,`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `user_profiles`
+--
+
+CREATE TABLE IF NOT EXISTS `user_profiles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `country` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `website` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `values`
+--
+
+CREATE TABLE IF NOT EXISTS `values` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `value` varchar(200) COLLATE utf8_bin NOT NULL,
+  `activity_ID` int(10) unsigned NOT NULL,
+  `value_type_ID` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `values_types`
+--
+
+CREATE TABLE IF NOT EXISTS `values_types` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) COLLATE utf8_bin NOT NULL,
+  `desc` text COLLATE utf8_bin NOT NULL,
+  `type` varchar(100) COLLATE utf8_bin NOT NULL,
+  `user_ID` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
