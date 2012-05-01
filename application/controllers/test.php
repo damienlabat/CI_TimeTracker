@@ -14,11 +14,9 @@ class Test extends CI_Controller {
     {
         $this->load->library('tank_auth');
 
-        if ($this->tank_auth->is_logged_in())  echo "hello ".$this->tank_auth->get_username();
-            else  echo "hello world";
-
-        $this->timetracker->update_categorie('t2',NULL,array("description"=>"ma super description") );
-        var_dump( $this->timetracker->get_categories_tree() );
+        /* $this->timetracker->update_categorie('t1/t2',array("title"=>"toto") );
+        var_dump( $this->timetracker->get_categorie_from_path('t1/toto') );*/
+        print_r( $this->timetracker->get_categories_path() );
 
     }
 }

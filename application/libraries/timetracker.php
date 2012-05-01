@@ -18,9 +18,9 @@ class Timetracker
 
 /* CATEGORIES */
 
-    function create_categories($categorie_string)
+    function create_categories($path)
     {
-        $cat_array=preg_split("/\//", $categorie_string);
+        $cat_array=preg_split("/\//", $path);
         $parent=NULL;
 
         foreach ($cat_array as $k => $cat_title)
@@ -42,21 +42,37 @@ class Timetracker
 
 
 
-    function get_categories_path()
+    function get_categories_path($forceshow=false)
     {
         $res=array();
         $categories=$this->ci->tt_categories->get_categories($this->user_id);
         foreach ($categories as $k => $item)
-            if ($item['parent']) $res[ $item['id'] ]= $res[ $item['parent'] ].'/'.$item['title'];
-                else $res[ $item['id'] ]= $item['title'];
+        {
+            //var_dump( ($forceshow OR $item['show']) && ( isset($res[ $item['parent'] ]) OR !$item['parent']) );
+            if ( ($forceshow OR $item['show']) && ( isset($res[ $item['parent'] ]) OR !$item['parent']) )
+            {
+                if ($item['parent']) $res[ $item['id'] ]= $res[ $item['parent'] ].'/'.$item['title'];
+                    else $res[ $item['id'] ]= $item['title'];
+            }
+        }
 
         sort($res);
         return $res;
     }
 
+
+
     function get_categorie_from_path($path)
     {
-           // TODO!
+        $cat_array=preg_split("/\//", $path);
+        $parent=NULL;
+        $res=NULL;
+
+        foreach ($cat_array as $k => $cat_title) {
+                $res= $this->ci->tt_categories->get_categorie_by_title($this->user_id, $cat_title, $parent);
+                $parent=$res['id'];
+            }
+        return $res;
     }
 
 
@@ -82,6 +98,14 @@ class Timetracker
         return $this->ci->tt_categories->update_categorie($this->user_id, $cat['title'],$cat['parent'],$data);
     }
 
+
+
+    function remove_emptycategories(){
+        // TODO!
+    }
+
+
+    // TODO! shared categorie gestion
 
 }
 

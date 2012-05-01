@@ -118,5 +118,7 @@ class Tt_categories extends CI_Model
         return NULL;
     }
 
+    // TODO! shared categorie gestion
+
 
 } // END Class
