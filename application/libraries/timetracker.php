@@ -13,12 +13,14 @@ class Timetracker
         $this->user_id= $this->ci->tank_auth->get_user_id();
 
         $this->ci->load->model('timetracker/tt_categories');
+        $this->ci->load->model('timetracker/tt_activities');
+        $this->ci->load->model('timetracker/tt_tags');
     }
 
 
 /* CATEGORIES */
 
-    function create_categories($path)
+    function getorcreate_categoriespath($path)
     {
         $cat_array=preg_split("/\//", $path);
         $parent=NULL;
@@ -94,7 +96,7 @@ class Timetracker
 
 
     function update_categorie($path,$data){
-        $cat=$this->get_categorie_from_path($path);
+        $cat=$this->getorcreate_categoriespath($path);
         return $this->ci->tt_categories->update_categorie($this->user_id, $cat['title'],$cat['parent'],$data);
     }
 
@@ -106,6 +108,55 @@ class Timetracker
 
 
     // TODO! shared categorie gestion
+
+
+
+/* ACTIVITIES */
+
+    function create_activity($title,$path=null,$param=array())
+    {
+        $cat=$this->getorcreate_categoriespath($path);
+
+        if (isset($param['tags']))
+        {
+            $tags=$param['tags'];
+            unset($param['tags']);
+        }
+
+        if (isset($param['values']))
+        {
+            $values=$param['values'];
+            unset($param['values']);
+        }
+
+        $activity=$this->ci->tt_activities->create_activity($cat['id'],$title,$param);
+
+        if (isset($tags))
+        {
+            $activity['tag']=array();
+            foreach ($tags as $k => $tag)
+                $activity['tag'][]=$this->add_tag($activity['id'],$tag);
+        }
+
+        return $activity;
+    }
+
+
+    function add_tag($activity_id,$tag)
+    {
+        $tag_obj=$this->ci->tt_tags->getorcreate_tag( $this->user_id,$tag );
+        if ($this->ci->tt_tags->add_tag( $activity_id,$tag_obj['id'] ))
+            return $tag_obj;
+        return false;
+    }
+
+    function remove_tag($activity_id,$tag)
+    {
+        $tag_obj=$this->ci->tt_tags->getorcreate_tag( $this->user_id,$tag );
+        return $this->ci->tt_tags->remove_tag( $activity_id,$tag_obj['id'] );
+
+    }
+
 
 }
 

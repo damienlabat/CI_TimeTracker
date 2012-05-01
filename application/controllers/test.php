@@ -16,7 +16,13 @@ class Test extends CI_Controller {
 
         /* $this->timetracker->update_categorie('t1/t2',array("title"=>"toto") );
         var_dump( $this->timetracker->get_categorie_from_path('t1/toto') );*/
-        print_r( $this->timetracker->get_categories_path() );
+
+
+
+      //  print_r( $this->timetracker->create_activity('test activity','t1/t2',array('tags'=>array('taaaggggg'))) );
+      print_r( $this->timetracker->remove_tag(15,'taaaggggg') );
+
+
 
     }
 }
