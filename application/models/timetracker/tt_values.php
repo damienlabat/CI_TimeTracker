@@ -3,7 +3,7 @@
 class Tt_values extends CI_Model
 {
     private $table_name             = 'values_types';
-    private $table_link_name        = 'values';
+    private $table_link_name        = 'l_activities_values';
 
 
 
@@ -49,9 +49,9 @@ class Tt_values extends CI_Model
     function get_value_type_list( $user_id )
     {
        $query =  $this->db->query(
-            'SELECT values_type.* , count( activity_ID ) AS count
-            FROM values_type
-                LEFT JOIN values ON value.value_type_ID  = values_type.id
+            'SELECT values_types.* , count( activity_ID ) AS count
+            FROM values_types
+                LEFT JOIN l_activities_values ON l_activities_values.value_type_ID  = values_types.id
             WHERE user_ID="'.$user_id.'"
             GROUP BY id
             ORDER BY title');
