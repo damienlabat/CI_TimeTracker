@@ -6,7 +6,11 @@ class Test extends CI_Controller {
     {
         parent::__construct();
         $this->output->enable_profiler(TRUE);
+        $this->load->helper('url');
 
+        $this->load->library('tank_auth');
+
+        if ( !$this->tank_auth->is_logged_in() )   redirect('auth/', 'location', 301);
     }
 
 
@@ -20,9 +24,13 @@ class Test extends CI_Controller {
 
 
       //  print_r( $this->timetracker->create_activity('test activity','t1/t2',array('tags'=>array('taaaggggg'))) );
-      print_r( $this->timetracker->add_value(15,'poid','12') );
+
+      print_r( $this->timetracker->get_value_type_list_list() );
+    }
 
 
+    public function _unauthorized()
+    {
 
     }
 }

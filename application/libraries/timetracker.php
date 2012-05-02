@@ -142,6 +142,14 @@ class Timetracker
         return $activity;
     }
 
+    function get_running_activities($offset=0,$count=10){
+
+    }
+
+
+    function get_last_activities($categorie_id=NULL, $offset=0,$count=10){
+
+    }
 /* TAGS */
 
     function add_tag($activity_id,$tag)
@@ -159,9 +167,18 @@ class Timetracker
 
     }
 
-        function update_tag($tag,$param)
+    function update_tag($tag,$param)
     {
         return $this->ci->tt_tags->update_tag( $this->user_id,$tag,$param );
+
+    }
+
+    function get_tag_list(){
+        return $this->ci->tt_tags->get_tag_list( $this->user_id );
+    }
+
+
+    function get_activity_tags($activity_id){
 
     }
 
@@ -194,7 +211,13 @@ class Timetracker
 
     }
 
+    function get_value_type_list_list(){
+        return $this->ci->tt_values->get_value_type_list( $this->user_id );
+    }
 
+    function get_value_tags($activity_id){
+
+    }
 
 }
 

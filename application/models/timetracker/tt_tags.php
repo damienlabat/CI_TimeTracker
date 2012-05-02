@@ -25,6 +25,26 @@ class Tt_tags extends CI_Model
     }
 
 
+    /**
+     * get tag list
+     *
+     * @user_id         int
+     * @return          array
+     */
+    function get_tag_list( $user_id )
+    {
+       $query =  $this->db->query(
+            'SELECT tags . * , count( activity_id ) AS count
+            FROM tags
+                LEFT JOIN l_activities_tags ON tags.id = l_activities_tags.tag_ID
+            WHERE user_ID="'.$user_id.'"
+            GROUP BY id
+            ORDER BY tag');
+
+        if ($query->num_rows() >= 1) return $query->result_array();
+        return NULL;
+    }
+
 
     /**
      * Create new tag record

@@ -40,6 +40,27 @@ class Tt_values extends CI_Model
     }
 
 
+     /**
+     * get value_type list
+     *
+     * @user_id         int
+     * @return          array
+     */
+    function get_value_type_list( $user_id )
+    {
+       $query =  $this->db->query(
+            'SELECT values_type.* , count( activity_ID ) AS count
+            FROM values_type
+                LEFT JOIN values ON value.value_type_ID  = values_type.id
+            WHERE user_ID="'.$user_id.'"
+            GROUP BY id
+            ORDER BY title');
+
+        if ($query->num_rows() >= 1) return $query->result_array();
+        return NULL;
+    }
+
+
     /**
      * get value_type_by_name
      *
