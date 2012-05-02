@@ -20,7 +20,7 @@ class Test extends CI_Controller {
 
 
       //  print_r( $this->timetracker->create_activity('test activity','t1/t2',array('tags'=>array('taaaggggg'))) );
-      print_r( $this->timetracker->remove_tag(15,'taaaggggg') );
+      print_r( $this->timetracker->add_value(15,'poid','12') );
 
 
 

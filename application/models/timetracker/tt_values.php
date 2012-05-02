@@ -2,7 +2,7 @@
 
 class Tt_values extends CI_Model
 {
-    private $table_name             = 'values_type';
+    private $table_name             = 'values_types';
     private $table_link_name        = 'values';
 
 

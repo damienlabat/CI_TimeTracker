@@ -56,7 +56,7 @@ class Tt_tags extends CI_Model
         $this->db->where('user_ID', $user_id);
         $this->db->where('tag', $tag);
         if ($this->db->update($this->table_name, $param ))
-            return TRUE
+            return TRUE;
 
         return FALSE;
     }

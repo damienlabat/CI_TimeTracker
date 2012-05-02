@@ -169,8 +169,8 @@ class Timetracker
 
     function add_value($activity_id,$value_name,$value)
     {
-        $value_obj=$this->ci->tt_values->getorcreate_value_type( $this->user_id,$tag , $value_name );
-        if ($this->ci->tt_values->add_value( $value_obj['id'], $value_type_id,$value ))
+        $value_obj=$this->ci->tt_values->getorcreate_value_type( $this->user_id, $value_name );
+        if ($this->ci->tt_values->add_value( $activity_id,$value_obj['id'] ,$value ))
             return $this->ci->tt_values->get_value( $activity_id, $value_obj['id']  );
         return NULL;
     }
