@@ -16,7 +16,45 @@ class Timetracker_lib
         $this->ci->load->model('timetracker/tt_activities');
         $this->ci->load->model('timetracker/tt_tags');
         $this->ci->load->model('timetracker/tt_values');
+
+        $this->ci->load->helper('array');
+
+
     }
+
+/* gestion POST */
+
+function fromPOST($post){
+
+    if (element('activity',$post)){
+        $param=array();
+
+        if (strpos($post['activity'], '@') === FALSE)
+        {
+            $path = 'root';
+            $title = $post['activity'];
+        }
+        else
+        {
+            $split= preg_split('/@/', $post['activity'], -1, PREG_SPLIT_NO_EMPTY);
+            $path = $split[1];
+            $title = $split[0];
+        }
+
+        if (element('tags',$post)) $param['tags']=preg_split('/ /', $post['tags'], -1, PREG_SPLIT_NO_EMPTY);
+
+        if (isset($post['description'])) $param['description']=$post['description'];
+        if (isset($post['localtime'])) $param['start_LOCAL']=$post['localtime'];
+
+
+        $res= $this->create_activity($title,$path,$param);
+        }
+
+    }
+
+
+
+
 
 
 /* CATEGORIES */
@@ -139,16 +177,25 @@ class Timetracker_lib
                 $activity['tag'][]=$this->add_tag($activity['id'],$tag);
         }
 
+        // TODO! ajouter values
+
         return $activity;
     }
 
-    function get_running_activities($offset=0,$count=10){
 
+    function get_running_activities(){
+        // TODO!
+        $activities=$this->ci->tt_activities->get_running_activities($this->user_id);
+
+        return $activities;
     }
 
 
     function get_last_activities($categorie_id=NULL, $offset=0,$count=10){
+        // TODO!
+        $activities=$this->ci->tt_activities->get_last_activities($this->user_id,$offset,$count);
 
+        return $activities;
     }
 /* TAGS */
 

@@ -32,7 +32,6 @@ class Tt_activities extends CI_Model
     function create_activity( $categorie_id,$title,$param=array() )
     {
         $param = array_merge( $param, array('title' => strtolower($title), 'categorie_id' => $categorie_id) );
-        print_r($param);
 
 
         if ($this->db->insert($this->table_name, $param)) {
@@ -42,6 +41,51 @@ class Tt_activities extends CI_Model
         return NULL;
     }
 
+
+    /**
+     * Get running activities
+     *
+     * @user_id     int
+     * @return          array
+     */
+    function get_running_activities($user_id)
+    {
+        $query =  $this->db->query(
+            'SELECT activities.*
+             FROM activities
+                LEFT JOIN categories
+                ON activities.categorie_ID=categories.id
+            WHERE user_ID='.$user_id.'
+            AND running=1
+            ORDER BY start_UNIX DESC'
+            );
+
+        if ($query->num_rows() >= 1) return $query->result_array();
+        return NULL;
+    }
+
+    /**
+     * Get last activities
+     *
+     * @user_id     int
+     * @return          array
+     */
+    function get_last_activities($user_id,$offset,$count)
+    {
+        $query =  $this->db->query(
+            'SELECT activities.*
+             FROM activities
+                LEFT JOIN categories
+                ON activities.categorie_ID=categories.id
+            WHERE user_ID='.$user_id.'
+            AND running=0
+            ORDER BY start_UNIX DESC
+            LIMIT '.$offset.','.$count
+            );
+
+        if ($query->num_rows() >= 1) return $query->result_array();
+        return NULL;
+    }
 
 
 } // END Class

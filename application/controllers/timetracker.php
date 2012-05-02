@@ -9,6 +9,7 @@ class Timetracker extends CI_Controller {
 
         $this->load->helper('url');
         $this->load->helper('assets_helper');
+        $this->load->helper('form');
 
         $this->load->library('tank_auth');
         $this->load->library('timetracker_lib');
@@ -18,6 +19,7 @@ class Timetracker extends CI_Controller {
 
 
     public function _render(){
+        $this->data['content'] = $this->load->view('timetracker/layout',$this->data,true);
         $this->load->view('layout',$this->data);
     }
 
@@ -25,7 +27,11 @@ class Timetracker extends CI_Controller {
     {
         //$this->data['headtitle']='Damien Labat';
 
-        $this->data['content'] = $this->load->view('timetracker/form/classicform',NULL,true);
+        if ($_POST) $this->timetracker_lib->fromPOST($_POST);
+
+        $this->data['running_activities']= $this->timetracker_lib->get_running_activities();
+        $this->data['last_activities']= $this->timetracker_lib->get_last_activities();
+
         $this->_render();
     }
 
