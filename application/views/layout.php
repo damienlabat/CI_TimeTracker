@@ -1,22 +1,24 @@
 <!doctype html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="fr"> <!--<![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
     <title><?= @$headtitle ?></title>
     <meta name="description" content="<?= @$headdesc ?>">
-    <meta name="author" content="Damien Labat">
+    <meta name="author" content="">
     <meta name="viewport" content="width=device-width">
 
     <link rel="stylesheet/less" href="<?= less_url('style.less') ?>">
     <script src="<?= libs_url('less-1.3.0.min.js') ?>"></script>
 
     <!-- Use SimpLESS (Win/Linux/Mac) or LESS.app (Mac) to compile your .less files
-    to style.css, and replace the 2 lines above by this one:-->
+    to style.css,
+        ie. lessc style.less > style.css
+            lessc style.less --yui-compress > style.yui.css
+     and replace the 2 lines above by this one:-->
 
     <!--link rel="stylesheet" href="<?= less_url('style.css') ?>"-->
     <!--link rel="stylesheet" href="<?= less_url('style.yui.css') ?>"-->
@@ -48,7 +50,7 @@
       </div>
 
       <footer>
-
+        <?php $this->load->view('bloc/footer'); ?>
       </footer>
 
     </div> <!-- /container -->
