@@ -68,7 +68,7 @@ class Tt_categories extends CI_Model
      * @title           string
      * @parent          int
      * @data            array
-     * @return          array
+     * @return          boolean
      */
     function update_categorie($user_id,$title,$parent,$data)
     {
@@ -77,9 +77,9 @@ class Tt_categories extends CI_Model
         $this->db->where('parent', $parent);
 
         if ($this->db->update($this->table_name, $data))
-            return $this->get_categorie_by_title($user_id, $title,$parent);
+            return TRUE;
 
-        return NULL;
+        return FALSE;
     }
 
 

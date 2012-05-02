@@ -3,7 +3,7 @@
 
 class Timetracker
 {
-    protected $user_id=null;
+    protected $user_id=NULL;
 
     function __construct()
     {
@@ -15,6 +15,7 @@ class Timetracker
         $this->ci->load->model('timetracker/tt_categories');
         $this->ci->load->model('timetracker/tt_activities');
         $this->ci->load->model('timetracker/tt_tags');
+        $this->ci->load->model('timetracker/tt_values');
     }
 
 
@@ -44,7 +45,7 @@ class Timetracker
 
 
 
-    function get_categories_path($forceshow=false)
+    function get_categories_path($forceshow=FALSE)
     {
         $res=array();
         $categories=$this->ci->tt_categories->get_categories($this->user_id);
@@ -113,7 +114,7 @@ class Timetracker
 
 /* ACTIVITIES */
 
-    function create_activity($title,$path=null,$param=array())
+    function create_activity($title,$path=NULL,$param=array())
     {
         $cat=$this->getorcreate_categoriespath($path);
 
@@ -141,13 +142,14 @@ class Timetracker
         return $activity;
     }
 
+/* TAGS */
 
     function add_tag($activity_id,$tag)
     {
         $tag_obj=$this->ci->tt_tags->getorcreate_tag( $this->user_id,$tag );
         if ($this->ci->tt_tags->add_tag( $activity_id,$tag_obj['id'] ))
             return $tag_obj;
-        return false;
+        return NULL;
     }
 
     function remove_tag($activity_id,$tag)
@@ -156,6 +158,42 @@ class Timetracker
         return $this->ci->tt_tags->remove_tag( $activity_id,$tag_obj['id'] );
 
     }
+
+        function update_tag($tag,$param)
+    {
+        return $this->ci->tt_tags->update_tag( $this->user_id,$tag,$param );
+
+    }
+
+/* VALUES */
+
+    function add_value($activity_id,$value_name,$value)
+    {
+        $value_obj=$this->ci->tt_values->getorcreate_value_type( $this->user_id,$tag , $value_name );
+        if ($this->ci->tt_values->add_value( $value_obj['id'], $value_type_id,$value ))
+            return $this->ci->tt_values->get_value( $activity_id, $value_obj['id']  );
+        return NULL;
+    }
+
+    function remove_value($activity_id,$value_name)
+    {
+        $value_obj=$this->ci->tt_values->getorcreate_value_type( $this->user_id,$tag , $value_name );
+        return $this->ci->tt_values->remove_value( $activity_id, $value_obj['id'] );
+
+    }
+
+    function update_value($activity_id,$value_name,$value)
+    {
+        return $this->ci->tt_tags->update_tag( $this->user_id,$tag,$param );
+
+    }
+
+    function update_value_type($value_name,$param)
+    {
+        return $this->ci->tt_tags->update_tag( $this->user_id,$tag,$param );
+
+    }
+
 
 
 }

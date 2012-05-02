@@ -30,7 +30,7 @@ class Tt_tags extends CI_Model
      * Create new tag record
      *
      * @user_id         int
-     * @tag           string
+     * @tag             string
      * @return          array
      */
     function create_tag( $user_id, $tag )
@@ -42,6 +42,24 @@ class Tt_tags extends CI_Model
         return NULL;
     }
 
+
+    /**
+     * Update tag
+     *
+     * @user_id         int
+     * @tag             string
+     * @param           array
+     * @return          boolean
+     */
+    function update_tag( $user_id, $tag, $param )
+    {
+        $this->db->where('user_ID', $user_id);
+        $this->db->where('tag', $tag);
+        if ($this->db->update($this->table_name, $param ))
+            return TRUE
+
+        return FALSE;
+    }
 
     /**
      * Get or Create new tag record
@@ -92,7 +110,7 @@ class Tt_tags extends CI_Model
      {
          // TODO !
          // clear table_link where not in tags or not in activities
-         // clear tags where not in table_link
+         // clear tags where not in table_link SHOULD WE ???
      }
 
 
