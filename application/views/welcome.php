@@ -1,1 +1,4 @@
-Hi, <strong><?php echo $username; ?></strong>! You are logged in now. <?php echo anchor('/auth/logout/', 'Logout'); ?>
+<ul>
+    <li><a href='<?=site_url('auth/logout')?>'>logout</a></li>
+    <li><a href='<?=site_url('timetracker')?>'>timetracker</a></li>
+</ul>

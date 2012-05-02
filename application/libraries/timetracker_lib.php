@@ -1,7 +1,7 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 
-class Timetracker
+class Timetracker_lib
 {
     protected $user_id=NULL;
 
