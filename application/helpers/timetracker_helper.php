@@ -41,7 +41,7 @@ if ( ! function_exists('activity_li'))
 
       $html="<li>".activity_path($activity);
 
-      if ($activity['running'])  $html.=" <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('timetracker/stop/'.$activity['id'])."'><i class='icon-stop icon-white'></i> stop</a>";
+      if ($activity['running'])  $html.=" <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('timetracker/stop/'.$activity['id'])."'>stop</a>";
 
       if ( ($activity['duration']==0)&&(!$activity['running']) ) $html.="<span class='label label-info ping'>PING!</span>";
         else $html.="<p>duration: ".duration2human($activity['duration'])."</p>";

@@ -5,6 +5,9 @@
 $(function() {
     log('script init');
 
+    //$('.popclick-trigger').popover({trigger:'manual'}).click( function(){ $(this).popover('toggle'); });
+    $('.popclick-trigger').popover({placement:'bottom', delay: { show: 10, hide: 500 }});
+    // TODO! keep popup open on focus
 });
 
 

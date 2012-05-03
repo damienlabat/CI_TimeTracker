@@ -4,4 +4,4 @@
 <?php endforeach; ?>
 </ul>
 
-<pre><?php print_r($last_activities) ?></pre>
+<!--pre><?php print_r($last_activities) ?></pre-->

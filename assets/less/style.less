@@ -32,20 +32,44 @@ body {
 // TODO regrouper
 // -------------------------
 
-body { background-color: @backgroundYellow; }
+body { background-color: @grayLighter; }
+
+h2 { margin-bottom: 1em; }
 
 .cadre {
     background: @white;
     border: 1px solid @grayLighter;
-    height: @gridColumnWidth*6;
+    //max-height: @gridColumnWidth*6;
     margin-bottom: @gridGutterWidth;
     overflow: auto;
-    padding: 2em 3em 4em;
+    // padding: 2em 3em 1em; TODO! breake the grid
+    padding-top: 3em; padding-bottom: 1em;
     .box-shadow(@shadow);
+
+    >* { padding-left: 2em; padding-right: 2em; } //TODO! ameliorer ca
     }
+
+
 
 p   {    word-spacing: -0.05em;    }
 
+#commandebloc {
+    h2 { text-align: center; }
+}
+
+#classicform {
+
+    label { font-size:18px; display:none; }
+
+    textarea { margin-bottom:@gridGutterWidth; }
+
+    button.btn {
+        display: block;
+        float: none;
+        margin: auto;
+    }
+
+}
 
 ul.activities {
     list-style:none;
