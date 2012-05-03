@@ -1,4 +1,4 @@
-    <?=form_open('timetracker')?>
+    <?=form_open('timetracker/add')?>
 
         <label>activity</label>
         <input type="text" class="span4" placeholder="" name="activity" value="">

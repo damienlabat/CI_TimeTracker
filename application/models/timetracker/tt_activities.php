@@ -43,6 +43,22 @@ class Tt_activities extends CI_Model
 
 
     /**
+     * Update activity
+     *
+     * @activity_id     int
+     * @title           string
+     * @return          boolean
+     */
+    function update_activity( $activity_id, $param )
+    {
+        $this->db->where('id', $activity_id);
+
+        if ($this->db->update($this->table_name, $param)) return TRUE;
+
+        return FALSE;
+    }
+
+    /**
      * Get running activities
      *
      * @user_id     int
@@ -87,5 +103,14 @@ class Tt_activities extends CI_Model
         return NULL;
     }
 
+
+
+    function stop_activity($id, $endtime)
+    {
+        $activity= $this->get_activity_by_id($id);
+        $duree= $endtime - strtotime( $activity['start_UNIX'] );
+        print_r($duree);
+
+    }
 
 } // END Class

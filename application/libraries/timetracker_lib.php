@@ -31,19 +31,19 @@ function fromPOST($post){
 
         if (strpos($post['activity'], '@') === FALSE)
         {
-            $path = 'root';
-            $title = $post['activity'];
+            $path = '';
+            $title = trim( $post['activity'] );
         }
         else
         {
             $split= preg_split('/@/', $post['activity'], -1, PREG_SPLIT_NO_EMPTY);
-            $path = $split[1];
-            $title = $split[0];
+            $path =  trim( $split[1] );
+            $title = trim( $split[0] );
         }
 
         if (element('tags',$post)) $param['tags']=preg_split('/,/', $post['tags'], -1, PREG_SPLIT_NO_EMPTY);
 
-        if (isset($post['description'])) $param['description']=$post['description'];
+        if (isset($post['description'])) $param['description']=trim( $post['description'] );
         if (isset($post['localtime'])) $param['start_LOCAL']=$post['localtime'];
 
 
@@ -51,7 +51,6 @@ function fromPOST($post){
         }
 
     }
-
 
 
 
@@ -182,7 +181,7 @@ function fromPOST($post){
             unset($param['values']);
         }
 
-        $activity=$this->ci->tt_activities->create_activity($cat['id'], trim($title), $param);
+        $activity=$this->ci->tt_activities->create_activity($cat['id'], $title, $param);
 
         if (isset($tags))
         {
@@ -218,10 +217,29 @@ function fromPOST($post){
         foreach ($activities as $k => $activity)
         {
             $activities[$k]['path_array']= $this->get_categorie_path_array( $activity['categorie_ID'] );
+
+            if ($activity['running']) $activities[$k]['duration']= $this->calcul_duration($activity);
         }
 
         return $activities;
     }
+
+/* STOP activitie */
+
+function calcul_duration($activity, $endtime=NULL )
+{
+    if ($endtime==NULL) $endtime= time();
+    $duration= $endtime - strtotime( $activity['start_UNIX'] );
+    return $duration;
+}
+
+function stop_activity($id){
+    $activity= $this->ci->tt_activities->get_activity_by_id($id);
+    $duration= $this->calcul_duration($activity);
+    return $this->ci->tt_activities->update_activity( $id, array('duration'=>$duration, 'running'=>0) );
+    }
+
+
 
 /* TAGS */
 

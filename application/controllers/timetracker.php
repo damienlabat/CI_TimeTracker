@@ -37,6 +37,19 @@ class Timetracker extends CI_Controller {
     }
 
 
+    public function add()
+    {
+        if ($_POST) $this->timetracker_lib->fromPOST($_POST);
+        redirect('timetracker', 'location');
+    }
+
+    public function stop($activity_id)
+    {
+        $this->timetracker_lib->stop_activity($activity_id);
+        redirect('timetracker', 'location');
+    }
+
+
 
 }
 

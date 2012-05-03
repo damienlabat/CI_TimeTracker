@@ -1,16 +1,49 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+
+
+
+
+if ( ! function_exists('duration2human'))
+{
+    function duration2human($duration)
+    {
+      if ( $duration<60 ) $html=$duration."s";
+      else
+      {
+          $M= floor( $duration/60 );
+          $H= floor( $M/60 );
+          $day= floor( $H/24 );
+
+          $html="";
+
+          if ( $day==1 ) $html.= $day.' day ';
+          if ( $day>1 )  $html.= $day.' days ';
+
+          if ( $H%24 ==1 ) $html.= ($H % 24).' hour ';
+          if ( $H%24>1 )  $html.= ($H % 24).' hours ';
+
+          $html.= ($M % 60).' min';
+
+      }
+        return $html;
+    }
+}
+
+
+//------------------------------------------------
+
 if ( ! function_exists('activity_li'))
 {
     function activity_li($activity)
     {
 
 
-      $html="<li>
-        <strong><a href='#".$activity['id']."'>".$activity['title']."</a><span class='arobase'>@</span>".categorie_path($activity['path_array'])."</strong>";
+      $html="<li>".activity_path($activity);
 
-      if ($activity['running'])  $html.="<p>RUN <a href='".site_url('timetracker/stop/'.$activity['id'])."'>stop</a></p>";
-        else $html="<p>duration: ".$activity['duration']."s</p>";
+      if ($activity['running'])  $html.=" <a href='".site_url('timetracker/stop/'.$activity['id'])."'>stop</a>";
+
+      $html.="<p>duration: ".duration2human($activity['duration'])."</p>";
 
       $html.="  <p>start at: ".$activity['start_LOCAL']."</p>
         <p>unix time: ".$activity['start_UNIX']."</p>
@@ -21,17 +54,31 @@ if ( ! function_exists('activity_li'))
 }
 
 
+if ( ! function_exists('activity_path'))
+{
+    function activity_path($activity)
+    {
+      $html= "<strong><a href='#".$activity['id']."'>".$activity['title']."</a>".categorie_path($activity['path_array'])."</strong>";
+      return $html;
+    }
+}
+
+
 
 if ( ! function_exists('categorie_path'))
 {
     function categorie_path($categorie_path)
     {
-      if (count($categorie_path)==1) $html= categorie_a($categorie_path[0]);
+      $html="<span class='arobase'>@</span>";
+      if (count($categorie_path)==1)
+      {
+          if ($categorie_path[0]['title']=='')   $html="";
+          $html.= categorie_a($categorie_path[0]);
+      }
       else
       {
-          $html="";
           foreach ($categorie_path as $k => $categorie) {
-              if ($html!="") $html.="/";
+              if ( $k>0 ) $html.="<span class='slash'>/</span>";
               $html.= categorie_a($categorie);
           }
       }
