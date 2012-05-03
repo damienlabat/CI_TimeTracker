@@ -1,11 +1,7 @@
-todo!
 <ul>
-<?php foreach ($running_activities as $k => $activity): ?>
-    <li>
-        <strong><?=$activity['title']?></strong>
-        <p>start at: <?=$activity['start_LOCAL']?></p>
-        <p>description: <?=$activity['description']?></p>
-    </li>
+<?php foreach ($last_activities as $k => $activity): ?>
+    <?= activity_li($activity) ?>
 <?php endforeach; ?>
 </ul>
-<pre><?php print_r($running_activities) ?></pre>
+
+<pre><?php print_r($last_activities) ?></pre>

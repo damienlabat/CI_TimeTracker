@@ -10,6 +10,7 @@ class Timetracker extends CI_Controller {
         $this->load->helper('url');
         $this->load->helper('assets_helper');
         $this->load->helper('form');
+        $this->load->helper('timetracker');
 
         $this->load->library('tank_auth');
         $this->load->library('timetracker_lib');
