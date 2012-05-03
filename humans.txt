@@ -14,7 +14,7 @@
 /* SITE */
   Standards: HTML5, CSS3
   Components: Initializr, Modernizr, jQuery, Responsive Bootstrap
-  Software:
+  Software: CodeIgniter
 
 
 

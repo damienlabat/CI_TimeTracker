@@ -7,13 +7,9 @@ class Timetracker extends CI_Controller {
         parent::__construct();
         $this->output->enable_profiler(TRUE);
 
-        $this->load->helper('url');
-        $this->load->helper('assets_helper');
-        $this->load->helper('form');
-        $this->load->helper('timetracker');
+        $this->load->helper( array('url','assets_helper','form','timetracker'));
+        $this->load->library( array('tank_auth','timetracker_lib') );
 
-        $this->load->library('tank_auth');
-        $this->load->library('timetracker_lib');
 
         if ( !$this->tank_auth->is_logged_in() )   redirect('auth/', 'location', 301);
     }
