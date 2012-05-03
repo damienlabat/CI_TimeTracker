@@ -26,11 +26,13 @@ body {
 @arobaseColor:        @orange;
 
 
+ @shadow: 2px 3px 4px 1px rgba(0, 0, 0, 0.1);
 
 
 // TODO regrouper
 // -------------------------
 
+body { background-color: @backgroundYellow; }
 
 .cadre {
     background: @white;
@@ -39,22 +41,42 @@ body {
     margin-bottom: @gridGutterWidth;
     overflow: auto;
     padding: 2em 3em 4em;
-        @shadow: 2px 3px 4px 1px rgba(0, 0, 0, 0.1);
     .box-shadow(@shadow);
     }
 
 p   {    word-spacing: -0.05em;    }
 
-.arobase {
-    padding: 0 3px;
-    font-size: 20px;
-    color: @arobaseColor;
+
+ul.activities {
+    list-style:none;
+    margin:0;
+
+    >li {
+        padding: @gridGutterWidth;
+
+        &:hover {
+            background-color: @backgroundGreen;
+            .box-shadow(@shadow);
+            }
+        }
     }
 
-.slash {
-    padding: 0 3px;
-    font-size: 20px;
+.activity_path {
+    font-size: 18px;
+    .arobase {
+        padding: 0 3px;
+        color: @arobaseColor;
+        }
+
+    .slash {
+        padding: 0 3px;
+        }
     }
 
+.stop-btn {
+    float:right;
+    }
 
-
+.ping {
+    float:right;
+    }
