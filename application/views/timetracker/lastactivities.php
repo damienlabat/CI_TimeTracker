@@ -1,4 +1,4 @@
-<ul>
+<ul class='activities'>
 <?php foreach ($last_activities as $k => $activity): ?>
     <?= activity_li($activity) ?>
 <?php endforeach; ?>

@@ -41,9 +41,10 @@ if ( ! function_exists('activity_li'))
 
       $html="<li>".activity_path($activity);
 
-      if ($activity['running'])  $html.=" <a href='".site_url('timetracker/stop/'.$activity['id'])."'>stop</a>";
+      if ($activity['running'])  $html.=" <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('timetracker/stop/'.$activity['id'])."'><i class='icon-stop icon-white'></i> stop</a>";
 
-      $html.="<p>duration: ".duration2human($activity['duration'])."</p>";
+      if ( ($activity['duration']==0)&&(!$activity['running']) ) $html.="<span class='label label-info ping'>PING!</span>";
+        else $html.="<p>duration: ".duration2human($activity['duration'])."</p>";
 
       $html.="  <p>start at: ".$activity['start_LOCAL']."</p>
         <p>unix time: ".$activity['start_UNIX']."</p>
@@ -58,7 +59,7 @@ if ( ! function_exists('activity_path'))
 {
     function activity_path($activity)
     {
-      $html= "<strong><a href='#".$activity['id']."'>".$activity['title']."</a>".categorie_path($activity['path_array'])."</strong>";
+      $html= "<strong class='activity_path'><a href='#".$activity['id']."'>".$activity['title']."</a>".categorie_path($activity['path_array'])."</strong>";
       return $html;
     }
 }
