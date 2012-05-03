@@ -41,7 +41,7 @@ function fromPOST($post){
             $title = $split[0];
         }
 
-        if (element('tags',$post)) $param['tags']=preg_split('/ /', $post['tags'], -1, PREG_SPLIT_NO_EMPTY);
+        if (element('tags',$post)) $param['tags']=preg_split('/,/', $post['tags'], -1, PREG_SPLIT_NO_EMPTY);
 
         if (isset($post['description'])) $param['description']=$post['description'];
         if (isset($post['localtime'])) $param['start_LOCAL']=$post['localtime'];
@@ -101,6 +101,20 @@ function fromPOST($post){
         return $res;
     }
 
+
+
+    function get_categorie_path_array($categorie_id)
+    {
+        $current_categorie= $this->ci->tt_categories->get_categorie_by_id($categorie_id);
+        $path_array= array($current_categorie);
+
+        while (isset($current_categorie['parent'])) {
+                $current_categorie= $this->ci->tt_categories->get_categorie_by_id( $current_categorie['parent'] );
+                $path_array[]= $current_categorie;
+            }
+
+        return array_reverse($path_array);
+    }
 
 
     function get_categorie_from_path($path)
@@ -168,13 +182,13 @@ function fromPOST($post){
             unset($param['values']);
         }
 
-        $activity=$this->ci->tt_activities->create_activity($cat['id'],$title,$param);
+        $activity=$this->ci->tt_activities->create_activity($cat['id'], trim($title), $param);
 
         if (isset($tags))
         {
             $activity['tag']=array();
             foreach ($tags as $k => $tag)
-                $activity['tag'][]=$this->add_tag($activity['id'],$tag);
+                $activity['tag'][]=$this->add_tag($activity['id'], trim($tag) );
         }
 
         // TODO! ajouter values
@@ -184,19 +198,31 @@ function fromPOST($post){
 
 
     function get_running_activities(){
-        // TODO!
-        $activities=$this->ci->tt_activities->get_running_activities($this->user_id);
+        $activities= $this->ci->tt_activities->get_running_activities($this->user_id);
+        $activities= $this->complete_activities_info($activities);
 
         return $activities;
     }
 
 
     function get_last_activities($categorie_id=NULL, $offset=0,$count=10){
-        // TODO!
         $activities=$this->ci->tt_activities->get_last_activities($this->user_id,$offset,$count);
+        $activities= $this->complete_activities_info($activities);
 
         return $activities;
     }
+
+
+    function complete_activities_info($activities) {
+
+        foreach ($activities as $k => $activity)
+        {
+            $activities[$k]['path_array']= $this->get_categorie_path_array( $activity['categorie_ID'] );
+        }
+
+        return $activities;
+    }
+
 /* TAGS */
 
     function add_tag($activity_id,$tag)

@@ -7,14 +7,12 @@ class Tt_categories extends CI_Model
     /**
      * Get categorie by Id
      *
-     * @user_id         int
      * @categorie_id    int
      * @return          array
      */
-    function get_categorie_by_id($user_id, $categorie_id)
+    function get_categorie_by_id($categorie_id)
     {
         $this->db->where('id', $categorie_id);
-        $this->db->where('user_ID', $user_id);
 
         $query = $this->db->get($this->table_name);
         if ($query->num_rows() == 1) return $query->row_array();
