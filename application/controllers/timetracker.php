@@ -12,7 +12,7 @@ class Timetracker extends CI_Controller {
 
 
         if ( !$this->tank_auth->is_logged_in() ) {
-             $thid->_goLogin();
+             $this->_goLogin();
           }
         else {
             $this->data['user_name']=$this->tank_auth->get_username();
