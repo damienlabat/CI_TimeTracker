@@ -1,1 +1,1 @@
-footer
+SILK ICONS by Mark James(http://www.famfamfam.com/lab/icons/silk/)

@@ -22,7 +22,6 @@ class Timetracker extends CI_Controller {
 
     public function index()
     {
-        //$this->data['headtitle']='Damien Labat';
 
         if ($_POST) $this->timetracker_lib->fromPOST($_POST);
 
