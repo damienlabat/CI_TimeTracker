@@ -1,4 +1,4 @@
-<?=form_open('timetracker/add', array('id' => 'classicform') )?>
+<?=form_open('tt/'.$user_name.'/add', array('id' => 'classicform') )?>
 <div class="row">
     <div class="span6">
             <label for="activity">activity</label>

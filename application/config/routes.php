@@ -48,38 +48,43 @@ $route['logout'] =      'auth/logout';
 $route['help'] =        'staticpages/help';
 $route['account'] =     'auth/account';
 
+
+
+
+
+$route['tt/(:any)/activities'] =                    'timetracker/activities/$1';
+$route['tt/(:any)/activity/(:num)'] =               'timetracker/activity/$1/$2';
+$route['tt/(:any)/activity/(:num)/edit'] =          'timetracker/activity_edit/$1/$2';
+$route['tt/(:any)/activity/(:num)/stop'] =          'timetracker/stop/$1/$2';
+$route['tt/(:any)/summary/activity/(:num)'] =       'timetracker/summary/activity/$1/$2';
+$route['tt/(:any)/stats/activity/(:num)'] =         'timetracker/stats/activity/$1/$2';
+
+$route['tt/(:any)/categories'] =                    'timetracker/categories/$1';
+$route['tt/(:any)/categorie/(:num)'] =              'timetracker/categorie/$1/$2';
+$route['tt/(:any)/categorie/(:num)/edit'] =         'timetracker/categorie_edit/$1/$2';
+$route['tt/(:any)/summary/categorie/(:num)'] =      'timetracker/summary/categorie/$1/$2';
+$route['tt/(:any)/stats/categorie/(:num)'] =        'timetracker/stats/categorie/$1/$2';
+
+$route['tt/(:any)/tags'] =                          'timetracker/tags/$1';
+$route['tt/(:any)/tag/(:num)'] =                    'timetracker/tag/$1/$2';
+$route['tt/(:any)/tag/(:num)/edit'] =               'timetracker/tag_edit/$1/$2';
+$route['tt/(:any)/summary/tag/(:num)'] =            'timetracker/summary/tag/$1/$2';
+$route['tt/(:any)/stats/tag/(:num)'] =              'timetracker/stats/tag/$1/$2';
+
+$route['tt/(:any)/values'] =                        'timetracker/values/$1';
+$route['tt/(:any)/value/(:num)'] =                  'timetracker/value/$1/$2';
+$route['tt/(:any)/value/(:num)/edit'] =             'timetracker/value_edit/$1/$2';
+$route['tt/(:any)/summary/value/(:num)'] =          'timetracker/summary/value/$1/$2';
+$route['tt/(:any)/stats/value/(:num)'] =            'timetracker/stats/value/$1/$2';
+
+$route['tt'] =                  'timetracker/index';
 $route['tt/(:any)'] =           'timetracker/index/$1';
 $route['tt/(:any)/summary'] =   'timetracker/summary/$1';
 $route['tt/(:any)/stats'] =     'timetracker/stats/$1';
 $route['tt/(:any)/export'] =    'timetracker/export/$1';
 $route['tt/(:any)/params'] =    'timetracker/params/$1';
 
-
-$route['tt/(:any)/activities'] =                    'timetracker/activities/$1';
-$route['tt/(:any)/activity/(:num)'] =               'timetracker/activity/$1/$2';
-$route['tt/(:any)/activity/(:num)/edit'] =          'timetracker/activity_edit/$1/$2';
-$route['tt/(:any)/summary/activity/(:num)'] =       'timetracker/summary/activity/$1/$2';
-$route['tt/(:any)/stats/activity/(:num)/edit'] =    'timetracker/stats/activity/$1/$2';
-
-$route['tt/(:any)/categories'] =                    'timetracker/categories/$1';
-$route['tt/(:any)/categorie/(:num)'] =              'timetracker/categorie/$1/$2';
-$route['tt/(:any)/categorie/(:num)/edit'] =         'timetracker/categorie_edit/$1/$2';
-$route['tt/(:any)/summary/categorie/(:num)'] =      'timetracker/summary/categorie/$1/$2';
-$route['tt/(:any)/stats/categorie/(:num)/edit'] =   'timetracker/stats/categorie/$1/$2';
-
-$route['tt/(:any)/tags'] =                          'timetracker/tags/$1';
-$route['tt/(:any)/tag/(:num)'] =                    'timetracker/tag/$1/$2';
-$route['tt/(:any)/tag/(:num)/edit'] =               'timetracker/tag_edit/$1/$2';
-$route['tt/(:any)/summary/tag/(:num)'] =            'timetracker/summary/tag/$1/$2';
-$route['tt/(:any)/stats/tag/(:num)/edit'] =         'timetracker/stats/tag/$1/$2';
-
-$route['tt/(:any)/values'] =                        'timetracker/values/$1';
-$route['tt/(:any)/value/(:num)'] =                  'timetracker/value/$1/$2';
-$route['tt/(:any)/value/(:num)/edit'] =             'timetracker/value_edit/$1/$2';
-$route['tt/(:any)/summary/value/(:num)'] =          'timetracker/summary/value/$1/$2';
-$route['tt/(:any)/stats/value/(:num)/edit'] =       'timetracker/stats/value/$1/$2';
-
-
+$route['tt/(:any)/add'] =       'timetracker/add/$1';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

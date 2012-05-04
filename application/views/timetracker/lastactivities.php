@@ -2,7 +2,7 @@
 <?php
 if (isset($last_activities)) {
     foreach ($last_activities as $k => $activity): ?>
-    <?= activity_li($activity) ?>
+    <?= activity_li($activity,$user_name, array('duration'=>'full') ) ?>
 <?php endforeach;
 }
 ?>

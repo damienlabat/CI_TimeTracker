@@ -6,7 +6,7 @@
 
 if ( ! function_exists('duration2human'))
 {
-    function duration2human($duration)
+    function duration2human($duration,$mode='normal')
     {
       if ( $duration<60 ) $html=$duration."s";
       else
@@ -25,6 +25,8 @@ if ( ! function_exists('duration2human'))
 
           $html.= ($M % 60).' min';
 
+          if ($mode=='full') $html.= ' '.($duration % 60).' s';
+
       }
         return $html;
     }
@@ -35,16 +37,17 @@ if ( ! function_exists('duration2human'))
 
 if ( ! function_exists('activity_li'))
 {
-    function activity_li($activity)
+    function activity_li($activity,$username,$param=array() )
     {
 
+    if (!isset($param['duration'])) $param['duration']='normal'; // normal OR full (hide/show seconds for 1 minute min duration)
 
       $html="<li>".activity_path($activity);
 
-      if ($activity['running'])  $html.=" <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('timetracker/stop/'.$activity['id'])."'>stop</a>";
+      if ($activity['running'])  $html.=" <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/activity/'.$activity['id'].'/stop')."'>stop TODO add username</a>";
 
       if ( ($activity['duration']==0)&&(!$activity['running']) ) $html.="<span class='label label-info ping'>PING!</span>";
-        else $html.="<p>duration: ".duration2human($activity['duration'])."</p>";
+        else $html.="<p>duration: ".duration2human($activity['duration'],$param['duration'])."</p>";
 
       $html.="  <p>start at: ".$activity['start_LOCAL']."</p>
         <p>unix time: ".$activity['start_UNIX']."</p>";

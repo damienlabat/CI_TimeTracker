@@ -21,6 +21,11 @@ class Timetracker extends CI_Controller {
     }
 
 
+
+
+
+
+
     public function _render(){
         $this->data['content'] = $this->load->view('timetracker/layout',$this->data,true);
         $this->load->view('layout',$this->data);
@@ -34,7 +39,11 @@ class Timetracker extends CI_Controller {
         if ($username!=$this->data['user_name']) $this->_goLogin(); //TODO shared folder gestion
     }
 
-    public function index($username)
+
+
+
+
+    public function index($username=NULL)
     {
         $this->_checkUsername($username);
 
@@ -47,16 +56,22 @@ class Timetracker extends CI_Controller {
     }
 
 
-    public function add()
+    public function add($username)
     {
+        $this->_checkUsername($username);
+
         if ($_POST) $this->timetracker_lib->fromPOST($_POST);
-        redirect(current_url(), 'location');
+        redirect('tt/'.$username, 'location');
     }
 
-    public function stop($activity_id)
+
+
+    public function stop($username,$activity_id)
     {
+        $this->_checkUsername($username);
+
         $this->timetracker_lib->stop_activity($activity_id);
-        redirect(current_url(), 'location');
+        redirect('tt/'.$username, 'location');
     }
 
 
