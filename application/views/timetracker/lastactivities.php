@@ -1,7 +1,11 @@
 <ul class='activities'>
-<?php foreach ($last_activities as $k => $activity): ?>
+<?php
+if (isset($last_activities)) {
+    foreach ($last_activities as $k => $activity): ?>
     <?= activity_li($activity) ?>
-<?php endforeach; ?>
+<?php endforeach;
+}
+?>
 </ul>
 
 <!--pre><?php print_r($last_activities) ?></pre-->

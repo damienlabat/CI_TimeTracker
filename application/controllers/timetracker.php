@@ -11,7 +11,13 @@ class Timetracker extends CI_Controller {
         $this->load->library( array('tank_auth','timetracker_lib') );
 
 
-        if ( !$this->tank_auth->is_logged_in() )   redirect('auth/', 'location', 301);
+        if ( !$this->tank_auth->is_logged_in() ) {
+             $thid->_goLogin();
+          }
+        else {
+            $this->data['user_name']=$this->tank_auth->get_username();
+            $this->data['user_id']=$this->tank_auth->get_user_id();
+        }
     }
 
 
@@ -20,8 +26,17 @@ class Timetracker extends CI_Controller {
         $this->load->view('layout',$this->data);
     }
 
-    public function index()
+    public function _goLogin(){
+        redirect('login', 'location', 301);
+    }
+
+    public function _checkUsername($username){
+        if ($username!=$this->data['user_name']) $this->_goLogin(); //TODO shared folder gestion
+    }
+
+    public function index($username)
     {
+        $this->_checkUsername($username);
 
         if ($_POST) $this->timetracker_lib->fromPOST($_POST);
 
@@ -35,13 +50,13 @@ class Timetracker extends CI_Controller {
     public function add()
     {
         if ($_POST) $this->timetracker_lib->fromPOST($_POST);
-        redirect('timetracker', 'location');
+        redirect(current_url(), 'location');
     }
 
     public function stop($activity_id)
     {
         $this->timetracker_lib->stop_activity($activity_id);
-        redirect('timetracker', 'location');
+        redirect(current_url(), 'location');
     }
 
 

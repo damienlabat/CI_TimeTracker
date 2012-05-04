@@ -1,5 +1,10 @@
 <ul class='activities'>
-<?php foreach ($running_activities as $k => $activity): ?>
+
+<?php
+if (isset($running_activities)) {
+ foreach ($running_activities as $k => $activity): ?>
     <?= activity_li($activity) ?>
-<?php endforeach; ?>
+<?php endforeach;
+}
+?>
 </ul>

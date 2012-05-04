@@ -198,7 +198,7 @@ function fromPOST($post){
 
     function get_running_activities(){
         $activities= $this->ci->tt_activities->get_running_activities($this->user_id);
-        $activities= $this->complete_activities_info($activities);
+        if ($activities) $activities= $this->complete_activities_info($activities);
 
         return $activities;
     }
@@ -206,7 +206,7 @@ function fromPOST($post){
 
     function get_last_activities($categorie_id=NULL, $offset=0,$count=10){
         $activities=$this->ci->tt_activities->get_last_activities($this->user_id,$offset,$count);
-        $activities= $this->complete_activities_info($activities);
+        if ($activities) $activities= $this->complete_activities_info($activities);
 
         return $activities;
     }
