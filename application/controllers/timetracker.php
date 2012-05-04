@@ -60,7 +60,9 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
 
-        if ($_POST) $this->timetracker_lib->fromPOST($_POST);
+        $post=$this->input->post(NULL, TRUE);
+
+        if ($post) $this->timetracker_lib->fromPOST($post);
         redirect('tt/'.$username, 'location');
     }
 
