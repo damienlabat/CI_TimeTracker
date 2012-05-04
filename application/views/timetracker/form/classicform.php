@@ -1,10 +1,10 @@
-<?=form_open('timetracker/add', array('class' => 'row', 'id' => 'classicform') )?>
+<?=form_open('timetracker/add', array('id' => 'classicform') )?>
 <div class="row">
     <div class="span6">
             <label for="activity">activity</label>
             <input type="text" class="span5" placeholder="activity" name="activity"  id="activity" value="">
             <a class="popclick-trigger" data-content="Use an <code>@</code> to add a categorie <code>activity@categorie</code><br/>Use <code>/</code> for sub-categories <code>activity@categorie/subcategorie</code></span>" rel="popover" href="#" data-original-title="start a new activitie"><i class='icon-question-sign'></i></a>
-            <div class='well'>
+            <div class='well span5'>
                     will create new categorie .... TODO!
                     <div class='alert alert-success'>Ok all seems ok<br/>Let's go!</div>
                     <div class='alert alert-info'>Will create new categorie: toto<br/>Let's go!</div>
@@ -32,7 +32,8 @@
     <input type="hidden" name="localtime" value="">
  </div>
 
-        <button type="submit" class="btn btn-success span4">Start</button>
+        <button type="submit" class="btn btn-large btn-primary span4">Start</button>
 
 
 </form>
+TODO! fluid row problem

@@ -219,6 +219,7 @@ function fromPOST($post){
             $activities[$k]['path_array']= $this->get_categorie_path_array( $activity['categorie_ID'] );
 
             if ($activity['running']) $activities[$k]['duration']= $this->calcul_duration($activity);
+                else $activities[$k]['stop_at']= date ("Y-m-d H:i:s",  strtotime( $activity['start_UNIX'])+$activities[$k]['duration'] );
         }
 
         return $activities;

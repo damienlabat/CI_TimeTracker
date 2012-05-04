@@ -34,19 +34,33 @@ body {
 
 body { background-color: @grayLighter; }
 
-h2 { margin-bottom: 1em; }
-
 .cadre {
     background: @white;
     border: 1px solid @grayLighter;
     //max-height: @gridColumnWidth*6;
     margin-bottom: @gridGutterWidth;
-    overflow: auto;
     // padding: 2em 3em 1em; TODO! breake the grid
-    padding-top: 3em; padding-bottom: 1em;
+    padding-top: 2em; padding-bottom: 1em;
     .box-shadow(@shadow);
 
     >* { padding-left: 2em; padding-right: 2em; } //TODO! ameliorer ca
+    }
+
+.cadre>h2 {
+    margin-bottom: 1em;
+    background-color: transparent;
+    color: @black;
+    left: 0;
+    position: relative;
+    text-align: left;
+    //.transition(left .2s linear, background .1s linear);
+    .transition(e('left .3s ease-out, background .2s ease-out'));
+    }
+
+.cadre:hover>h2 {
+    background-color: @blue;  // TODO! color style selon les blocs
+    color: @white;
+    left: -0.5em;
     }
 
 
@@ -54,7 +68,6 @@ h2 { margin-bottom: 1em; }
 p   {    word-spacing: -0.05em;    }
 
 #commandebloc {
-    h2 { text-align: center; }
 }
 
 #classicform {
@@ -79,7 +92,7 @@ ul.activities {
         padding: @gridGutterWidth;
 
         &:hover {
-            background-color: @backgroundGreen;
+            background-color: lighten(@blue, 50%); // TODO! color style selon les blocs
             .box-shadow(@shadow);
             }
         }

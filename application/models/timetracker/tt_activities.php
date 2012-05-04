@@ -95,7 +95,7 @@ class Tt_activities extends CI_Model
                 ON activities.categorie_ID=categories.id
             WHERE user_ID='.$user_id.'
             AND running=0
-            ORDER BY start_UNIX DESC
+            ORDER BY UNIX_TIMESTAMP(start_UNIX)+duration DESC
             LIMIT '.$offset.','.$count
             );
 

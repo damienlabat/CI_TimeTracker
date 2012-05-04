@@ -47,8 +47,11 @@ if ( ! function_exists('activity_li'))
         else $html.="<p>duration: ".duration2human($activity['duration'])."</p>";
 
       $html.="  <p>start at: ".$activity['start_LOCAL']."</p>
-        <p>unix time: ".$activity['start_UNIX']."</p>
-        <p>description: ".$activity['description']."</p>
+        <p>unix time: ".$activity['start_UNIX']."</p>";
+
+      if (isset($activity['stop_at'])) $html.="  <p>stop at: ".$activity['stop_at']."</p>";
+
+      $html.="  <p>description: ".$activity['description']."</p>
     </li>";
         return $html;
     }
