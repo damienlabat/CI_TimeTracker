@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Serveur: localhost
--- Généré le : Mar 08 Mai 2012 à 09:35
+-- Généré le : Mar 08 Mai 2012 à 09:58
 -- Version du serveur: 5.1.61
 -- Version de PHP: 5.3.3-7+squeeze8
 
@@ -142,6 +142,7 @@ CREATE TABLE IF NOT EXISTS `records` (
   `diff_greenwich` varchar(5) COLLATE utf8_bin NOT NULL,
   `duration` int(11) unsigned NOT NULL,
   `running` int(1) unsigned NOT NULL DEFAULT '1',
+  `type_of_record` varchar(10) COLLATE utf8_bin NOT NULL DEFAULT 'tracking',
   `activity_ID` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
