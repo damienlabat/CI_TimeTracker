@@ -58,33 +58,40 @@ $route['tt/(:any)/activities'] =                    'timetracker/activities/$1';
 $route['tt/(:any)/activity/(:num)'] =               'timetracker/activity/$1/$2';
 $route['tt/(:any)/activity/(:num)/edit'] =          'timetracker/activity_edit/$1/$2';
 $route['tt/(:any)/activity/(:num)/stop'] =          'timetracker/stop/$1/$2';
-$route['tt/(:any)/summary/activity/(:num)'] =       'timetracker/summary/activity/$1/$2';
-$route['tt/(:any)/stats/activity/(:num)'] =         'timetracker/stats/activity/$1/$2';
+$route['tt/(:any)/summary/activity/(:num)'] =       'timetracker/summary/$1/activity/$2';
+$route['tt/(:any)/stats/activity/(:num)'] =         'timetracker/stats/$1/activity/$2';
 
-$route['tt/(:any)/thingstodo'] =                    'timetracker/todos/$1';
+$route['tt/(:any)/thingstodo'] =                    'timetracker/thingstodo/$1';
 $route['tt/(:any)/todo/(:num)'] =                   'timetracker/todo/$1/$2';
 $route['tt/(:any)/todo/(:num)/edit'] =              'timetracker/todo_edit/$1/$2';
 $route['tt/(:any)/todo/(:num)/stop'] =              'timetracker/stop/$1/$2';
-$route['tt/(:any)/summary/todo/(:num)'] =           'timetracker/summary/todo/$1/$2';
-$route['tt/(:any)/stats/todo/(:num)'] =             'timetracker/stats/todo/$1/$2';
+$route['tt/(:any)/summary/todo/(:num)'] =           'timetracker/summary/$1/todo/$2';
+$route['tt/(:any)/stats/todo/(:num)'] =             'timetracker/stats/$1/todo/$2';
 
 $route['tt/(:any)/values'] =                        'timetracker/values/$1';
 $route['tt/(:any)/value/(:num)'] =                  'timetracker/value/$1/$2';
 $route['tt/(:any)/value/(:num)/edit'] =             'timetracker/value_edit/$1/$2';
-$route['tt/(:any)/summary/value/(:num)'] =          'timetracker/summary/value/$1/$2';
-$route['tt/(:any)/stats/value/(:num)'] =            'timetracker/stats/value/$1/$2';
+$route['tt/(:any)/summary/value/(:num)'] =          'timetracker/summary/$1/value/$2';
+$route['tt/(:any)/stats/value/(:num)'] =            'timetracker/stats/$1/value/$2';
 
 $route['tt/(:any)/categories'] =                    'timetracker/categories/$1';
 $route['tt/(:any)/categorie/(:num)'] =              'timetracker/categorie/$1/$2';
 $route['tt/(:any)/categorie/(:num)/edit'] =         'timetracker/categorie_edit/$1/$2';
-$route['tt/(:any)/summary/categorie/(:num)'] =      'timetracker/summary/categorie/$1/$2';
-$route['tt/(:any)/stats/categorie/(:num)'] =        'timetracker/stats/categorie/$1/$2';
+$route['tt/(:any)/summary/categorie/(:num)'] =      'timetracker/summary/$1/categorie/$2';
+$route['tt/(:any)/stats/categorie/(:num)'] =        'timetracker/stats/$1/categorie/$2';
 
 $route['tt/(:any)/tags'] =                          'timetracker/tags/$1';
 $route['tt/(:any)/tag/(:num)'] =                    'timetracker/tag/$1/$2';
 $route['tt/(:any)/tag/(:num)/edit'] =               'timetracker/tag_edit/$1/$2';
-$route['tt/(:any)/summary/tag/(:num)'] =            'timetracker/summary/tag/$1/$2';
-$route['tt/(:any)/stats/tag/(:num)'] =              'timetracker/stats/tag/$1/$2';
+$route['tt/(:any)/summary/tag/(:num)'] =            'timetracker/summary/$1/tag/$2';
+$route['tt/(:any)/stats/tag/(:num)'] =              'timetracker/stats/$1/tag/$2';
+
+
+$route['tt/(:any)/valuetypes'] =                     'timetracker/valuetypes/$1';
+$route['tt/(:any)/valuetype/(:num)'] =               'timetracker/valuetype/$1/$2';
+$route['tt/(:any)/valuetype/(:num)/edit'] =          'timetracker/valuetype_edit/$1/$2';
+$route['tt/(:any)/summary/valuetype/(:num)'] =       'timetracker/summary/$1/valuetype/$2';
+$route['tt/(:any)/stats/valuetype/(:num)'] =         'timetracker/stats/$1/valuetype/$2';
 
 
 
