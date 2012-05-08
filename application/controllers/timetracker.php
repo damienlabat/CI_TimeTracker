@@ -49,8 +49,8 @@ class Timetracker extends CI_Controller {
 
         if ($_POST) $this->timetracker_lib->fromPOST($_POST);
 
-        $this->data['running_activities']= $this->timetracker_lib->get_running_activities();
-        $this->data['last_activities']= $this->timetracker_lib->get_last_activities();
+      //  $this->data['running_activities']= $this->timetracker_lib->get_running_activities();
+       // $this->data['last_activities']= $this->timetracker_lib->get_last_activities();
 
         $this->_render();
     }
