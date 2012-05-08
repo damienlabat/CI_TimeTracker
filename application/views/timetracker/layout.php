@@ -11,6 +11,11 @@
 
 
 <div class="span6"><div class='cadre'>
-    <h2>Last Activities</h2>
-    <?php $this->load->view('timetracker/lastactivities'); ?>
+    <h2>TODO</h2>
+    <?php $this->load->view('timetracker/todos'); ?>
+</div></div>
+
+<div class="span12"><div class='cadre'>
+    <h2>Last actions</h2>
+    <?php $this->load->view('timetracker/lastactions'); ?>
 </div></div>

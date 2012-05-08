@@ -2,8 +2,9 @@
 
 class Tt_activities extends CI_Model
 {
-    private $table_name             = 'activities';
-    private $categorie_table_name   = 'categories';
+    private $activities_table   = 'activities';
+    private $categories_table   = 'categories';
+
 
     /**
      * Get activity by Id
@@ -15,7 +16,27 @@ class Tt_activities extends CI_Model
     {
         $this->db->where('id', $activity_id);
 
-        $query = $this->db->get($this->table_name);
+        $query = $this->db->get($this->activities_table);
+        if ($query->num_rows() == 1) return $query->row_array();
+        return NULL;
+    }
+
+
+    /**
+     * Get activity
+     *
+     * @categorie_id    int
+     * @title           string
+     * @type_record     string
+     * @return          array
+     */
+    function get_activity( $categorie_id,$title,$type_record )
+    {
+        $this->db->where('categorie_ID', $categorie_id);
+        $this->db->where('title', $title);
+        $this->db->where('type_of_record', $type_record);
+
+        $query = $this->db->get($this->activities_table);
         if ($query->num_rows() == 1) return $query->row_array();
         return NULL;
     }
@@ -26,19 +47,37 @@ class Tt_activities extends CI_Model
      *
      * @categorie_id    int
      * @title           string
-     * @param           array
+     * @type_record     string
      * @return          array
      */
-    function create_activity( $categorie_id,$title,$param=array() )
+    function create_activity( $categorie_id,$title,$type_record )
     {
-        $param = array_merge( $param, array('title' => strtolower($title), 'categorie_id' => $categorie_id) );
+        $param =array('title' => strtolower($title), 'categorie_id' => $categorie_id, 'type_of_record' =>$type_record );
 
 
-        if ($this->db->insert($this->table_name, $param)) {
+        if ($this->db->insert($this->activities_table, $param)) {
                $data = $this->get_activity_by_id( $this->db->insert_id() );
             return $data;
         }
         return NULL;
+    }
+
+
+
+    /**
+     * get or create activity record
+     *
+     * @categorie_id    int
+     * @title           string
+     * @param           array
+     * @return          array
+     */
+    function getorcreate_activity($categorie_id,$title,$type_record )
+    {
+        $res=$this->get_activity($categorie_id,$title,$type_record );
+        if (!$res) $res=$this->create_activity( $categorie_id,$title,$type_record );
+
+        return $res;
     }
 
 
@@ -53,7 +92,7 @@ class Tt_activities extends CI_Model
     {
         $this->db->where('id', $activity_id);
 
-        if ($this->db->update($this->table_name, $param)) return TRUE;
+        if ($this->db->update($this->activities_table, $param)) return TRUE;
 
         return FALSE;
     }

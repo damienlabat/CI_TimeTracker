@@ -1,5 +1,4 @@
 <ul class='activities'>
-
 <?php
 if (isset($running_activities)) {
  foreach ($running_activities as $k => $activity): ?>

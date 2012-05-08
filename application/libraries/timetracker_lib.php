@@ -16,6 +16,7 @@ class Timetracker_lib
         $this->ci->load->model('timetracker/tt_activities');
         $this->ci->load->model('timetracker/tt_tags');
         $this->ci->load->model('timetracker/tt_values');
+        $this->ci->load->model('timetracker/tt_records');
 
         $this->ci->load->helper('array');
 
@@ -26,17 +27,18 @@ class Timetracker_lib
 
 function fromPOST($post){
 
-    if (element('activity',$post)){
+    if (element('start',$post)){
         $param=array();
+        $type_record='tracking';
 
-        if (strpos($post['activity'], '@') === FALSE)
+        if (strpos($post['start'], '@') === FALSE)
         {
             $path = '';
-            $title = trim( $post['activity'] );
+            $title = trim( $post['start'] );
         }
         else
         {
-            $split= preg_split('/@/', $post['activity'], -1, PREG_SPLIT_NO_EMPTY);
+            $split= preg_split('/@/', $post['start'], -1, PREG_SPLIT_NO_EMPTY);
             $path =  trim( $split[1] );
             $title = trim( $split[0] );
         }
@@ -44,10 +46,10 @@ function fromPOST($post){
         if (element('tags',$post)) $param['tags']=preg_split('/,/', $post['tags'], -1, PREG_SPLIT_NO_EMPTY);
 
         if (isset($post['description'])) $param['description']=trim( $post['description'] );
-        if (isset($post['localtime'])) $param['start_LOCAL']=$post['localtime'];
+        if (isset($post['localtime'])) $param['diff_greenwich']=$post['localtime']; // TODO recup greenwich from time
 
 
-        $res= $this->create_activity($title,$path,$param);
+        $res= $this->create_activity($title,$path,$type_record,$param);
         }
 
     }
@@ -165,9 +167,9 @@ function fromPOST($post){
 
 /* ACTIVITIES */
 
-    function create_activity($title,$path=NULL,$param=array())
+    function create_activity($title,$path=NULL,$type_record='tracking',$param=array())
     {
-        $cat=$this->getorcreate_categoriespath($path);
+        $cat=$this->getorcreate_categoriespath($path); // BUG ?
 
         if (isset($param['tags']))
         {
@@ -181,14 +183,16 @@ function fromPOST($post){
             unset($param['values']);
         }
 
-        $activity=$this->ci->tt_activities->create_activity($cat['id'], $title, $param);
+        $activity=$this->ci->tt_activities->getorcreate_activity($cat['id'], $title, $type_record);
 
-        if (isset($tags))
+        $record=$this->ci->tt_records->create_record($activity['id'],$param);
+
+        /*if (isset($tags))
         {
             $activity['tag']=array();
             foreach ($tags as $k => $tag)
                 $activity['tag'][]=$this->add_tag($activity['id'], trim($tag) );
-        }
+        }*/
 
         // TODO! ajouter values
 

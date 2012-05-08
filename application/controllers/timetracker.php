@@ -10,6 +10,8 @@ class Timetracker extends CI_Controller {
         $this->load->helper( array('url','assets_helper','form','timetracker'));
         $this->load->library( array('tank_auth','timetracker_lib') );
 
+        $this->data['alerts']=$this->session->flashdata('alerts');//array( array('type'=>'error', 'alert'=>'error 1 .....') );
+
 
         if ( !$this->tank_auth->is_logged_in() ) {
              $this->_goLogin();
@@ -17,6 +19,7 @@ class Timetracker extends CI_Controller {
         else {
             $this->data['user_name']=$this->tank_auth->get_username();
             $this->data['user_id']=$this->tank_auth->get_user_id();
+
         }
 
          if ($_POST) $this->timetracker_lib->fromPOST($_POST);
@@ -65,7 +68,8 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername($username);
 
       //  $this->data['running_activities']= $this->timetracker_lib->get_running_activities();
-       // $this->data['last_activities']= $this->timetracker_lib->get_last_activities();
+      //  $this->data['todos']= $this->timetracker_lib->get_todos();
+      //  $this->data['last_actions']= $this->timetracker_lib->get_last_actions();
 
         $this->_render();
     }
@@ -80,7 +84,9 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
 
-        $this->timetracker_lib->stop_record($record_id);
+        $stopped= $this->timetracker_lib->stop_record($record_id);
+
+        if (isset($stopped['alerts'])) $this->session->set_flashdata('alerts', $stopped['alerts'] );
         redirect('tt/'.$username, 'location');
     }
 
@@ -110,6 +116,7 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername($username);
         $this->_checkRecordType($record_id,'tracking');
         // TODO!
+        $this->_render();
     }
 
 
@@ -122,6 +129,7 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername($username);
         $this->_checkRecordType($record_id,'tracking');
         // TODO!
+        $this->_render();
     }
 
 
@@ -134,6 +142,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->_render();
     }
 
 
@@ -146,6 +155,7 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername($username);
         $this->_checkRecordType($record_id,'todo');
         // TODO!
+        $this->_render();
     }
 
 
@@ -156,8 +166,9 @@ class Timetracker extends CI_Controller {
     public function todo_edit($username,$record_id)
     {
         $this->_checkUsername($username);
-        $this->_checkRecordType($record_id,'tracking');
+        $this->_checkRecordType($record_id,'todo');
         // TODO!
+        $this->_render();
     }
 
 
@@ -171,6 +182,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->_render();
     }
 
 
@@ -183,6 +195,7 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername($username);
         $this->_checkRecordType($record_id,'value');
         // TODO!
+        $this->_render();
     }
 
 
@@ -195,6 +208,7 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername($username);
         $this->_checkRecordType($record_id,'tracking');
         // TODO!
+        $this->_render();
     }
 
 
@@ -209,6 +223,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->_render();
     }
 
 
@@ -220,6 +235,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->_render();
     }
 
 
@@ -232,6 +248,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->_render();
     }
 
 
@@ -246,6 +263,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->_render();
     }
 
 
@@ -257,6 +275,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->_render();
     }
 
 
@@ -269,6 +288,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->_render();
     }
 
 
@@ -283,6 +303,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->_render();
     }
 
 
@@ -294,6 +315,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->_render();
     }
 
 
@@ -306,6 +328,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->_render();
     }
 
 
@@ -320,6 +343,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->_render();
     }
 
 
@@ -331,6 +355,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->_render();
     }
 
 
@@ -342,6 +367,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->_render();
     }
 
 
@@ -354,6 +380,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->_render();
     }
 
 

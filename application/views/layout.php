@@ -38,10 +38,23 @@
 
 
     <div class="container">
+
+
     <div class="row main-cont">
 
 
     <div class="span12">
+<?php
+
+    if ( (isset($alerts)) && ($alerts!=FALSE) ) {
+    foreach ($alerts as $k => $alert): ?>
+        <div class="alert alert-<?=$alert['type']?>">
+        <?=$alert['alert']?>
+        </div>
+    <?php endforeach;
+    }
+?>
+
       <?php $this->load->view('bloc/breadcrumb'); ?>
     </div>
 

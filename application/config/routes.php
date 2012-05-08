@@ -95,12 +95,12 @@ $route['tt/(:any)/stats/valuetype/(:num)'] =         'timetracker/stats/$1/value
 
 
 
-$route['tt'] =                  'timetracker/index';
-$route['tt/(:any)'] =           'timetracker/index/$1';
-$route['tt/(:any)/summary'] =   'timetracker/summary/$1';
-$route['tt/(:any)/stats'] =     'timetracker/stats/$1';
-$route['tt/(:any)/export'] =    'timetracker/export/$1';
-$route['tt/(:any)/params'] =    'timetracker/params/$1';
+$route['tt'] =                       'timetracker/index';
+$route['tt/(:any)'] =                'timetracker/index/$1';
+$route['tt/(:any)/summary'] =        'timetracker/summary/$1';
+$route['tt/(:any)/stats'] =          'timetracker/stats/$1';
+$route['tt/(:any)/export'] =         'timetracker/export/$1';
+$route['tt/(:any)/params'] =         'timetracker/params/$1';
 
 
 /* End of file routes.php */

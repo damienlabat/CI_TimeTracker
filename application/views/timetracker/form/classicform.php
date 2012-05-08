@@ -1,8 +1,8 @@
-<?=form_open('tt/'.$user_name.'/add', array('id' => 'classicform') )?>
+<?=form_open('tt/'.$user_name, array('id' => 'classicform') )?>
 <div class="row">
     <div class="span6">
             <label for="activity">activity</label>
-            <input type="text" class="span5" placeholder="activity" name="activity"  id="activity" value="">
+            <input type="text" class="span5" placeholder="activity" name="start"  id="activity" value="">
             <a class="popclick-trigger" data-content="Use an <code>@</code> to add a categorie <code>activity@categorie</code><br/>Use <code>/</code> for sub-categories <code>activity@categorie/subcategorie</code></span>" rel="popover" href="#" data-original-title="start a new activitie"><i class='icon-question-sign'></i></a>
             <div class='well span5'>
                     will create new categorie .... TODO!
