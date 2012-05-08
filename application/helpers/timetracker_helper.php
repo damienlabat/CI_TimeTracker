@@ -42,30 +42,45 @@ if ( ! function_exists('activity_li'))
 
     if (!isset($param['duration'])) $param['duration']='normal'; // normal OR full (hide/show seconds for 1 minute min duration)
 
-      $html="<li>".activity_path($activity);
+      $html="<li><div class='activity-time'>".activity_time($activity)."</div>".activity_path($activity);
 
-      if ($activity['running'])  $html.=" <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/activity/'.$activity['id'].'/stop')."'>stop TODO add username</a>";
+      if ($activity['running'])  $html.=" <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/activity/'.$activity['id'].'/stop')."'>stop</a>";
 
-      if ( ($activity['duration']==0)&&(!$activity['running']) ) $html.="<span class='label label-info ping'>PING!</span>";
-        else $html.="<p>duration: ".duration2human($activity['duration'],$param['duration'])."</p>";
+    /*  if ( ($activity['duration']==0)&&(!$activity['running']) ) $html.="<span class='label label-info ping'>PING!</span>";
+        else $html.="<p>duration: ".duration2human($activity['duration'],$param['duration'])."</p>";*/
 
-      $html.="  <p>start at: ".$activity['start_LOCAL']."</p>
-        <p>unix time: ".$activity['start_UNIX']."</p>";
 
       if (isset($activity['stop_at'])) $html.="  <p>stop at: ".$activity['stop_at']."</p>";
 
-      $html.="  <p>description: ".$activity['description']."</p>
-    </li>";
+     // $html.="  <p>description: ".$activity['description']."</p>";
+    echo "</li>";
         return $html;
     }
 }
+
+
+
+if ( ! function_exists('activity_time'))
+{
+    function activity_time($activity)
+    {
+      $html= $activity['start_UNIX'];
+      if ($activity['running']) { /* ???*/ }
+      else {
+            if ($activity['duration']==0) $html.="<span class='label label-info ping'>PING!</span>";
+            else $html.=" - ".$activity['stop_at'];
+        }
+      return $html;
+    }
+}
+
 
 
 if ( ! function_exists('activity_path'))
 {
     function activity_path($activity)
     {
-      $html= "<strong class='activity_path'><a href='#".$activity['id']."'>".$activity['title']."</a>".categorie_path($activity['path_array'])."</strong>";
+      $html= " <strong class='activity_path'><span class='activity'>".$activity['title']."</span>".categorie_path($activity['path_array'])."</strong>";
       return $html;
     }
 }
@@ -99,7 +114,7 @@ if ( ! function_exists('categorie_a'))
 {
     function categorie_a($categorie)
     {
-      $html="<a href='#".$categorie['slug']."'>".$categorie['title']."</a>";
+      $html="<span class='category'>".$categorie['title']."</span>";
       return $html;
     }
 }
