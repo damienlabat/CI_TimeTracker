@@ -48,7 +48,9 @@ $route['logout'] =      'auth/logout';
 $route['help'] =        'staticpages/help';
 $route['account'] =     'auth/account';
 
-
+/*
+ TODO! user params and shared categories routes
+ */
 
 
 
@@ -58,6 +60,13 @@ $route['tt/(:any)/activity/(:num)/edit'] =          'timetracker/activity_edit/$
 $route['tt/(:any)/activity/(:num)/stop'] =          'timetracker/stop/$1/$2';
 $route['tt/(:any)/summary/activity/(:num)'] =       'timetracker/summary/activity/$1/$2';
 $route['tt/(:any)/stats/activity/(:num)'] =         'timetracker/stats/activity/$1/$2';
+
+$route['tt/(:any)/todo'] =                          'timetracker/todos/$1';
+$route['tt/(:any)/todo/(:num)'] =                   'timetracker/todo/$1/$2';
+$route['tt/(:any)/todo/(:num)/edit'] =              'timetracker/todo_edit/$1/$2';
+$route['tt/(:any)/todo/(:num)/stop'] =              'timetracker/stop/$1/$2';
+$route['tt/(:any)/summary/todo/(:num)'] =           'timetracker/summary/todo/$1/$2';
+$route['tt/(:any)/stats/todo/(:num)'] =             'timetracker/stats/todo/$1/$2';
 
 $route['tt/(:any)/categories'] =                    'timetracker/categories/$1';
 $route['tt/(:any)/categorie/(:num)'] =              'timetracker/categorie/$1/$2';
@@ -77,6 +86,7 @@ $route['tt/(:any)/value/(:num)/edit'] =             'timetracker/value_edit/$1/$
 $route['tt/(:any)/summary/value/(:num)'] =          'timetracker/summary/value/$1/$2';
 $route['tt/(:any)/stats/value/(:num)'] =            'timetracker/stats/value/$1/$2';
 
+
 $route['tt'] =                  'timetracker/index';
 $route['tt/(:any)'] =           'timetracker/index/$1';
 $route['tt/(:any)/summary'] =   'timetracker/summary/$1';
@@ -84,7 +94,6 @@ $route['tt/(:any)/stats'] =     'timetracker/stats/$1';
 $route['tt/(:any)/export'] =    'timetracker/export/$1';
 $route['tt/(:any)/params'] =    'timetracker/params/$1';
 
-$route['tt/(:any)/add'] =       'timetracker/add/$1';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
