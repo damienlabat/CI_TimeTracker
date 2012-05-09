@@ -102,11 +102,11 @@ ul.records {
     >li {
         padding: @gridGutterWidth;
 
-        &:hover {
-            background-color: lighten(@blue, 50%); // TODO! color style selon les blocs
-            .box-shadow(@shadow);
-            }
+        &:hover {.box-shadow(@shadow);}
         }
+    >li.activity-activity:hover { background-color: @backgroundCyan; }
+    >li.activity-todo:hover     { background-color: @backgroundYellow; }
+    >li.activity-value:hover    { background-color: @backgroundGreen; }
     }
 
 .activity_path {

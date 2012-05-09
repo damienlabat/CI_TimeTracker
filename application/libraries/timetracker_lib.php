@@ -30,7 +30,48 @@ function fromPOST($post){
 
     if (element('start',$post)){
         $param=array();
+        $post['start']=trim($post['start']);
+
         $type_record='activity';
+
+        if ($post['start'][0]=='!') $type_record='todo';
+        if ($post['start'][0]=='.') $param['running']=0;  // ping
+        if (element('value_name',$post)) {  $type_record='value';    $param['running']=0;   }
+
+
+
+
+
+
+        preg_match('/\[{1}.+\]{1}/i',$post['start'], $path_tags); // get tags from path
+        if (($path_tags) && (!element('tags',$post))) $post['tags']=trim($path_tags[0],'[] ');
+
+         if (element('tags',$post)) $tags=preg_split('/,/', $post['tags'], -1, PREG_SPLIT_NO_EMPTY); // get tags from input
+
+
+
+
+         $post['start']=preg_replace('/(\!|\.|\[{1}.+\]{1})*/i', '', $post['start']); // clean activity path phase1
+
+
+
+
+         if ($type_record!='value') {
+             preg_match('/\#{1}.+\={1}.+/i', $post['start'],  $path_value); // get value from path
+             if ($path_value) {
+                 $path_value_array=preg_split('/=/', $path_value[0], -1, PREG_SPLIT_NO_EMPTY);
+                 $post['value_name']=trim($path_value_array[0],'# ');
+                 $post['value']=trim($path_value_array[1]);
+                 $type_record='value';    $param['running']=0;
+                }
+         }
+
+
+         $post['start']=preg_replace('/\#{1}.+\={1}.+/i', '', $post['start']); // clean activity path phase2
+
+
+
+
 
         if (strpos($post['start'], '@') === FALSE)
         {
@@ -44,15 +85,12 @@ function fromPOST($post){
             $title = trim( $split[0] );
         }
 
-        if (element('tags',$post)) $tags=preg_split('/,/', $post['tags'], -1, PREG_SPLIT_NO_EMPTY);
+
 
         if (isset($post['description'])) $param['description']=trim( $post['description'] );
         if (isset($post['localtime'])) $param['diff_greenwich']=$post['localtime']; // TODO recup greenwich from time
 
-        if (element('value_name',$post)) {
-            $type_record='value';
-            $param['running']=0;
-        }
+
 
         $res['activity']= $this->create_record($title,$path,$type_record,$param);
         $res['alerts']= array( array('type'=>'success', 'alert'=>'start new activity: '.$res['activity']['title']) );

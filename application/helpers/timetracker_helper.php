@@ -40,7 +40,6 @@ if ( ! function_exists('record_li'))
     function record_li($record,$username,$param=array() )
     {
 
-    //print_r($record);
     if (!isset($param['duration'])) $param['duration']='normal'; // normal OR full (hide/show seconds for 1 minute min duration)
 
 
@@ -57,7 +56,7 @@ if ( ! function_exists('record_li'))
 
 
 
-      $html.="  <p>description: ".$record['description']."</p>";
+      if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
       echo "</li>";
         return $html;
     }
@@ -70,9 +69,12 @@ if ( ! function_exists('record_time'))
     function record_time($record)
     {
       $html= $record['start_time'];
-      if ($record['running']) { /* ???*/ }
+      if ($record['running']) {
+           if ($record['type_of_record']=='todo') $html.=" <span class='label label-warning'>TODO!</span>";
+           }
       else {
-            if ($record['duration']==0) $html.=" <span class='label label-info ping'>PING!</span>";
+            if ($record['type_of_record']=='todo') $html.=" <span class='label label-success'>DONE!</span>";
+            if (($record['type_of_record']=='activity')&&($record['duration']==0)) $html.=" <span class='label label-info'>PING!</span>";
             else $html.=" - ".$record['stop_at'];
         }
       return $html;
@@ -85,7 +87,9 @@ if ( ! function_exists('activity_path'))
 {
     function activity_path($record,$username)
     {
-      $html= " <strong class='activity_path'><a href='".site_url('tt/'.$username.'/'.$record['type_of_record'].'/'.$record['id'])."'>".$record['title']."</a>".categorie_path($record['path_array'],$username)."</strong>";
+      $html= " <strong class='activity_path'>";
+      if ($record['type_of_record']=='todo') $html.= '<span class="todo-icon">!</span>';
+      $html.= "<a href='".site_url('tt/'.$username.'/'.$record['type_of_record'].'/'.$record['id'])."'>".$record['title']."</a>".categorie_path($record['path_array'],$username)."</strong>";
       return $html;
     }
 }
@@ -153,7 +157,7 @@ if ( ! function_exists('tag'))
 if ( ! function_exists('value'))
 {
     function value($value,$username)
-    {print_r($value);
+    {
       $html= "<div class='value'><a href='".site_url('tt/'.$username.'/valuetype/'.$value['id'])."'>#".$value['title']."</a> = <a href='".site_url('tt/'.$username.'/value/'.$value['record_ID'])."'>".$value['value']."</a></div>";
       return $html;
     }
