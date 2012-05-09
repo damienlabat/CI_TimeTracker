@@ -2,8 +2,8 @@
 
 class Tt_values extends CI_Model
 {
-    private $table_name             = 'values_types';
-    private $table_link_name        = 'l_activities_values';
+    private $values_type_table          = 'values_types';
+    private $l_record_values_table      = 'l_records_values';
 
 
 
@@ -11,15 +11,15 @@ class Tt_values extends CI_Model
      * get value
      *
      * @value_type_id   int
-     * @activity_id     int
+     * @record_ID     int
      * @return          array
      */
-    function get_value( $activity_id,$value_type_id )
+    function get_value( $record_id,$value_type_id )
     {
         $this->db->where('value_type_ID', $value_type_id);
-        $this->db->where('activity_ID', $activity_id);
+        $this->db->where('record_ID', $record_id);
 
-        $query = $this->db->get($this->table_link_name);
+        $query = $this->db->get($this->l_record_values_table);
         if ($query->num_rows() == 1) return $query->row_array();
         return NULL;
     }
@@ -34,7 +34,7 @@ class Tt_values extends CI_Model
     {
         $this->db->where('id', $value_type_id);
 
-        $query = $this->db->get($this->table_name);
+        $query = $this->db->get($this->values_type_table);
         if ($query->num_rows() == 1) return $query->row_array();
         return NULL;
     }
@@ -49,7 +49,7 @@ class Tt_values extends CI_Model
     function get_value_type_list( $user_id )
     {
        $query =  $this->db->query(
-            'SELECT values_types.* , count( activity_ID ) AS count
+            'SELECT values_types.* , count( record_ID ) AS count
             FROM values_types
                 LEFT JOIN l_activities_values ON l_activities_values.value_type_ID  = values_types.id
             WHERE user_ID="'.$user_id.'"
@@ -73,7 +73,7 @@ class Tt_values extends CI_Model
         $this->db->where('user_ID', $user_id);
         $this->db->where('title', $title);
 
-        $query = $this->db->get($this->table_name);
+        $query = $this->db->get($this->values_type_table);
         if ($query->num_rows() == 1) return $query->row_array();
         return NULL;
     }
@@ -90,7 +90,7 @@ class Tt_values extends CI_Model
      */
     function create_value_type( $user_id, $title )
     {
-        if ( $this->db->insert($this->table_name, array('title'=>$title, 'user_ID'=>$user_id)) ) {
+        if ( $this->db->insert($this->values_type_table, array('title'=>$title, 'user_ID'=>$user_id)) ) {
                $data = $this->value_type_by_title( $user_id, $title );
             return $data;
         }
@@ -117,28 +117,27 @@ class Tt_values extends CI_Model
     /**
      * add value
      *
-     * @activity_id     int
+     * @record_id       int
      * @value_type_id   int
      * @value           string
      * @return          boolean
      */
-    function add_value( $activity_id, $value_type_id,$value )
+    function add_value( $record_id, $value_type_id,$value )
     {
-        return $this->db->insert($this->table_link_name, array('activity_ID'=>$activity_id, 'value_type_ID'=>$value_type_id, 'value'=>$value));
+        return $this->db->insert($this->l_record_values_table, array('record_ID'=>$record_id, 'value_type_ID'=>$value_type_id, 'value'=>$value));
 
     }
 
     /**
      * remove value
      *
-     * @activity_id     int
+     * @record_id       int
      * @tag_id          int
      * @return          boolean
      */
-    function remove_value( $activity_id, $value_type_id )
+    function remove_value( $record_id, $value_type_id )
     {
-        $res= $this->db->delete($this->table_link_name, array('activity_ID'=>$activity_id, 'value_type_ID'=>$value_type_id));
-        $this->clear_orphan();
+        $res= $this->db->delete($this->l_record_values_table, array('record_ID'=>$record_id, 'value_type_ID'=>$value_type_id));
         return $res;
 
     }
@@ -155,7 +154,7 @@ class Tt_values extends CI_Model
     {
         $this->db->where('user_ID', $user_id);
         $this->db->where('title', $title);
-        if ($this->db->update($this->table_name, $param ))
+        if ($this->db->update($this->values_type_table, $param ))
             return TRUE;
 
         return FALSE;
@@ -165,27 +164,41 @@ class Tt_values extends CI_Model
     /**
      * Update value
      *
-     * @activity_id     int
+     * @record_id     int
      * @value_type_id   int
      * @value           string
      * @return          array
      */
-    function update_value( $activity_id, $value_type_id, $value )
+    function update_value( $record_id, $value_type_id, $value )
     {
-        $this->db->where('activity_ID', $activity_id);
+        $this->db->where('record_ID', $record_id);
         $this->db->where('value_type_ID', $value_type_id);
-        if ($this->db->update($this->table_name, array('value'=>$value) ))
+        if ($this->db->update($this->values_type_table, array('value'=>$value) ))
             return TRUE;
 
         return FALSE;
     }
 
-     function clear_orphan()
-     {
-         // TODO !
-         // clear table_link where not in tags or not in activities
-         // clear tags where not in table_link SHOULD WE ???
-     }
 
+
+
+    /**
+     * get record value
+     *
+     * @record_id     int
+     * @return          array
+     */
+    function get_record_value( $record_id)
+    {
+        $this->db->select($this->values_type_table.'.*, '.$this->l_record_values_table.'.value');
+        $this->db->from($this->values_type_table);
+        $this->db->join($this->l_record_values_table, $this->values_type_table.'.id = '. $this->l_record_values_table.'.value_type_ID');
+        $this->db->where('record_ID',$record_id);
+
+         $query = $this->db->get();
+        if ($query->num_rows() == 1) return $query->row_array();
+        return NULL;
+
+    }
 
 } // END Class

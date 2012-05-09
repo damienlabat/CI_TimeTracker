@@ -44,14 +44,22 @@ function fromPOST($post){
             $title = trim( $split[0] );
         }
 
-        if (element('tags',$post)) $param['tags']=preg_split('/,/', $post['tags'], -1, PREG_SPLIT_NO_EMPTY);
+        if (element('tags',$post)) $tags=preg_split('/,/', $post['tags'], -1, PREG_SPLIT_NO_EMPTY);
 
         if (isset($post['description'])) $param['description']=trim( $post['description'] );
         if (isset($post['localtime'])) $param['diff_greenwich']=$post['localtime']; // TODO recup greenwich from time
 
 
         $res['activity']= $this->create_record($title,$path,$type_record,$param);
-        $res['alerts']= array( array('type'=>'success', 'alert'=>'start new activity: TODO recup activity name') );
+        $res['alerts']= array( array('type'=>'success', 'alert'=>'start new activity: '.$res['activity']['title']) );
+
+        if (isset($tags))
+             foreach ($tags as $k => $tag)
+                        $this->add_tag( $res['activity']['record']['id'], trim($tag) );  // add tags
+
+        if (element('value_name',$post))
+            $this->add_value( $res['activity']['record']['id'], trim($post['value_name']), trim($post['value']) ); // add value
+
 
 
         }
@@ -187,14 +195,7 @@ function fromPOST($post){
 
         $activity=$this->ci->tt_activities->getorcreate_activity($cat['id'], $title, $type_record);
 
-        $record=$this->ci->tt_records->create_record($activity['id'],$param);
-
-        if (isset($tags))
-             foreach ($tags as $k => $tag)
-                        $this->add_tag( $record['id'], trim($tag) );  // add tags
-
-
-                // TODO! ajouter values
+        $activity['record']=$this->ci->tt_records->create_record($activity['id'],$param);
 
         return $activity;
     }
@@ -202,7 +203,7 @@ function fromPOST($post){
 
     function get_running_activities(){
         $activities= $this->ci->tt_records->get_running_activities($this->user_id);
-        if ($activities) $activities= $this->complete_activities_info($activities);
+        if ($activities) $activities= $this->complete_records_info($activities);
 
         return $activities;
     }
@@ -210,7 +211,7 @@ function fromPOST($post){
 
     function get_running_TODO(){
         $activities= $this->ci->tt_records->get_running_TODO($this->user_id);
-        if ($activities) $activities= $this->complete_activities_info($activities);
+        if ($activities) $activities= $this->complete_records_info($activities);
 
         return $activities;
     }
@@ -221,44 +222,45 @@ function fromPOST($post){
 
 
     function get_last_actions($categorie_id=NULL, $offset=0,$count=10){
-        $activities=$this->ci->tt_records->get_last_activities($this->user_id,$offset,$count);
-        if ($activities) $activities= $this->complete_activities_info($activities);
+        $records=$this->ci->tt_records->get_last_activities($this->user_id,$offset,$count);
+        if ($records) $records= $this->complete_records_info($records);
 
-        return $activities;
+        return $records;
     }
 
 
-    function complete_activities_info($activities) {
+    function complete_records_info($records) {
 
-        foreach ($activities as $k => $activity)
-            $activities[$k]=$this->complete_activity_info($activity);
+        foreach ($records as $k => $record)
+            $records[$k]=$this->complete_record_info($record);
 
-        return $activities;
+        return $records;
     }
 
 
 
 
-    function complete_activity_info($activity) {
+    function complete_record_info($record) {
 
-        $activity['path_array']= $this->get_categorie_path_array( $activity['categorie_ID'] );
+        $record['path_array']= $this->get_categorie_path_array( $record['categorie_ID'] );
 
-            if ($activity['running']) $activity['duration']= $this->calcul_duration($activity);
-                else $activity['stop_at']= date ("Y-m-d H:i:s",  strtotime( $activity['start_time'])+$activity['duration'] );
+            if ($record['running']) $record['duration']= $this->calcul_duration($record);
+                else $record['stop_at']= date ("Y-m-d H:i:s",  strtotime( $record['start_time'])+$record['duration'] );
 
-            $activity['tags']=$this->ci->tt_tags->get_record_tags($activity['id']);
+            $record['tags']=$this->ci->tt_tags->get_record_tags($record['id']);
+            $record['value']=$this->ci->tt_values->get_record_value($record['id']);
 
-        return $activity;
+        return $record;
     }
 
 
 
 /* STOP activitie */
 
-function calcul_duration($activity, $endtime=NULL )
+function calcul_duration($record, $endtime=NULL )
 {
     if ($endtime==NULL) $endtime= time();
-    $duration= $endtime - strtotime( $activity['start_time'] );
+    $duration= $endtime - strtotime( $record['start_time'] );
     return $duration;
 }
 
@@ -272,18 +274,18 @@ function stop_record($id){
 
 /* TAGS */
 
-    function add_tag($activity_id,$tag)
+    function add_tag($record_id,$tag)
     {
         $tag_obj=$this->ci->tt_tags->getorcreate_tag( $this->user_id,$tag );
-        if ($this->ci->tt_tags->add_tag( $activity_id,$tag_obj['id'] ))
+        if ($this->ci->tt_tags->add_tag( $record_id,$tag_obj['id'] ))
             return $tag_obj;
         return NULL;
     }
 
-    function remove_tag($activity_id,$tag)
+    function remove_tag($record_id,$tag)
     {
         $tag_obj=$this->ci->tt_tags->getorcreate_tag( $this->user_id,$tag );
-        return $this->ci->tt_tags->remove_tag( $activity_id,$tag_obj['id'] );
+        return $this->ci->tt_tags->remove_tag( $record_id,$tag_obj['id'] );
 
     }
 
@@ -298,36 +300,32 @@ function stop_record($id){
     }
 
 
-    function get_activity_tags($activity_id){
-
-    }
-
 /* VALUES */
 
-    function add_value($activity_id,$value_name,$value)
+    function add_value($record_id,$value_name,$value)
     {
         $value_obj=$this->ci->tt_values->getorcreate_value_type( $this->user_id, $value_name );
-        if ($this->ci->tt_values->add_value( $activity_id,$value_obj['id'] ,$value ))
-            return $this->ci->tt_values->get_value( $activity_id, $value_obj['id']  );
+        if ($this->ci->tt_values->add_value( $record_id,$value_obj['id'] ,$value ))
+            return $this->ci->tt_values->get_value( $record_id, $value_obj['id']  );
         return NULL;
     }
 
-    function remove_value($activity_id,$value_name)
+    function remove_value($record_id,$value_name)
     {
         $value_obj=$this->ci->tt_values->getorcreate_value_type( $this->user_id,$tag , $value_name );
-        return $this->ci->tt_values->remove_value( $activity_id, $value_obj['id'] );
+        return $this->ci->tt_values->remove_value( $record_id, $value_obj['id'] );
 
     }
 
-    function update_value($activity_id,$value_name,$value)
+    function update_value($record_id,$value_name,$value)
     {
-        return $this->ci->tt_tags->update_tag( $this->user_id,$tag,$param );
+        return $this->ci->tt_values->update_value( $this->user_id,$record_id,$value_name,$value );
 
     }
 
     function update_value_type($value_name,$param)
     {
-        return $this->ci->tt_tags->update_tag( $this->user_id,$tag,$param );
+        return $this->ci->tt_values->update_value_type( $this->user_id,$value_name,$param );
 
     }
 
@@ -335,8 +333,8 @@ function stop_record($id){
         return $this->ci->tt_values->get_value_type_list( $this->user_id );
     }
 
-    function get_value_tags($activity_id){
-
+    function get_value($record_id){
+         return $this->ci->tt_values->get_value( $record_id );
     }
 
 }

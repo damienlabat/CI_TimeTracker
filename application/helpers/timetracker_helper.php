@@ -44,14 +44,17 @@ if ( ! function_exists('activity_li'))
 
 
 
-      $html="<li><div class='activity-time'>".activity_time($activity)."</div>".activity_path($activity);
+    $html="<li><div class='activity-time'>".activity_time($activity)."</div>".activity_path($activity);
 
-      if ($activity['running']) {
-          $html.=" <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/activity/'.$activity['id'].'/stop')."'>stop</a>";
+    if ($activity['running']) {
+          $html.="  <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/activity/'.$activity['id'].'/stop')."'>stop</a>";
 
-      }
+    }
 
-     if ( isset($activity['tags']))  $html.=tag_list($activity['tags']);
+    if ( isset($activity['value']))  $html.=value($activity['value']);
+    if ( isset($activity['tags']))  $html.=tag_list($activity['tags']);
+
+
 
       $html.="  <p>description: ".$activity['description']."</p>";
       echo "</li>";
@@ -139,6 +142,18 @@ if ( ! function_exists('tag'))
     function tag($tag)
     {
       $html= "<a href='#TODO'>".$tag['tag']."</a>";
+      return $html;
+    }
+}
+
+
+
+
+if ( ! function_exists('value'))
+{
+    function value($value)
+    {
+      $html= "<div class='value'><a href='#TODO'>#".$value['title']."</a> = ".$value['value']."</div>";
       return $html;
     }
 }
