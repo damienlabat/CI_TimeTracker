@@ -2,7 +2,7 @@
 
 class Tt_categories extends CI_Model
 {
-    private $table_name         = 'categories';
+    private $categories_table         = 'categories';
 
     /**
      * Get categorie by Id
@@ -14,7 +14,7 @@ class Tt_categories extends CI_Model
     {
         $this->db->where('id', $categorie_id);
 
-        $query = $this->db->get($this->table_name);
+        $query = $this->db->get($this->categories_table);
         if ($query->num_rows() == 1) return $query->row_array();
         return NULL;
     }
@@ -33,7 +33,7 @@ class Tt_categories extends CI_Model
         $this->db->where('user_ID', $user_id);
         $this->db->where('parent', $parent);
 
-        $query = $this->db->get($this->table_name);
+        $query = $this->db->get($this->categories_table);
         if ($query->num_rows() == 1) return $query->row_array();
         return NULL;
     }
@@ -51,7 +51,7 @@ class Tt_categories extends CI_Model
     {
         $data = array('title' => strtolower($title), 'parent' => $parent, 'user_ID' => $user_id);
 
-        if ($this->db->insert($this->table_name, $data)) {
+        if ($this->db->insert($this->categories_table, $data)) {
             $data = $this->get_categorie_by_id($this->db->insert_id() );
             return $data;
         }
@@ -74,7 +74,7 @@ class Tt_categories extends CI_Model
         $this->db->where('user_ID', $user_id);
         $this->db->where('parent', $parent);
 
-        if ($this->db->update($this->table_name, $data))
+        if ($this->db->update($this->categories_table, $data))
             return TRUE;
 
         return FALSE;
@@ -111,7 +111,7 @@ class Tt_categories extends CI_Model
         $this->db->where('user_ID', $user_id);
         $this->db->order_by('parent');
 
-        $query = $this->db->get($this->table_name);
+        $query = $this->db->get($this->categories_table);
         if ($query->num_rows() >= 1) return $query->result_array();
         return NULL;
     }

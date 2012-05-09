@@ -29,14 +29,13 @@ class Tt_records extends CI_Model
      * Create new record
      *
      * @activity_id     int
-     * @param          string
+     * @param           string
      */
     function create_record($activity_id,$param)
     {
         $param = array_merge( $param, array('activity_ID' => $activity_id) );
 
-
-        if ($this->db->insert($this->records_table, $param)) {
+            if ($this->db->insert($this->records_table, $param)) {
                $data = $this->get_record_by_id( $this->db->insert_id() );
             return $data;
         }

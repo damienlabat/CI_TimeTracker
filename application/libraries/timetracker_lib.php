@@ -50,7 +50,7 @@ function fromPOST($post){
         if (isset($post['localtime'])) $param['diff_greenwich']=$post['localtime']; // TODO recup greenwich from time
 
 
-        $res['activity']= $this->create_activity($title,$path,$type_record,$param);
+        $res['activity']= $this->create_record($title,$path,$type_record,$param);
         $res['alerts']= array( array('type'=>'success', 'alert'=>'start new activity: TODO recup activity name') );
 
 
@@ -170,7 +170,7 @@ function fromPOST($post){
 
 /* ACTIVITIES */
 
-    function create_activity($title,$path=NULL,$type_record='tracking',$param=array())
+    function create_record($title,$path=NULL,$type_record,$param=array())
     {
         $cat=$this->getorcreate_categoriespath($path); // BUG ?
         if (isset($param['tags']))
@@ -189,16 +189,12 @@ function fromPOST($post){
 
         $record=$this->ci->tt_records->create_record($activity['id'],$param);
 
-        /*if (isset($tags))
-        {
-            $activity['tag']=array();
-            foreach ($tags as $k => $tag)
-                $activity['tag'][]=$this->add_tag($activity['id'], trim($tag) );
-        }*/
-
-        // TODO! ajouter values
+        if (isset($tags))
+             foreach ($tags as $k => $tag)
+                        $this->add_tag( $record['id'], trim($tag) );  // add tags
 
 
+                // TODO! ajouter values
 
         return $activity;
     }
@@ -249,6 +245,8 @@ function fromPOST($post){
 
             if ($activity['running']) $activity['duration']= $this->calcul_duration($activity);
                 else $activity['stop_at']= date ("Y-m-d H:i:s",  strtotime( $activity['start_time'])+$activity['duration'] );
+
+            $activity['tags']=$this->ci->tt_tags->get_record_tags($activity['id']);
 
         return $activity;
     }

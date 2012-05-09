@@ -2,8 +2,8 @@
 
 class Tt_tags extends CI_Model
 {
-    private $table_name             = 'tags';
-    private $table_link_name        = 'l_activities_tags';
+    private $tags_table              = 'tags';
+    private $l_records_tags_table    = 'l_records_tags';
 
 
 
@@ -19,7 +19,7 @@ class Tt_tags extends CI_Model
         $this->db->where('tag', $tag);
         $this->db->where('user_ID', $user_id);
 
-        $query = $this->db->get($this->table_name);
+        $query = $this->db->get($this->tags_table);
         if ($query->num_rows() == 1) return $query->row_array();
         return NULL;
     }
@@ -33,7 +33,7 @@ class Tt_tags extends CI_Model
      */
     function get_tag_list( $user_id )
     {
-       $query =  $this->db->query(
+       $query =  $this->db->query( //TODO
             'SELECT tags . * , count( activity_id ) AS count
             FROM tags
                 LEFT JOIN l_activities_tags ON tags.id = l_activities_tags.tag_ID
@@ -55,7 +55,7 @@ class Tt_tags extends CI_Model
      */
     function create_tag( $user_id, $tag )
     {
-        if ( $this->db->insert($this->table_name, array('tag'=>$tag, 'user_ID'=>$user_id)) ) {
+        if ( $this->db->insert($this->tags_table, array('tag'=>$tag, 'user_ID'=>$user_id)) ) {
                $data = $this->get_tag( $user_id, $tag );
             return $data;
         }
@@ -75,7 +75,7 @@ class Tt_tags extends CI_Model
     {
         $this->db->where('user_ID', $user_id);
         $this->db->where('tag', $tag);
-        if ($this->db->update($this->table_name, $param ))
+        if ($this->db->update($this->tags_table, $param ))
             return TRUE;
 
         return FALSE;
@@ -104,9 +104,9 @@ class Tt_tags extends CI_Model
      * @tag_id          int
      * @return          boolean
      */
-    function add_tag( $activity_id, $tag_id )
+    function add_tag( $record_id, $tag_id )
     {
-        return $this->db->insert($this->table_link_name, array('activity_ID'=>$activity_id, 'tag_ID'=>$tag_id));
+        return $this->db->insert($this->l_records_tags_table, array('record_ID'=>$record_id, 'tag_ID'=>$tag_id));
 
     }
 
@@ -117,21 +117,39 @@ class Tt_tags extends CI_Model
      * @tag_id          int
      * @return          boolean
      */
-    function remove_tag( $activity_id, $tag_id )
+    function remove_tag( $record_id, $tag_id )
     {
-        $res= $this->db->delete($this->table_link_name, array('activity_ID'=>$activity_id, 'tag_ID'=>$tag_id));
-        $this->clear_orphan();
+        $res= $this->db->delete($this->l_records_tags_table, array('record_ID'=>$record_id, 'tag_ID'=>$tag_id));
         return $res;
 
     }
 
 
-     function clear_orphan()
-     {
-         // TODO !
-         // clear table_link where not in tags or not in activities
-         // clear tags where not in table_link SHOULD WE ???
-     }
+
+    /**
+     * get record tags
+     *
+     * @record_id     int
+     * @return          array
+     */
+    function get_record_tags( $record_id)
+    {
+        $this->db->select('*');
+        $this->db->from($this->tags_table);
+        $this->db->join($this->l_records_tags_table, $this->tags_table.'.id = '. $this->l_records_tags_table.'.tag_ID');
+        $this->db->where('record_ID',$record_id);
+        $this->db->order_by('tag', 'asc');
+
+         $query = $this->db->get();
+        if ($query->num_rows() >= 1) return $query->result_array();
+        return NULL;
+
+    }
+
+
+
+
+
 
 
 } // END Class

@@ -46,16 +46,15 @@ if ( ! function_exists('activity_li'))
 
       $html="<li><div class='activity-time'>".activity_time($activity)."</div>".activity_path($activity);
 
-      if ($activity['running'])  $html.=" <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/activity/'.$activity['id'].'/stop')."'>stop</a>";
+      if ($activity['running']) {
+          $html.=" <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/activity/'.$activity['id'].'/stop')."'>stop</a>";
 
-      if ( ($activity['duration']==0)&&(!$activity['running']) ) $html.="<span class='label label-info ping'>PING!</span>";
-        else $html.="<p>duration: ".duration2human($activity['duration'],$param['duration'])."</p>";
+      }
 
+     if ( isset($activity['tags']))  $html.=tag_list($activity['tags']);
 
-     // if (isset($activity['stop_at'])) $html.="  <p>stop at: ".$activity['stop_at']."</p>";
-
-     // $html.="  <p>description: ".$activity['description']."</p>";
-    echo "</li>";
+      $html.="  <p>description: ".$activity['description']."</p>";
+      echo "</li>";
         return $html;
     }
 }
@@ -69,7 +68,7 @@ if ( ! function_exists('activity_time'))
       $html= $activity['start_time'];
       if ($activity['running']) { /* ???*/ }
       else {
-            if ($activity['duration']==0) $html.="<span class='label label-info ping'>PING!</span>";
+            if ($activity['duration']==0) $html.=" <span class='label label-info ping'>PING!</span>";
             else $html.=" - ".$activity['stop_at'];
         }
       return $html;
@@ -121,3 +120,25 @@ if ( ! function_exists('categorie_a'))
     }
 }
 
+
+if ( ! function_exists('tag_list'))
+{
+    function tag_list($tag_array)
+    {
+      $html="<ul class='tags'>";
+      foreach ($tag_array as $k => $tag)
+        $html.="<li>".tag($tag)."</li>";
+      $html.="</ul>";
+      return $html;
+    }
+}
+
+
+if ( ! function_exists('tag'))
+{
+    function tag($tag)
+    {
+      $html= "<a href='#TODO'>".$tag['tag']."</a>";
+      return $html;
+    }
+}
