@@ -45,4 +45,107 @@ class Tt_records extends CI_Model
 
 
 
+    /**
+     * Get running tracking records
+     *
+     * @user_id     int
+     * @return          array
+     */
+    function get_running_activities($user_id)
+    {
+        $query =  $this->db->query(
+            'SELECT '.$this->activities_table.'.title,type_of_record,categorie_ID,'.$this->records_table.'.*
+             FROM '.$this->records_table.'
+             LEFT JOIN '.$this->activities_table.'
+                ON '.$this->records_table.'.activity_ID='.$this->activities_table.'.id
+             LEFT JOIN '.$this->categories_table.'
+                ON '.$this->activities_table.'.categorie_ID='.$this->categories_table.'.id
+            WHERE
+                user_ID='.$user_id.'
+                AND running=1
+                AND type_of_record=\'tracking\'
+            ORDER BY start_time DESC'
+            );
+
+        if ($query->num_rows() >= 1) return $query->result_array();
+        return NULL;
+    }
+
+
+    /**
+     * Get running todo records
+     *
+     * @user_id     int
+     * @return          array
+     */
+    function get_running_TODO($user_id)
+    {
+        $query =  $this->db->query(
+            'SELECT '.$this->activities_table.'.title,type_of_record,categorie_ID,'.$this->records_table.'.*
+             FROM '.$this->records_table.'
+             LEFT JOIN '.$this->activities_table.'
+                ON '.$this->records_table.'.activity_ID='.$this->activities_table.'.id
+             LEFT JOIN '.$this->categories_table.'
+                ON '.$this->activities_table.'.categorie_ID='.$this->categories_table.'.id
+            WHERE
+                user_ID='.$user_id.'
+                AND running=1
+                AND type_of_record=\'todo\'
+            ORDER BY start_time DESC'
+            );
+
+        if ($query->num_rows() >= 1) return $query->result_array();
+        return NULL;
+    }
+
+
+
+
+    /**
+     * Get last records
+     *
+     * @user_id     int
+     * @offset          int
+     * @count           int
+     * @return          array
+     */
+    function get_last_activities($user_id,$offset,$count)
+    {
+        $query =  $this->db->query(
+            'SELECT '.$this->activities_table.'.title,type_of_record,categorie_ID,'.$this->records_table.'.*
+             FROM '.$this->records_table.'
+             LEFT JOIN '.$this->activities_table.'
+                ON '.$this->records_table.'.activity_ID='.$this->activities_table.'.id
+             LEFT JOIN '.$this->categories_table.'
+                ON '.$this->activities_table.'.categorie_ID='.$this->categories_table.'.id
+            WHERE
+                user_ID='.$user_id.'
+                AND running=0
+
+            ORDER BY UNIX_TIMESTAMP(start_time)+duration DESC
+            LIMIT '.$offset.','.$count
+            );
+
+        if ($query->num_rows() >= 1) return $query->result_array();
+        return NULL;
+    }
+
+
+     /**
+     * Update record
+     *
+     * @record_id       int
+     * @title           string
+     * @return          boolean
+     */
+    function update_record( $record_id, $param )
+    {
+        $this->db->where('id', $record_id);
+
+        if ($this->db->update($this->records_table, $param)) return TRUE;
+
+        return FALSE;
+    }
+
+
 } // END Class

@@ -1,8 +1,8 @@
 <ul class='activities'>
 <?php
 if (isset($last_actions)) {
-    foreach ($last_actions as $k => $actions): ?>
-    <?= activity_li($activions,$user_name, array('duration'=>'full') ) ?>
+    foreach ($last_actions as $k => $action): ?>
+    <?= activity_li($action,$user_name, array('duration'=>'full') ) ?>
 <?php endforeach;
 }
 ?>

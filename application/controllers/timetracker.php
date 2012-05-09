@@ -72,9 +72,9 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
 
-      //  $this->data['running_activities']= $this->timetracker_lib->get_running_activities();
-      //  $this->data['todos']= $this->timetracker_lib->get_todos();
-      //  $this->data['last_actions']= $this->timetracker_lib->get_last_actions();
+        $this->data['running_activities']= $this->timetracker_lib->get_running_activities();
+        $this->data['todos']= $this->timetracker_lib->get_running_TODO();
+        $this->data['last_actions']= $this->timetracker_lib->get_last_actions();
 
         $this->_render();
     }

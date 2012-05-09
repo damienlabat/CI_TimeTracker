@@ -97,58 +97,10 @@ class Tt_activities extends CI_Model
         return FALSE;
     }
 
-    /**
-     * Get running activities
-     *
-     * @user_id     int
-     * @return          array
-     */
-    function get_running_activities($user_id)
-    {
-        $query =  $this->db->query(
-            'SELECT activities.*
-             FROM activities
-                LEFT JOIN categories
-                ON activities.categorie_ID=categories.id
-            WHERE user_ID='.$user_id.'
-            AND running=1
-            ORDER BY start_UNIX DESC'
-            );
-
-        if ($query->num_rows() >= 1) return $query->result_array();
-        return NULL;
-    }
-
-    /**
-     * Get last activities
-     *
-     * @user_id     int
-     * @return          array
-     */
-    function get_last_activities($user_id,$offset,$count)
-    {
-        $query =  $this->db->query(
-            'SELECT activities.*
-             FROM activities
-                LEFT JOIN categories
-                ON activities.categorie_ID=categories.id
-            WHERE user_ID='.$user_id.'
-            AND running=0
-            ORDER BY UNIX_TIMESTAMP(start_UNIX)+duration DESC
-            LIMIT '.$offset.','.$count
-            );
-
-        if ($query->num_rows() >= 1) return $query->result_array();
-        return NULL;
-    }
 
 
 
-    function stop_activity($id, $endtime)
-    {
-        $activity= $this->get_activity_by_id($id);
-        $duree= $endtime - strtotime( $activity['start_UNIX'] );
 
-    }
+
 
 } // END Class

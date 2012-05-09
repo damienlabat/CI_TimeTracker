@@ -205,15 +205,27 @@ function fromPOST($post){
 
 
     function get_running_activities(){
-        $activities= $this->ci->tt_activities->get_running_activities($this->user_id);
+        $activities= $this->ci->tt_records->get_running_activities($this->user_id);
         if ($activities) $activities= $this->complete_activities_info($activities);
 
         return $activities;
     }
 
 
-    function get_last_activities($categorie_id=NULL, $offset=0,$count=10){
-        $activities=$this->ci->tt_activities->get_last_activities($this->user_id,$offset,$count);
+    function get_running_TODO(){
+        $activities= $this->ci->tt_records->get_running_TODO($this->user_id);
+        if ($activities) $activities= $this->complete_activities_info($activities);
+
+        return $activities;
+    }
+
+
+
+
+
+
+    function get_last_actions($categorie_id=NULL, $offset=0,$count=10){
+        $activities=$this->ci->tt_records->get_last_activities($this->user_id,$offset,$count);
         if ($activities) $activities= $this->complete_activities_info($activities);
 
         return $activities;
@@ -223,29 +235,39 @@ function fromPOST($post){
     function complete_activities_info($activities) {
 
         foreach ($activities as $k => $activity)
-        {
-            $activities[$k]['path_array']= $this->get_categorie_path_array( $activity['categorie_ID'] );
-
-            if ($activity['running']) $activities[$k]['duration']= $this->calcul_duration($activity);
-                else $activities[$k]['stop_at']= date ("Y-m-d H:i:s",  strtotime( $activity['start_UNIX'])+$activities[$k]['duration'] );
-        }
+            $activities[$k]=$this->complete_activity_info($activity);
 
         return $activities;
     }
+
+
+
+
+    function complete_activity_info($activity) {
+
+        $activity['path_array']= $this->get_categorie_path_array( $activity['categorie_ID'] );
+
+            if ($activity['running']) $activity['duration']= $this->calcul_duration($activity);
+                else $activity['stop_at']= date ("Y-m-d H:i:s",  strtotime( $activity['start_time'])+$activity['duration'] );
+
+        return $activity;
+    }
+
+
 
 /* STOP activitie */
 
 function calcul_duration($activity, $endtime=NULL )
 {
     if ($endtime==NULL) $endtime= time();
-    $duration= $endtime - strtotime( $activity['start_UNIX'] );
+    $duration= $endtime - strtotime( $activity['start_time'] );
     return $duration;
 }
 
-function stop_activity($id){
-    $activity= $this->ci->tt_activities->get_activity_by_id($id);
-    $duration= $this->calcul_duration($activity);
-    return $this->ci->tt_activities->update_activity( $id, array('duration'=>$duration, 'running'=>0) );
+function stop_record($id){
+    $record= $this->ci->tt_records->get_record_by_id($id);
+    $duration= $this->calcul_duration($record);
+    return $this->ci->tt_records->update_record( $id, array('duration'=>$duration, 'running'=>0) );
     }
 
 

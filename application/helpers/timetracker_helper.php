@@ -42,15 +42,17 @@ if ( ! function_exists('activity_li'))
 
     if (!isset($param['duration'])) $param['duration']='normal'; // normal OR full (hide/show seconds for 1 minute min duration)
 
+
+
       $html="<li><div class='activity-time'>".activity_time($activity)."</div>".activity_path($activity);
 
       if ($activity['running'])  $html.=" <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/activity/'.$activity['id'].'/stop')."'>stop</a>";
 
-    /*  if ( ($activity['duration']==0)&&(!$activity['running']) ) $html.="<span class='label label-info ping'>PING!</span>";
-        else $html.="<p>duration: ".duration2human($activity['duration'],$param['duration'])."</p>";*/
+      if ( ($activity['duration']==0)&&(!$activity['running']) ) $html.="<span class='label label-info ping'>PING!</span>";
+        else $html.="<p>duration: ".duration2human($activity['duration'],$param['duration'])."</p>";
 
 
-      if (isset($activity['stop_at'])) $html.="  <p>stop at: ".$activity['stop_at']."</p>";
+     // if (isset($activity['stop_at'])) $html.="  <p>stop at: ".$activity['stop_at']."</p>";
 
      // $html.="  <p>description: ".$activity['description']."</p>";
     echo "</li>";
@@ -64,7 +66,7 @@ if ( ! function_exists('activity_time'))
 {
     function activity_time($activity)
     {
-      $html= $activity['start_UNIX'];
+      $html= $activity['start_time'];
       if ($activity['running']) { /* ???*/ }
       else {
             if ($activity['duration']==0) $html.="<span class='label label-info ping'>PING!</span>";
