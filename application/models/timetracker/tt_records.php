@@ -45,10 +45,10 @@ class Tt_records extends CI_Model
 
 
     /**
-     * Get running tracking records
+     * Get running activity records
      *
      * @user_id     int
-     * @return          array
+     * @return      array
      */
     function get_running_activities($user_id)
     {
@@ -62,7 +62,7 @@ class Tt_records extends CI_Model
             WHERE
                 user_ID='.$user_id.'
                 AND running=1
-                AND type_of_record=\'tracking\'
+                AND type_of_record=\'activity\'
             ORDER BY start_time DESC'
             );
 

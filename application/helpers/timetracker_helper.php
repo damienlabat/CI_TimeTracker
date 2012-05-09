@@ -35,28 +35,29 @@ if ( ! function_exists('duration2human'))
 
 //------------------------------------------------
 
-if ( ! function_exists('activity_li'))
+if ( ! function_exists('record_li'))
 {
-    function activity_li($activity,$username,$param=array() )
+    function record_li($record,$username,$param=array() )
     {
 
+    //print_r($record);
     if (!isset($param['duration'])) $param['duration']='normal'; // normal OR full (hide/show seconds for 1 minute min duration)
 
 
 
-    $html="<li><div class='activity-time'>".activity_time($activity)."</div>".activity_path($activity);
+    $html="<li class='activity-".$record['type_of_record']."'><div class='record-time'>".record_time($record)."</div>".activity_path($record,$username);
 
-    if ($activity['running']) {
-          $html.="  <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/activity/'.$activity['id'].'/stop')."'>stop</a>";
+    if ($record['running']) {
+          $html.="  <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/'.$record['type_of_record'].'/'.$record['id'].'/stop')."'>stop</a>";
 
     }
 
-    if ( isset($activity['value']))  $html.=value($activity['value']);
-    if ( isset($activity['tags']))  $html.=tag_list($activity['tags']);
+    if ( $record['type_of_record']=='value')  $html.=value($record['value'],$username);
+    if ( isset($record['tags']))  $html.=tag_list($record['tags'],$username);
 
 
 
-      $html.="  <p>description: ".$activity['description']."</p>";
+      $html.="  <p>description: ".$record['description']."</p>";
       echo "</li>";
         return $html;
     }
@@ -64,15 +65,15 @@ if ( ! function_exists('activity_li'))
 
 
 
-if ( ! function_exists('activity_time'))
+if ( ! function_exists('record_time'))
 {
-    function activity_time($activity)
+    function record_time($record)
     {
-      $html= $activity['start_time'];
-      if ($activity['running']) { /* ???*/ }
+      $html= $record['start_time'];
+      if ($record['running']) { /* ???*/ }
       else {
-            if ($activity['duration']==0) $html.=" <span class='label label-info ping'>PING!</span>";
-            else $html.=" - ".$activity['stop_at'];
+            if ($record['duration']==0) $html.=" <span class='label label-info ping'>PING!</span>";
+            else $html.=" - ".$record['stop_at'];
         }
       return $html;
     }
@@ -82,9 +83,9 @@ if ( ! function_exists('activity_time'))
 
 if ( ! function_exists('activity_path'))
 {
-    function activity_path($activity)
+    function activity_path($record,$username)
     {
-      $html= " <strong class='activity_path'><span class='activity'>".$activity['title']."</span>".categorie_path($activity['path_array'])."</strong>";
+      $html= " <strong class='activity_path'><a href='".site_url('tt/'.$username.'/'.$record['type_of_record'].'/'.$record['id'])."'>".$record['title']."</a>".categorie_path($record['path_array'],$username)."</strong>";
       return $html;
     }
 }
@@ -93,19 +94,19 @@ if ( ! function_exists('activity_path'))
 
 if ( ! function_exists('categorie_path'))
 {
-    function categorie_path($categorie_path)
+    function categorie_path($categorie_path,$username)
     {
       $html="<span class='arobase'>@</span>";
       if (count($categorie_path)==1)
       {
           if ($categorie_path[0]['title']=='')   $html="";
-          $html.= categorie_a($categorie_path[0]);
+          $html.= categorie_a($categorie_path[0],$username);
       }
       else
       {
           foreach ($categorie_path as $k => $categorie) {
               if ( $k>0 ) $html.="<span class='slash'>/</span>";
-              $html.= categorie_a($categorie);
+              $html.= categorie_a($categorie,$username);
           }
       }
       return $html;
@@ -116,9 +117,9 @@ if ( ! function_exists('categorie_path'))
 
 if ( ! function_exists('categorie_a'))
 {
-    function categorie_a($categorie)
+    function categorie_a($categorie,$username)
     {
-      $html="<span class='category'>".$categorie['title']."</span>";
+      $html="<a href='".site_url('tt/'.$username.'/categorie/'.$categorie['id'])."' class='category'>".$categorie['title']."</a>";
       return $html;
     }
 }
@@ -126,11 +127,11 @@ if ( ! function_exists('categorie_a'))
 
 if ( ! function_exists('tag_list'))
 {
-    function tag_list($tag_array)
+    function tag_list($tag_array,$username)
     {
       $html="<ul class='tags'>";
       foreach ($tag_array as $k => $tag)
-        $html.="<li>".tag($tag)."</li>";
+        $html.="<li>".tag($tag,$username)."</li>";
       $html.="</ul>";
       return $html;
     }
@@ -139,9 +140,9 @@ if ( ! function_exists('tag_list'))
 
 if ( ! function_exists('tag'))
 {
-    function tag($tag)
+    function tag($tag,$username)
     {
-      $html= "<a href='#TODO'>".$tag['tag']."</a>";
+      $html= "<a href='".site_url('tt/'.$username.'/tag/'.$tag['id'])."'>".$tag['tag']."</a>";
       return $html;
     }
 }
@@ -151,9 +152,9 @@ if ( ! function_exists('tag'))
 
 if ( ! function_exists('value'))
 {
-    function value($value)
-    {
-      $html= "<div class='value'><a href='#TODO'>#".$value['title']."</a> = ".$value['value']."</div>";
+    function value($value,$username)
+    {print_r($value);
+      $html= "<div class='value'><a href='".site_url('tt/'.$username.'/valuetype/'.$value['id'])."'>#".$value['title']."</a> = <a href='".site_url('tt/'.$username.'/value/'.$value['record_ID'])."'>".$value['value']."</a></div>";
       return $html;
     }
 }

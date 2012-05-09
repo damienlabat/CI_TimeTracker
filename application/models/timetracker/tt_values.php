@@ -190,7 +190,7 @@ class Tt_values extends CI_Model
      */
     function get_record_value( $record_id)
     {
-        $this->db->select($this->values_type_table.'.*, '.$this->l_record_values_table.'.value');
+        $this->db->select($this->values_type_table.'.*, '.$this->l_record_values_table.'.*');
         $this->db->from($this->values_type_table);
         $this->db->join($this->l_record_values_table, $this->values_type_table.'.id = '. $this->l_record_values_table.'.value_type_ID');
         $this->db->where('record_ID',$record_id);

@@ -30,7 +30,7 @@ function fromPOST($post){
 
     if (element('start',$post)){
         $param=array();
-        $type_record='tracking';
+        $type_record='activity';
 
         if (strpos($post['start'], '@') === FALSE)
         {
@@ -49,6 +49,10 @@ function fromPOST($post){
         if (isset($post['description'])) $param['description']=trim( $post['description'] );
         if (isset($post['localtime'])) $param['diff_greenwich']=$post['localtime']; // TODO recup greenwich from time
 
+        if (element('value_name',$post)) {
+            $type_record='value';
+            $param['running']=0;
+        }
 
         $res['activity']= $this->create_record($title,$path,$type_record,$param);
         $res['alerts']= array( array('type'=>'success', 'alert'=>'start new activity: '.$res['activity']['title']) );

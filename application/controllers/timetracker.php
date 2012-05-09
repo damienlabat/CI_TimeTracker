@@ -54,7 +54,7 @@ class Timetracker extends CI_Controller {
     public function _checkRecordType($record_id,$type_of_record){
         // recup type
 
-        if ($type_of_record!='tracking') $this->show404();  //TODO controlle du type
+        //if ($type_of_record!='tracking') $this->show404();  //TODO controlle du type
     }
 
 
@@ -119,7 +119,7 @@ class Timetracker extends CI_Controller {
     public function activity($username,$record_id)
     {
         $this->_checkUsername($username);
-        $this->_checkRecordType($record_id,'tracking');
+        $this->_checkRecordType($record_id,'activity');
         // TODO!
         $this->_render();
     }
@@ -132,7 +132,7 @@ class Timetracker extends CI_Controller {
     public function activity_edit($username,$record_id)
     {
         $this->_checkUsername($username);
-        $this->_checkRecordType($record_id,'tracking');
+        $this->_checkRecordType($record_id,'activity');
         // TODO!
         $this->_render();
     }
@@ -211,7 +211,7 @@ class Timetracker extends CI_Controller {
     public function value_edit($username,$record_id)
     {
         $this->_checkUsername($username);
-        $this->_checkRecordType($record_id,'tracking');
+        $this->_checkRecordType($record_id,'value');
         // TODO!
         $this->_render();
     }
