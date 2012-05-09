@@ -148,7 +148,6 @@ class Tt_activities extends CI_Model
     {
         $activity= $this->get_activity_by_id($id);
         $duree= $endtime - strtotime( $activity['start_UNIX'] );
-        print_r($duree);
 
     }
 

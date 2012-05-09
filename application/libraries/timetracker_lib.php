@@ -26,6 +26,7 @@ class Timetracker_lib
 /* gestion POST */
 
 function fromPOST($post){
+    $res=array();
 
     if (element('start',$post)){
         $param=array();
@@ -49,9 +50,12 @@ function fromPOST($post){
         if (isset($post['localtime'])) $param['diff_greenwich']=$post['localtime']; // TODO recup greenwich from time
 
 
-        $res= $this->create_activity($title,$path,$type_record,$param);
-        }
+        $res['activity']= $this->create_activity($title,$path,$type_record,$param);
+        $res['alerts']= array( array('type'=>'success', 'alert'=>'start new activity: TODO recup activity name') );
 
+
+        }
+    return $res;
     }
 
 
@@ -67,7 +71,7 @@ function fromPOST($post){
 
         foreach ($cat_array as $k => $cat_title)
         {
-            $res=$this->ci->tt_categories->getorcreate_categorie($this->user_id, $cat_title,$parent);
+            $res=$this->ci->tt_categories->getorcreate_categorie($this->user_id, $cat_title, $parent);
             $parent= $res['id'];
         }
 
@@ -90,7 +94,6 @@ function fromPOST($post){
         $categories=$this->ci->tt_categories->get_categories($this->user_id);
         foreach ($categories as $k => $item)
         {
-            //var_dump( ($forceshow OR $item['show']) && ( isset($res[ $item['parent'] ]) OR !$item['parent']) );
             if ( ($forceshow OR $item['show']) && ( isset($res[ $item['parent'] ]) OR !$item['parent']) )
             {
                 if ($item['parent']) $res[ $item['id'] ]= $res[ $item['parent'] ].'/'.$item['title'];
@@ -170,7 +173,6 @@ function fromPOST($post){
     function create_activity($title,$path=NULL,$type_record='tracking',$param=array())
     {
         $cat=$this->getorcreate_categoriespath($path); // BUG ?
-
         if (isset($param['tags']))
         {
             $tags=$param['tags'];
@@ -195,6 +197,8 @@ function fromPOST($post){
         }*/
 
         // TODO! ajouter values
+
+
 
         return $activity;
     }

@@ -10,7 +10,9 @@ class Timetracker extends CI_Controller {
         $this->load->helper( array('url','assets_helper','form','timetracker'));
         $this->load->library( array('tank_auth','timetracker_lib') );
 
-        $this->data['alerts']=$this->session->flashdata('alerts');//array( array('type'=>'error', 'alert'=>'error 1 .....') );
+        $this->data['alerts']=array();
+
+        if ($this->session->flashdata('alerts')) $this->data['alerts']=$this->session->flashdata('alerts');//array( array('type'=>'success', 'alert'=>'error 1 .....') );
 
 
         if ( !$this->tank_auth->is_logged_in() ) {
@@ -22,7 +24,10 @@ class Timetracker extends CI_Controller {
 
         }
 
-         if ($_POST) $this->timetracker_lib->fromPOST($_POST);
+         if ($_POST) {
+             $res=$this->timetracker_lib->fromPOST($_POST);
+             if (isset($res['alerts'])) $this->data['alerts']= array_merge( $this->data['alerts'], $res['alerts'] );
+            }
 
     }
 

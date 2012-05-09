@@ -52,7 +52,7 @@ class Tt_categories extends CI_Model
         $data = array('title' => strtolower($title), 'parent' => $parent, 'user_ID' => $user_id);
 
         if ($this->db->insert($this->table_name, $data)) {
-            $data = $this->get_categorie_by_id($user_id, $this->db->insert_id() );
+            $data = $this->get_categorie_by_id($this->db->insert_id() );
             return $data;
         }
         return NULL;

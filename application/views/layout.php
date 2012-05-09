@@ -44,7 +44,10 @@
 
 
     <div class="span12">
-<?php
+      <?php $this->load->view('bloc/breadcrumb'); ?>
+          <?php
+
+    // alerts and error messages
 
     if ( (isset($alerts)) && ($alerts!=FALSE) ) {
     foreach ($alerts as $k => $alert): ?>
@@ -53,10 +56,10 @@
         </div>
     <?php endforeach;
     }
-?>
 
-      <?php $this->load->view('bloc/breadcrumb'); ?>
+    ?>
     </div>
+
 
         <?=@$content?>
 
