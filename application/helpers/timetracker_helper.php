@@ -46,18 +46,26 @@ if ( ! function_exists('record_li'))
 
     $html="<li class='activity-".$record['type_of_record']."'><div class='record-time'>".record_time($record)."</div>".activity_path($record,$username);
 
-    if ($record['running']) {
-          $html.="  <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/'.$record['type_of_record'].'/'.$record['id'].'/stop')."'>stop</a>";
 
-    }
 
     if ( $record['type_of_record']=='value')  $html.=value($record['value'],$username);
     if ( isset($record['tags']))  $html.=tag_list($record['tags'],$username);
 
 
 
-      if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
-      echo "</li>";
+    if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
+
+
+    $html.= "<br/>";
+    $html.= "<a class='edit-btn btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/edit')."'>edit</a>";
+    if (!$record['running'])
+        $html.= " <a class='restart-btn btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/restart')."'>restart</a>";
+    $html.= " <a class='delete-btn btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete')."'>delete</a>";
+    if ($record['running'])
+          $html.= " <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/stop')."'>stop</a>";
+
+
+    echo "</li>";
         return $html;
     }
 }
@@ -73,10 +81,11 @@ if ( ! function_exists('record_time'))
            if ($record['type_of_record']=='todo') $html.=" <span class='label label-warning'>TODO!</span>";
            }
       else {
-            if ($record['type_of_record']=='todo') $html.=" <span class='label label-success'>DONE!</span>";
             if (($record['type_of_record']=='activity')&&($record['duration']==0)) $html.=" <span class='label label-info'>PING!</span>";
-            else $html.=" - ".$record['stop_at'];
+                else $html.=" - ".$record['stop_at'];
+            if ($record['type_of_record']=='todo') $html.=" <span class='label label-success'>DONE!</span>";
         }
+        if ($record['duration']>0) $html.="<br/>".duration2human($record['duration']);
       return $html;
     }
 }
