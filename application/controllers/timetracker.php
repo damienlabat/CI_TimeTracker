@@ -72,7 +72,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
 
-        $this->data['show_form']=TRUE;
+        $this->data['tt_layout']='tt_board';
         $this->data['running_activities']= $this->timetracker_lib->get_running_activities();
         $this->data['todos']= $this->timetracker_lib->get_running_TODO();
         $this->data['last_actions']= $this->timetracker_lib->get_last_actions();
@@ -95,6 +95,17 @@ class Timetracker extends CI_Controller {
         redirect('tt/'.$username, 'location');
     }
 
+
+    /*****
+     *  show record
+     *  */
+    public function record($username,$record_id)
+    {
+        $this->_checkUsername($username);
+    // TODO!
+        $this->data['TODO']="record ".$record_id;
+        $this->_render();
+    }
 
 
     /*****

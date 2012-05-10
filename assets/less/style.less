@@ -34,6 +34,12 @@ body {
 
 body { background-color: #FAFAFA; /* sad song */ }
 
+.navbar .pull-right .dropdown-menu:after {
+    top: -5px;
+    right: 10px;
+    left: auto;
+    }
+
 .cadre {
     background: @white;
     position: relative;
@@ -100,31 +106,82 @@ ul.records {
     margin:0;
 
     >li {
-        padding: @gridGutterWidth;
-
+        border: 2px solid #888888;
+        margin: 5px 0;
+        padding: 6px;
         &:hover {.box-shadow(@shadow);}
         }
     >li.activity-activity:hover { background-color: @backgroundCyan; }
     >li.activity-todo:hover     { background-color: @backgroundYellow; }
     >li.activity-value:hover    { background-color: @backgroundGreen; }
+
+    >li.activity-activity       { border-color: @backgroundCyan; }
+    >li.activity-todo          { border-color: @backgroundYellow; }
+    >li.activity-value         { border-color: @backgroundGreen; }
     }
 
-.activity_path {
-    font-size: 18px;
-    .arobase {
-        padding: 0 3px;
-        color: @arobaseColor;
+
+.record-item {
+
+
+    >.record-time, >.activity-path, >.tags {
+        display: table-cell;
+        padding: 5px;
+        vertical-align: middle;
+        text-align:center;
+    }
+
+    li { list-style: none; }
+
+    >.record-time {
+        width: 15%;
+
+        >span {
+            display: block;
+            line-height: 1em;
+            }
+        >.record-duration {
+            font-size:1.5em;
         }
 
-    .slash {
-        padding: 0 3px;
+    }
+
+    >.activity-path {
+         width: 70%;
+
+        >span {
+            display: block;
+            line-height: 1em;
+            font-size:1.25em;
+            }
+        >.activity-item {
+            font-size:2em;
         }
     }
 
-.stop-btn {
+
+    >ul.tags {
+        width: 15%;
+        text-align: center;
+
+        >li {
+            display: inline;
+            margin: 2px;
+            }
 
     }
 
-.ping {
-
+    >ul.buttons {
+        display:block;
+        opacity:0.5;
+        text-align: center;
+        margin-top: 10px;
+        >li {
+            display: inline;
+            >a { min-width: 20% }
+            }
     }
+
+    &:hover >ul.buttons { opacity:1; }
+
+}

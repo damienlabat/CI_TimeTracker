@@ -20,12 +20,12 @@ if ( ! function_exists('duration2human'))
           if ( $day==1 ) $html.= $day.' day ';
           if ( $day>1 )  $html.= $day.' days ';
 
-          if ( $H%24 ==1 ) $html.= ($H % 24).' hour ';
-          if ( $H%24>1 )  $html.= ($H % 24).' hours ';
+        /*  if ( $H%24 ==1 ) $html.= ($H % 24).'h ';
+          if ( $H%24>1 )  $html.= ($H % 24).'h ';*/
 
-          $html.= ($M % 60).' min';
+          $html.= ($H % 24).':'.($M % 60);
 
-          if ($mode=='full') $html.= ' '.($duration % 60).' s';
+          if (($duration<60)||($mode=='full')) $html.= ':'.($duration % 60);
 
       }
         return $html;
@@ -34,6 +34,40 @@ if ( ! function_exists('duration2human'))
 
 
 //------------------------------------------------
+
+
+/*
+
+ <li class="record-item activity-activity">
+
+        <div class="record-time">
+            <span class="record-period">
+                <time datetime='2012-05-10T00:00-10:12:13'>10:12</time> -
+            </span>
+            <span class="record-duration">
+                2h 31
+            </span>
+        </div>
+
+        <div class="activity-path">
+            <span class="activity-item"><a href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/activity/2">test</a></span>
+            <span class="categorie-path">@<a class="category" href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/categorie/1">cat1/cat2</a></span>
+        </div>
+
+        <ul class="tags">
+            <li><a href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/tag/1">tag1</a></li>
+            <li><a href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/tag/2">tag2</a></li>
+            <li><a href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/tag/3">tag3</a></li>
+        </ul>
+
+        <ul class="buttons">
+            <li><a href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/record/2/edit" class="edit-btn btn btn-mini">edit</a></li>
+            <li><a href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/record/2/delete" class="delete-btn btn btn-mini">delete</a></li>
+            <li><a href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/record/2/stop" class="stop-btn btn btn-mini btn-inverse">stop</a></li>
+        </ul>
+    </li>
+
+    */
 
 if ( ! function_exists('record_li'))
 {
@@ -44,25 +78,25 @@ if ( ! function_exists('record_li'))
 
 
 
-    $html="<li class='activity-".$record['type_of_record']."'><div class='record-time'>".record_time($record)."</div>".activity_path($record,$username);
+    $html= "<li class='record-item activity-".$record['type_of_record']."'>";
+
+    $html.= record_time($record,$username);
+    $html.= activity_path($record,$username);
+    $html.= tag_list($record['tags'],$username);
 
 
 
-    if ( $record['type_of_record']=='value')  $html.=value($record['value'],$username);
-    if ( isset($record['tags']))  $html.=tag_list($record['tags'],$username);
+   // if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
 
 
-
-    if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
-
-
-    $html.= "<br/>";
-    $html.= "<a class='edit-btn btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/edit')."'>edit</a>";
+    $html.= '<ul class="buttons">';
+    $html.= "<li><a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/edit')."'>edit</a></li>";
     if (!$record['running'])
-        $html.= " <a class='restart-btn btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/restart')."'>restart</a>";
-    $html.= " <a class='delete-btn btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete')."'>delete</a>";
+        $html.= "<li><a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/restart')."'>restart</a></li>";
+    $html.= "<li><a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete')."'>delete</a></li>";
     if ($record['running'])
-          $html.= " <a class='stop-btn btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/stop')."'>stop</a>";
+          $html.= "<li><a class='btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/stop')."'>stop</a></li>";
+    $html.= '</ul>';
 
 
     echo "</li>";
@@ -74,21 +108,35 @@ if ( ! function_exists('record_li'))
 
 if ( ! function_exists('record_time'))
 {
-    function record_time($record)
+    function record_time($record,$username)
     {
-      $html= $record['start_time'];
-      if ($record['running']) {
-           if ($record['type_of_record']=='todo') $html.=" <span class='label label-warning'>TODO!</span>";
-           }
-      else {
-            if (($record['type_of_record']=='activity')&&($record['duration']==0)) $html.=" <span class='label label-info'>PING!</span>";
-                else $html.=" - ".$record['stop_at'];
-            if ($record['type_of_record']=='todo') $html.=" <span class='label label-success'>DONE!</span>";
+      $html=  '<div class="record-time">';
+
+      $html.= '<span class="record-period">';
+      $html.= '<a href="'.site_url('tt/'.$username.'/record/'.$record['id']).'"><time datetime=\''.$record['start_time'].'\'>'.$record['start_time'].'</time>';
+      if ((!$record['running'])&&($record['duration']>0))  $html.= '<time datetime=\''.$record['stop_at'].'\'>'.$record['stop_at'].'</time>';
+      $html.= '</a></span>';
+
+      $html.= '<span class="record-duration">';
+
+      if ($record['duration']>0) $html.= duration2human($record['duration']);
+        else if (($record['type_of_record']!='value')&&(!$record['running'])) $html.="<br/><span class='label label-info'>PING!</span>";
+         else if ($record['type_of_record']=='value') $html.="<br/><span class='label label-info'>Value</span>";
+
+      if ($record['type_of_record']=='todo') {
+            if ($record['running'])  $html.="<br/><span class='label label-warning'>TODO!</span>";
+                else  $html.="<br/><span class='label label-success'>DONE!</span>";
         }
-        if ($record['duration']>0) $html.="<br/>".duration2human($record['duration']);
+
+      $html.= '</span>';
+
+      $html.= '</div>';
+
       return $html;
     }
 }
+
+
 
 
 
@@ -96,9 +144,19 @@ if ( ! function_exists('activity_path'))
 {
     function activity_path($record,$username)
     {
-      $html= " <strong class='activity_path'>";
-      if ($record['type_of_record']=='todo') $html.= '<span class="todo-icon">!</span>';
-      $html.= "<a href='".site_url('tt/'.$username.'/'.$record['type_of_record'].'/'.$record['id'])."'>".$record['title']."</a>".categorie_path($record['path_array'],$username)."</strong>";
+      $html= '<div class="activity-path">';
+      $html.= '<span class="activity-item">';
+
+      if ($record['type_of_record']=='todo') $html.= '!';
+      if (($record['type_of_record']!='value')&&($record['duration']==0))$html.= '.';
+
+      $html.= "<a href='".site_url('tt/'.$username.'/'.$record['type_of_record'].'/'.$record['id'])."'>".$record['title']."</a>";
+      if ( $record['type_of_record']=='value')  $html.=value($record['value'],$username);
+      $html.= "</span>";
+
+      $html.= categorie_path($record['path_array'],$username);
+
+      $html.= '</div>';
       return $html;
     }
 }
@@ -109,7 +167,7 @@ if ( ! function_exists('categorie_path'))
 {
     function categorie_path($categorie_path,$username)
     {
-      $html="<span class='arobase'>@</span>";
+      $html='<span class="categorie-path">@';
       if (count($categorie_path)==1)
       {
           if ($categorie_path[0]['title']=='')   $html="";
@@ -118,10 +176,11 @@ if ( ! function_exists('categorie_path'))
       else
       {
           foreach ($categorie_path as $k => $categorie) {
-              if ( $k>0 ) $html.="<span class='slash'>/</span>";
+              if ( $k>0 ) $html.="/";
               $html.= categorie_a($categorie,$username);
           }
       }
+      $html.= '</span>';
       return $html;
     }
 }
@@ -138,13 +197,15 @@ if ( ! function_exists('categorie_a'))
 }
 
 
+
 if ( ! function_exists('tag_list'))
 {
     function tag_list($tag_array,$username)
     {
       $html="<ul class='tags'>";
-      foreach ($tag_array as $k => $tag)
-        $html.="<li>".tag($tag,$username)."</li>";
+      if ( isset($tag_array))
+          foreach ($tag_array as $k => $tag)
+            $html.="<li>".tag($tag,$username)."</li>";
       $html.="</ul>";
       return $html;
     }
