@@ -55,6 +55,7 @@ $route['account'] =     'auth/account';
 
 //$1 username
 $route['tt/(:any)/activities'] =                    'timetracker/activities/$1';
+$route['tt/(:any)/activity'] =                      'timetracker/activity/$1';
 $route['tt/(:any)/activity/(:num)'] =               'timetracker/activity/$1/$2';
 $route['tt/(:any)/activity/(:num)/edit'] =          'timetracker/activity_edit/$1/$2';
 $route['tt/(:any)/activity/(:num)/delete'] =        'timetracker/activity_delete/$1/$2';
@@ -62,6 +63,7 @@ $route['tt/(:any)/summary/activity/(:num)'] =       'timetracker/summary/$1/acti
 $route['tt/(:any)/stats/activity/(:num)'] =         'timetracker/stats/$1/activity/$2';
 
 $route['tt/(:any)/thingstodo'] =                    'timetracker/thingstodo/$1';
+$route['tt/(:any)/todo'] =                          'timetracker/todo/$1';
 $route['tt/(:any)/todo/(:num)'] =                   'timetracker/todo/$1/$2';
 $route['tt/(:any)/todo/(:num)/edit'] =              'timetracker/todo_edit/$1/$2';
 $route['tt/(:any)/todo/(:num)/delete'] =            'timetracker/todo_delete/$1/$2';
@@ -69,6 +71,7 @@ $route['tt/(:any)/summary/todo/(:num)'] =           'timetracker/summary/$1/todo
 $route['tt/(:any)/stats/todo/(:num)'] =             'timetracker/stats/$1/todo/$2';
 
 $route['tt/(:any)/values'] =                        'timetracker/values/$1';
+$route['tt/(:any)/value'] =                         'timetracker/value/$1';
 $route['tt/(:any)/value/(:num)'] =                  'timetracker/value/$1/$2';
 $route['tt/(:any)/value/(:num)/edit'] =             'timetracker/value_edit/$1/$2';
 $route['tt/(:any)/value/(:num)/delete'] =           'timetracker/value_delete/$1/$2';
@@ -76,6 +79,7 @@ $route['tt/(:any)/summary/value/(:num)'] =          'timetracker/summary/$1/valu
 $route['tt/(:any)/stats/value/(:num)'] =            'timetracker/stats/$1/value/$2';
 
 $route['tt/(:any)/categories'] =                    'timetracker/categories/$1';
+$route['tt/(:any)/categorie'] =                     'timetracker/categorie/$1';
 $route['tt/(:any)/categorie/(:num)'] =              'timetracker/categorie/$1/$2';
 $route['tt/(:any)/categorie/(:num)/edit'] =         'timetracker/categorie_edit/$1/$2';
 $route['tt/(:any)/categorie/(:num)/delete'] =       'timetracker/categorie_delete/$1/$2';
@@ -83,6 +87,7 @@ $route['tt/(:any)/summary/categorie/(:num)'] =      'timetracker/summary/$1/cate
 $route['tt/(:any)/stats/categorie/(:num)'] =        'timetracker/stats/$1/categorie/$2';
 
 $route['tt/(:any)/tags'] =                          'timetracker/tags/$1';
+$route['tt/(:any)/tag'] =                           'timetracker/tag/$1';
 $route['tt/(:any)/tag/(:num)'] =                    'timetracker/tag/$1/$2';
 $route['tt/(:any)/tag/(:num)/edit'] =               'timetracker/tag_edit/$1/$2';
 $route['tt/(:any)/tag/(:num)/delete'] =             'timetracker/tag_delete/$1/$2';
@@ -91,6 +96,7 @@ $route['tt/(:any)/stats/tag/(:num)'] =              'timetracker/stats/$1/tag/$2
 
 
 $route['tt/(:any)/valuetypes'] =                     'timetracker/valuetypes/$1';
+$route['tt/(:any)/valuetype'] =                      'timetracker/valuetype/$1';
 $route['tt/(:any)/valuetype/(:num)'] =               'timetracker/valuetype/$1/$2';
 $route['tt/(:any)/valuetype/(:num)/edit'] =          'timetracker/valuetype_edit/$1/$2';
 $route['tt/(:any)/valuetype/(:num)/delete'] =        'timetracker/valuetype_delete/$1/$2';
@@ -98,17 +104,21 @@ $route['tt/(:any)/summary/valuetype/(:num)'] =       'timetracker/summary/$1/val
 $route['tt/(:any)/stats/valuetype/(:num)'] =         'timetracker/stats/$1/valuetype/$2';
 
 
+$route['tt/(:any)/record/(:num)'] =                   'timetracker/record/$1/$2';
 $route['tt/(:any)/record/(:num)/edit'] =              'timetracker/edit_record/$1/$2';
 $route['tt/(:any)/record/(:num)/delete'] =            'timetracker/delete_record/$1/$2';
 $route['tt/(:any)/record/(:num)/restart'] =           'timetracker/restart/$1/$2';
 $route['tt/(:any)/record/(:num)/stop'] =              'timetracker/stop/$1/$2';
 
-$route['tt'] =                       'timetracker/index';
-$route['tt/(:any)'] =                'timetracker/index/$1';
+
+
 $route['tt/(:any)/summary'] =        'timetracker/summary/$1';
 $route['tt/(:any)/stats'] =          'timetracker/stats/$1';
 $route['tt/(:any)/export'] =         'timetracker/export/$1';
 $route['tt/(:any)/params'] =         'timetracker/params/$1';
+$route['tt/(:any)'] =                'timetracker/index/$1';
+$route['tt'] =                       'timetracker/index';
+
 
 
 /* End of file routes.php */

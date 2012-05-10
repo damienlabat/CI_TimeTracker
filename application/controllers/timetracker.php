@@ -72,6 +72,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
 
+        $this->data['show_form']=TRUE;
         $this->data['running_activities']= $this->timetracker_lib->get_running_activities();
         $this->data['todos']= $this->timetracker_lib->get_running_TODO();
         $this->data['last_actions']= $this->timetracker_lib->get_last_actions();
@@ -84,7 +85,6 @@ class Timetracker extends CI_Controller {
     /*****
      *  stop record
      *  */
-
     public function stop($username,$record_id)
     {
         $this->_checkUsername($username);
@@ -97,7 +97,41 @@ class Timetracker extends CI_Controller {
 
 
 
+    /*****
+     *  edit record
+     *  */
+    public function edit_record($username,$record_id)
+    {
+        $this->_checkUsername($username);
+        // TODO!
+        $this->data['TODO']="edit record ".$record_id;
+        $this->_render();
+    }
 
+
+    /*****
+     *  delete record
+     *  */
+    public function delete_record($username,$record_id)
+    {
+        $this->_checkUsername($username);
+        // TODO! get confirmed from get val: ?confirmed
+        $this->data['TODO']="delete record ".$record_id." confirmation page ??";
+        $this->_render();
+    }
+
+
+
+     /*****
+     *  restart record
+     *  */
+    public function restart($username,$record_id)
+    {
+        $this->_checkUsername($username);
+        // TODO!
+        $this->data['TODO']="restart record ".$record_id;
+        $this->_render();
+    }
 
 
 
@@ -109,6 +143,8 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->data['TODO']="activities page";
+        $this->_render();
     }
 
 
@@ -116,11 +152,13 @@ class Timetracker extends CI_Controller {
      *  show activity
      *  */
 
-    public function activity($username,$record_id)
+    public function activity($username,$activity_id=NULL)
     {
         $this->_checkUsername($username);
-        $this->_checkRecordType($record_id,'activity');
+        if ($activity_id==NULL) redirect('tt/'.$username.'/activities', 'location', 301);
+        $this->_checkRecordType($activity_id,'activity');
         // TODO!
+        $this->data['TODO']="activity ".$activity_id." page";
         $this->_render();
     }
 
@@ -129,11 +167,12 @@ class Timetracker extends CI_Controller {
      *  show edit activity
      *  */
 
-    public function activity_edit($username,$record_id)
+    public function activity_edit($username,$activity_id)
     {
         $this->_checkUsername($username);
-        $this->_checkRecordType($record_id,'activity');
+        $this->_checkRecordType($activity_id,'activity');
         // TODO!
+         $this->data['TODO']="activity ".$activity_id." edit";
         $this->_render();
     }
 
@@ -147,6 +186,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->data['TODO']="things todo page";
         $this->_render();
     }
 
@@ -155,11 +195,13 @@ class Timetracker extends CI_Controller {
      *  show todo
      *  */
 
-    public function todo($username,$record_id)
+    public function todo($username,$activity_id=NULL)
     {
         $this->_checkUsername($username);
-        $this->_checkRecordType($record_id,'todo');
+        if ($activity_id==NULL) redirect('tt/'.$username.'/thingstodo', 'location', 301);
+        $this->_checkRecordType($activity_id,'todo');
         // TODO!
+        $this->data['TODO']="todo ".$activity_id." page";
         $this->_render();
     }
 
@@ -168,11 +210,12 @@ class Timetracker extends CI_Controller {
      *  show edit todo
      *  */
 
-    public function todo_edit($username,$record_id)
+    public function todo_edit($username,$activity_id)
     {
         $this->_checkUsername($username);
-        $this->_checkRecordType($record_id,'todo');
+        $this->_checkRecordType($activity_id,'todo');
         // TODO!
+        $this->data['TODO']="todo ".$activity_id." edit";
         $this->_render();
     }
 
@@ -187,6 +230,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->data['TODO']="values page";
         $this->_render();
     }
 
@@ -195,11 +239,13 @@ class Timetracker extends CI_Controller {
      *  show value
      *  */
 
-    public function value($username,$record_id)
+    public function value($username,$activity_id=NULL)
     {
         $this->_checkUsername($username);
-        $this->_checkRecordType($record_id,'value');
+        if ($activity_id==NULL) redirect('tt/'.$username.'/values', 'location', 301);
+        $this->_checkRecordType($activity_id,'value');
         // TODO!
+        $this->data['TODO']="value ".$activity_id." page";
         $this->_render();
     }
 
@@ -208,11 +254,12 @@ class Timetracker extends CI_Controller {
      *  show edit value
      *  */
 
-    public function value_edit($username,$record_id)
+    public function value_edit($username,$activity_id)
     {
         $this->_checkUsername($username);
-        $this->_checkRecordType($record_id,'value');
+        $this->_checkRecordType($activity_id,'value');
         // TODO!
+        $this->data['TODO']="value ".$activity_id." edit";
         $this->_render();
     }
 
@@ -228,6 +275,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->data['TODO']="categories";
         $this->_render();
     }
 
@@ -236,10 +284,12 @@ class Timetracker extends CI_Controller {
      *  show categorie
      *  */
 
-    public function categorie($username,$categorie_id)
+    public function categorie($username,$categorie_id=NULL)
     {
         $this->_checkUsername($username);
         // TODO!
+        if ($categorie_id==NULL) redirect('tt/'.$username.'/categories', 'location', 301);
+        $this->data['TODO']="categorie ".$categorie_id." page";
         $this->_render();
     }
 
@@ -253,6 +303,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->data['TODO']="categorie ".$categorie_id." edit";
         $this->_render();
     }
 
@@ -268,6 +319,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+         $this->data['TODO']="tags page";
         $this->_render();
     }
 
@@ -276,10 +328,12 @@ class Timetracker extends CI_Controller {
      *  show tag
      *  */
 
-    public function tag($username,$tag_id)
+    public function tag($username,$tag_id=NULL)
     {
         $this->_checkUsername($username);
+        if ($tag_id==NULL) redirect('tt/'.$username.'/tags', 'location', 301);
         // TODO!
+        $this->data['TODO']="tag ".$tag_id." page";
         $this->_render();
     }
 
@@ -293,6 +347,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->data['TODO']="tag ".$tag_id." edit";
         $this->_render();
     }
 
@@ -304,10 +359,11 @@ class Timetracker extends CI_Controller {
      *  list value_types
      *  */
 
-    public function valuestypes($username)
+    public function valuetypes($username)
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->data['TODO']="value types page";
         $this->_render();
     }
 
@@ -316,10 +372,12 @@ class Timetracker extends CI_Controller {
      *  show value_types
      *  */
 
-    public function valuetype($username,$valuetype_id)
+    public function valuetype($username,$valuetype_id=NULL)
     {
         $this->_checkUsername($username);
+        if ($valuetype_id==NULL) redirect('tt/'.$username.'/valuetypes', 'location', 301);
         // TODO!
+        $this->data['TODO']="valuetype ".$valuetype_id." page";
         $this->_render();
     }
 
@@ -333,6 +391,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->data['TODO']="valuetype ".$valuetype_id." edit";
         $this->_render();
     }
 
@@ -348,6 +407,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->data['TODO']="summary $type_obj $id_obj";
         $this->_render();
     }
 
@@ -360,6 +420,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->data['TODO']="stats $type_obj $id_obj";
         $this->_render();
     }
 
@@ -372,6 +433,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->data['TODO']="export $type_obj $id_obj";
         $this->_render();
     }
 
@@ -385,6 +447,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->data['TODO']="params";
         $this->_render();
     }
 
