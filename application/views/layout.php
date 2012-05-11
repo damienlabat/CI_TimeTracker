@@ -44,7 +44,9 @@
 
 
     <div class="span12">
-      <?php $this->load->view('bloc/breadcrumb'); ?>
+
+        <?php $this->load->view('bloc/breadcrumb'); ?>
+
           <?php
 
     // alerts and error messages

@@ -50,38 +50,6 @@ if ( ! function_exists('date2human'))
 //------------------------------------------------
 
 
-/*
-
- <li class="record-item activity-activity">
-
-        <div class="record-time">
-            <span class="record-period">
-                <time datetime='2012-05-10T00:00-10:12:13'>10:12</time> -
-            </span>
-            <span class="record-duration">
-                2h 31
-            </span>
-        </div>
-
-        <div class="activity-path">
-            <span class="activity-item"><a href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/activity/2">test</a></span>
-            <span class="categorie-path">@<a class="category" href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/categorie/1">cat1/cat2</a></span>
-        </div>
-
-        <ul class="tags">
-            <li><a href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/tag/1">tag1</a></li>
-            <li><a href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/tag/2">tag2</a></li>
-            <li><a href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/tag/3">tag3</a></li>
-        </ul>
-
-        <ul class="buttons">
-            <li><a href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/record/2/edit" class="edit-btn btn btn-mini">edit</a></li>
-            <li><a href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/record/2/delete" class="delete-btn btn btn-mini">delete</a></li>
-            <li><a href="http://127.0.0.1/damien/CI_TimeTracker/tt/damien/record/2/stop" class="stop-btn btn btn-mini btn-inverse">stop</a></li>
-        </ul>
-    </li>
-
-    */
 
 if ( ! function_exists('record_li'))
 {
@@ -89,7 +57,6 @@ if ( ! function_exists('record_li'))
     {
 
     if (!isset($param['duration'])) $param['duration']='normal'; // normal OR full (hide/show seconds for 1 minute min duration)
-
 
 
     $html= "<li class='record-item activity-".$record['type_of_record']."'>";
@@ -158,14 +125,18 @@ if ( ! function_exists('activity_path'))
 {
     function activity_path($record,$username)
     {
+
+      if (!isset($record['activity_ID'])) $record['activity_ID']=$record['id'];
       $html= '<div class="activity-path">';
       $html.= '<span class="activity-item">';
 
       if ($record['type_of_record']=='todo') $html.= '!';
-      if (($record['type_of_record']!='value')&&($record['duration']==0))$html.= '.';
 
-      $html.= "<a href='".site_url('tt/'.$username.'/'.$record['type_of_record'].'/'.$record['id'])."'>".$record['title']."</a>";
-      if ( $record['type_of_record']=='value')  $html.=value($record['value'],$username);
+      if (isset($record['duration']))
+        if (($record['type_of_record']!='value')&&($record['duration']==0))$html.= '.';
+
+      $html.= "<a href='".site_url('tt/'.$username.'/'.$record['type_of_record'].'/'.$record['activity_ID'])."'>".$record['title']."</a>";
+      if (isset($record['value']))  $html.=value($record['value'],$username);
       $html.= "</span>";
 
       $html.= categorie_path($record['path_array'],$username);

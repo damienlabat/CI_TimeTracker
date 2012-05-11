@@ -11,6 +11,7 @@ class Timetracker_lib
 
         $this->ci->load->library('tank_auth');
         $this->user_id= $this->ci->tank_auth->get_user_id();
+        $this->user_name= $this->ci->tank_auth->get_username();
 
         $this->ci->load->model('timetracker/tt_categories');
         $this->ci->load->model('timetracker/tt_activities');
@@ -109,6 +110,20 @@ function fromPOST($post){
     }
 
 
+
+
+    function build_breadcrumb($obj)
+    {
+        $breadcrumb=array();
+
+        if (isset($obj['start_time']))    $breadcrumb[]= array('title'=>$obj['start_time'], 'url'=>'');
+            else if ( (isset($obj['id'])) && (isset($obj['categorie_ID'])) )  $obj['activity_ID']=$obj['id'];
+        if (isset($obj['activity_ID']))   $breadcrumb[]= array('title'=>$obj['title'], 'url'=>'tt/'.$this->user_name.'/'.$obj['type_of_record'].'/'.$obj['activity_ID']);
+        $path_array=array_reverse($obj['path_array']);
+        foreach ($path_array as $k => $cat)  $breadcrumb[]= array('title'=>$cat['title'], 'url'=>'tt/'.$this->user_name.'/categorie/'.$cat['id']);
+
+        return array_reverse($breadcrumb);
+    }
 
 
 
