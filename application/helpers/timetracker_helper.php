@@ -33,6 +33,20 @@ if ( ! function_exists('duration2human'))
 }
 
 
+
+
+if ( ! function_exists('date2human'))
+{
+    function date2human($date,$local_time='normal') // ADD timezone gestion
+    {
+        $unix=mysql_to_unix($date);
+        $datestring = "%Y/%m/%d %h:%i";
+
+        return mdate($datestring, $unix);
+    }
+}
+
+
 //------------------------------------------------
 
 
@@ -113,8 +127,8 @@ if ( ! function_exists('record_time'))
       $html=  '<div class="record-time">';
 
       $html.= '<span class="record-period">';
-      $html.= '<a href="'.site_url('tt/'.$username.'/record/'.$record['id']).'"><time datetime=\''.$record['start_time'].'\'>'.$record['start_time'].'</time>';
-      if ((!$record['running'])&&($record['duration']>0))  $html.= '<time datetime=\''.$record['stop_at'].'\'>'.$record['stop_at'].'</time>';
+      $html.= '<a href="'.site_url('tt/'.$username.'/record/'.$record['id']).'"><time datetime=\''.$record['start_time'].'\'>'.date2human($record['start_time']).'</time>';
+      if ((!$record['running'])&&($record['duration']>0))  $html.= ' - <time datetime=\''.$record['stop_at'].'\'>'.date2human($record['stop_at']).'</time>';
       $html.= '</a></span>';
 
       $html.= '<span class="record-duration">';

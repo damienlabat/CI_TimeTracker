@@ -16,7 +16,7 @@ body {
 // element colors
 // -------------------------
 
-@backgroundRed:       #F7E4E4;
+@backgroundRed:       #FFD8D8;
 @backgroundYellow:    spin(@backgroundRed, 60);
 @backgroundGreen:     spin(@backgroundRed, 120);
 @backgroundCyan:      spin(@backgroundRed, 180);
@@ -65,12 +65,6 @@ body { background-color: #FAFAFA; /* sad song */ }
     }
 
 
-/*.cadre:hover>h2 {
-    background-color: @blue;  // TODO! color style selon les blocs
-    color: @white;
-    left: -0.5em;
-    }*/
-
 
 .configbtn {
     position: absolute;
@@ -106,18 +100,15 @@ ul.records {
     margin:0;
 
     >li {
-        border: 2px solid #888888;
         margin: 5px 0;
         padding: 6px;
+        .border-radius(12px);
         &:hover {.box-shadow(@shadow);}
         }
-    >li.activity-activity:hover { background-color: @backgroundCyan; }
-    >li.activity-todo:hover     { background-color: @backgroundYellow; }
-    >li.activity-value:hover    { background-color: @backgroundGreen; }
+    >li.activity-activity { background-color: @backgroundCyan; }
+    >li.activity-todo     { background-color: @backgroundYellow; }
+    >li.activity-value    { background-color: @backgroundGreen; }
 
-    >li.activity-activity       { border-color: @backgroundCyan; }
-    >li.activity-todo          { border-color: @backgroundYellow; }
-    >li.activity-value         { border-color: @backgroundGreen; }
     }
 
 

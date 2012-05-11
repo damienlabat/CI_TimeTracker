@@ -259,6 +259,13 @@ function fromPOST($post){
     }
 
 
+    function get_record_by_id($record_id){
+        $activitie= $this->ci->tt_records->get_record_by_id($record_id);
+        if ($activitie) $activitie= $this->complete_record_info($activitie);
+
+        return $activitie;
+    }
+
 
 
 

@@ -16,9 +16,18 @@ class Tt_records extends CI_Model
      */
     function get_record_by_id($record_id)
     {
-        $this->db->where('id', $record_id);
+        //$this->db->where('id', $record_id);
 
-        $query = $this->db->get($this->records_table);
+       // $query = $this->db->get($this->records_table);
+
+
+        $this->db->select($this->activities_table.'.title,type_of_record,categorie_ID,'.$this->records_table.'.*');
+        $this->db->from($this->records_table);
+        $this->db->join($this->activities_table, $this->activities_table.'.id = '. $this->records_table.'.activity_ID');
+        $this->db->where($this->records_table.'.id',$record_id);
+
+        $query = $this->db->get();
+
         if ($query->num_rows() == 1) return $query->row_array();
         return NULL;
     }

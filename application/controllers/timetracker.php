@@ -7,7 +7,7 @@ class Timetracker extends CI_Controller {
         parent::__construct();
         $this->output->enable_profiler(TRUE);
 
-        $this->load->helper( array('url','assets_helper','form','timetracker'));
+        $this->load->helper( array('url','assets_helper','form','timetracker','date'));
         $this->load->library( array('tank_auth','timetracker_lib') );
 
         $this->data['alerts']=array();
@@ -102,8 +102,8 @@ class Timetracker extends CI_Controller {
     public function record($username,$record_id)
     {
         $this->_checkUsername($username);
-    // TODO!
-        $this->data['TODO']="record ".$record_id;
+        $this->data['tt_layout']='tt_record';
+        $this->data['record']= $this->timetracker_lib->get_record_by_id($record_id);
         $this->_render();
     }
 
