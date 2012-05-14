@@ -70,14 +70,7 @@ if ( ! function_exists('record_li'))
    // if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
 
 
-    $html.= '<ul class="buttons">';
-    $html.= "<li><a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/edit')."'>edit</a></li>";
-    if (!$record['running'])
-        $html.= "<li><a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/restart')."'>restart</a></li>";
-    $html.= "<li><a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete')."'>delete</a></li>";
-    if ($record['running'])
-          $html.= "<li><a class='btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/stop')."'>stop</a></li>";
-    $html.= '</ul>';
+
 
 
     echo "</li>";
@@ -140,6 +133,18 @@ if ( ! function_exists('activity_path'))
       $html.= "</span>";
 
       $html.= categorie_path($record['path_array'],$username);
+
+      if (isset($record['running'])) {
+        $html.= '<div class="buttons btn-group">';
+        $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/edit')."'>edit</a>";
+        if (!$record['running'])
+            $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/restart')."'>restart</a>";
+        $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete')."'>delete</a>";
+        if ($record['running'])
+              $html.= "<a class='btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/stop')."'>stop</a>";
+        $html.= '</div>';
+    }
+
 
       $html.= '</div>';
       return $html;

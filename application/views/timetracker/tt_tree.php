@@ -1,21 +1,39 @@
-        <ul>
-          <li><a href="#"><i class="icon-folder-open"></i> Cat1</a></li>
-          <ul>
-              <li><a href="#"><i class="icon-folder-open"></i> Cat1</a></li>
-              <ul>
-                  <li><a href="#"><i class="icon-file"></i> activity 1</a></li>
-                  <li><a href="#"><i class="icon-file"></i> activity 2</a></li>
-                  <li><a href="#"><i class="icon-file"></i> activity 3</a></li>
-              </ul>
-              <li><a href="#"><i class="icon-folder-open"></i> Cat2</a></li>
-              <li><a href="#"><i class="icon-folder-open"></i> Cat3</a></li>
-          </ul>
-          <li><a href="#"><i class="icon-folder-open"></i> Cat2</a></li>
-          <ul>
-            <li><a href="#"><i class="icon-file"></i> activity 1</a></li>
-            <li><a href="#"><i class="icon-file"></i> activity 2</a></li>
-          </ul>
-          <li><a href="#"><i class="icon-folder-open"></i> Cat3</a></li>
-          <li><a href="#"><i class="icon-file"></i> activity 1</a></li>
-          <li><a href="#"><i class="icon-file"></i> activity 2</a></li>
-        </ul>
+<?php
+
+
+
+    if (!isset($activities)) $activities=NULL;
+    cat_content($cat_tree,$activities,$user_name);
+
+
+
+
+
+  function cat_content($cat_array,$activities,$user_name) {
+
+      echo "<ul>";
+      foreach ($cat_array as $k => $cat) {
+          echo '<li><a href="'.site_url('tt/'.$user_name.'/categorie/'.$cat['id']).'"><i class="icon-folder-open"></i> '.$cat['title'].'</a></li>';
+          if (isset($cat['sub'])) cat_content($cat['sub'],$activities,$user_name);
+          if (isset($activities)) echo cat_activities($activities,$cat['id'],$user_name);
+      }
+      echo "</ul>";
+    }
+
+
+  function cat_activities($activities_array,$cat_ID,$user_name) {
+
+      $html='';
+      foreach ($activities_array as $k => $activity) {
+         if ($activity['categorie_ID']==$cat_ID) {
+            $icon= 'icon-file';
+            if ($activity['type_of_record']=='todo') { $icon='icon-exclamation-sign'; $activity['title']='!'.$activity['title']; }
+            if ($activity['type_of_record']=='value') $icon='icon-flag';
+            $html.= '<li><a href="'.site_url('tt/'.$user_name.'/'.$activity['type_of_record'].'/'.$activity['id']).'"><i class="'.$icon.'"></i> '.$activity['title'].'</a></li>';
+        }
+
+        }
+      if ($html!='') return '<ul>'.$html.'</ul>';
+    }
+
+?>

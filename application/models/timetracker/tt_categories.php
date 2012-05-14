@@ -109,7 +109,7 @@ class Tt_categories extends CI_Model
     function get_categories($user_id)
     {
         $this->db->where('user_ID', $user_id);
-        $this->db->order_by('parent');
+        $this->db->order_by('parent,title');
 
         $query = $this->db->get($this->categories_table);
         if ($query->num_rows() >= 1) return $query->result_array();

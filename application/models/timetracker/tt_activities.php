@@ -64,6 +64,23 @@ class Tt_activities extends CI_Model
 
 
 
+     /**
+     * Get cat activities
+     *
+     * @categorie_id    int
+     * @return          array
+     */
+    function get_categorie_activities( $categorie_id )
+    {
+        $this->db->where('categorie_ID', $categorie_id);
+        $query = $this->db->get($this->activities_table);
+
+        if ($query->num_rows() >= 1) return $query->result_array();
+        return NULL;
+    }
+
+
+
     /**
      * get or create activity record
      *

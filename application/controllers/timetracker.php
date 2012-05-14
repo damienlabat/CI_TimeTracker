@@ -12,6 +12,7 @@ class Timetracker extends CI_Controller {
 
         $this->data['alerts']=array();
 
+
         if ($this->session->flashdata('alerts')) $this->data['alerts']=$this->session->flashdata('alerts');//array( array('type'=>'success', 'alert'=>'error 1 .....') );
 
 
@@ -170,6 +171,8 @@ class Timetracker extends CI_Controller {
         $this->data['activity']=$this->tt_activities->get_activity_by_id($activity_id);
         $this->data['activity']['path_array']=$this->timetracker_lib->get_categorie_path_array($this->data['activity']['categorie_ID']);
         $this->data['breadcrumb']=$this->timetracker_lib->build_breadcrumb($this->data['activity']);
+        $this->data['cat_tree']=$this->timetracker_lib->get_categories_tree();
+        $this->data['activities']=$this->timetracker_lib->get_categorie_activities( $this->data['activity']['categorie_ID'] );
         $this->data['tt_layout']='tt_activity';
       }
 
@@ -304,6 +307,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->data['cat_tree']=$this->timetracker_lib->get_categories_tree();
         $this->data['TODO']="categories";
         $this->_render();
     }
@@ -322,6 +326,8 @@ class Timetracker extends CI_Controller {
         $this->data['categorie']=$this->tt_categories->get_categorie_by_id($categorie_id);
         $this->data['categorie']['path_array']=$this->timetracker_lib->get_categorie_path_array($categorie_id);
         $this->data['breadcrumb']=$this->timetracker_lib->build_breadcrumb($this->data['categorie']);
+        $this->data['cat_tree']=$this->timetracker_lib->get_categories_tree();
+        $this->data['activities']=$this->timetracker_lib->get_categorie_activities( $categorie_id );
         $this->data['tt_layout']='tt_categorie';
 
         $this->data['TODO']="categorie ".$categorie_id." page";

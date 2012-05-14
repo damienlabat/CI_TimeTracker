@@ -16,7 +16,10 @@ body {
 // element colors
 // -------------------------
 
-@backgroundRed:       #FFD8D8;
+@cadreBorder:   #E3E3E3;
+
+@backgroundRed:       #EDCCCC;
+@backgroundOrange:    #F8D4A1;
 @backgroundYellow:    spin(@backgroundRed, 60);
 @backgroundGreen:     spin(@backgroundRed, 120);
 @backgroundCyan:      spin(@backgroundRed, 180);
@@ -26,7 +29,7 @@ body {
 @arobaseColor:        @orange;
 
 
- @shadow: 2px 3px 4px 1px rgba(0, 0, 0, 0.1);
+ @shadow: 2px 3px 4px 1px rgba(0, 0, 0, 0.04);
 
 
 // TODO regrouper
@@ -43,7 +46,7 @@ body { background-color: #FAFAFA; /* sad song */ }
 .cadre {
     background: @white;
     position: relative;
-    border: 1px solid @grayLighter;
+    border: 1px solid @cadreBorder;
     //max-height: @gridColumnWidth*6;
     margin-bottom: @gridGutterWidth;
     // padding: 2em 3em 1em; TODO! breake the grid
@@ -106,7 +109,7 @@ ul.records {
         &:hover {.box-shadow(@shadow);}
         }
     >li.activity-activity { background-color: @backgroundCyan; }
-    >li.activity-todo     { background-color: @backgroundYellow; }
+    >li.activity-todo     { background-color: @backgroundOrange; }
     >li.activity-value    { background-color: @backgroundGreen; }
 
     }
@@ -125,7 +128,7 @@ ul.records {
     li { list-style: none; }
 
     >.record-time {
-        width: 15%;
+        width: 200px;
 
         >span {
             display: block;
@@ -152,7 +155,7 @@ ul.records {
 
 
     >ul.tags {
-        width: 15%;
+        width: 200px;
         text-align: center;
 
         >li {
@@ -162,17 +165,15 @@ ul.records {
 
     }
 
-    >ul.buttons {
+    .buttons {
         display:block;
         opacity:0.5;
         text-align: center;
-        margin-top: 10px;
-        >li {
-            display: inline;
-            >a { min-width: 20% }
-            }
+        margin: 10px auto 0px;
+        width: 200px;
+        >a { width: 26% }
     }
 
-    &:hover >ul.buttons { opacity:1; }
+    &:hover .buttons { opacity:1; }
 
 }

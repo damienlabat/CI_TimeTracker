@@ -235,6 +235,12 @@ function fromPOST($post){
 
 /* ACTIVITIES */
 
+    function get_categorie_activities( $categorie_id )
+    {
+        return $this->ci->tt_activities->get_categorie_activities( $categorie_id );
+    }
+
+
     function create_record($title,$path=NULL,$type_record,$param=array())
     {
         $cat=$this->getorcreate_categoriespath($path); // BUG ?
