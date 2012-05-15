@@ -4,6 +4,7 @@ class Tt_activities extends CI_Model
 {
     private $activities_table   = 'activities';
     private $categories_table   = 'categories';
+    private $records_table      = 'records';
 
 
     /**
@@ -70,9 +71,17 @@ class Tt_activities extends CI_Model
      * @categorie_id    int
      * @return          array
      */
-    function get_categorie_activities( $categorie_id )
+    function get_categorie_activities( $categorie_id ,$show_empty )
     {
+        $this->db->select($this->activities_table.'.*');
+
+        if (!$show_empty) {
+            $this->db->join('records', $this->activities_table.'.id = '.$this->records_table.'.activity_ID');
+            $this->db->group_by($this->records_table.'.activity_ID');
+            }
+
         $this->db->where('categorie_ID', $categorie_id);
+        $this->db->order_by('title');
         $query = $this->db->get($this->activities_table);
 
         if ($query->num_rows() >= 1) return $query->result_array();

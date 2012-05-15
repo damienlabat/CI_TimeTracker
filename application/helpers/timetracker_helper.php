@@ -143,6 +143,8 @@ if ( ! function_exists('activity_path'))
         if ($record['running'])
               $html.= "<a class='btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/stop')."'>stop</a>";
         $html.= '</div>';
+
+          if (element('delete_confirm',$record)==TRUE)    $html.= "<div><br/><a class='btn btn-mini btn-danger' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete?delete=true')."'>delete ! confirmed ?</a></div>";
     }
 
 

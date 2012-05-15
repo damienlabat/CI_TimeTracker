@@ -129,9 +129,24 @@ class Timetracker extends CI_Controller {
     public function delete_record($username,$record_id)
     {
         $this->_checkUsername($username);
-        // TODO! get confirmed from get val: ?confirmed
-        $this->data['TODO']="delete record ".$record_id." confirmation page ??";
+        $this->data['tt_layout']='tt_record';
+        $this->data['record']= $this->timetracker_lib->get_record_by_id($record_id);
+        $this->data['record']['delete_confirm']= TRUE;
+        $this->data['cat_tree']=$this->timetracker_lib->get_categories_tree();
+        $this->data['activities']=$this->timetracker_lib->get_categorie_activities( $this->data['record']['categorie_ID'] );
+
+        $confirmed=$this->input->get('delete', TRUE);
+
+        if ($confirmed=='true') {
+            if ($this->timetracker_lib->delete_record($record_id)) {
+                $alert= array( array('type'=>'success', 'alert'=>'record deleted !') );
+                $this->session->set_flashdata('alerts', $alert );
+                redirect('tt/'.$username, 'location');
+            }
+        }
+
         $this->_render();
+
     }
 
 

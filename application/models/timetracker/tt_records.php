@@ -156,4 +156,22 @@ class Tt_records extends CI_Model
     }
 
 
+
+
+    /**
+     * delete record
+     *
+     * @record_id       int
+     * @return          boolean
+     */
+    function delete_record( $record_id )
+    {
+        $this->db->where('id', $record_id);
+
+        if ($this->db->delete($this->records_table)) return TRUE;
+
+        return FALSE;
+    }
+
+
 } // END Class

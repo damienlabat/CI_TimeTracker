@@ -235,9 +235,9 @@ function fromPOST($post){
 
 /* ACTIVITIES */
 
-    function get_categorie_activities( $categorie_id )
+    function get_categorie_activities( $categorie_id, $show_empty= FALSE )
     {
-        return $this->ci->tt_activities->get_categorie_activities( $categorie_id );
+        return $this->ci->tt_activities->get_categorie_activities( $categorie_id , $show_empty);
     }
 
 
@@ -321,6 +321,12 @@ function fromPOST($post){
             $record['value']=$this->ci->tt_values->get_record_value($record['id']);
 
         return $record;
+    }
+
+
+    function delete_record( $record_id )
+    {
+        return $this->ci->tt_records->delete_record( $record_id );
     }
 
 
