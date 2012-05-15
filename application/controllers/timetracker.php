@@ -157,9 +157,14 @@ class Timetracker extends CI_Controller {
     public function restart($username,$record_id)
     {
         $this->_checkUsername($username);
-        // TODO!
-        $this->data['TODO']="restart record ".$record_id;
-        $this->_render();
+
+        if ($this->timetracker_lib->restart_record($record_id))
+                $alert= array( array('type'=>'success', 'alert'=>'start new record !') );
+            else $alert= array( array('type'=>'error', 'alert'=>'error !') );
+
+        $this->session->set_flashdata('alerts', $alert );
+       redirect('tt/'.$username, 'location');
+
     }
 
 

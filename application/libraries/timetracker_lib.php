@@ -331,6 +331,28 @@ function fromPOST($post){
 
 
 
+    function restart_record( $record_id )
+    {
+        $record=$this->get_record_by_id($record_id);
+        print_r($record);
+        $param=array(
+            'description'=> $record['description'],
+            'diff_greenwich'=>$record['diff_greenwich']
+        );
+
+        if (($record['type_of_record']=='value') || ((!$record['running']) && ($record['duration']==0)) ) $param['running']=0;
+
+       $new_record= $this->ci->tt_records->create_record($record['activity_ID'],$param);
+
+       foreach ($record['tags'] as $k => $tag) $this->ci->tt_tags->add_tag( $new_record['id'], $tag['id'] );  // add tags
+
+       if ($record['type_of_record']=='value') $this->ci->tt_values->add_value( $new_record['id'], $record['value']['value_type_ID'], $record['value']['value'] );
+
+        return TRUE;
+    }
+
+
+
 /* STOP activitie */
 
 function calcul_duration($record, $endtime=NULL )
