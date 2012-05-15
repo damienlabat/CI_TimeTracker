@@ -105,7 +105,8 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername($username);
         $this->data['tt_layout']='tt_record';
         $this->data['record']= $this->timetracker_lib->get_record_by_id($record_id);
-        $this->data['breadcrumb']=$this->timetracker_lib->build_breadcrumb($this->data['record']);
+        $this->data['cat_tree']=$this->timetracker_lib->get_categories_tree();
+        $this->data['activities']=$this->timetracker_lib->get_categorie_activities( $this->data['record']['categorie_ID'] );
         $this->_render();
     }
 
@@ -156,7 +157,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
-        $this->data['TODO']="activities page";
+        $this->data['TODO']="activities page - add running & last activities";
         $this->_render();
     }
 
@@ -184,7 +185,7 @@ class Timetracker extends CI_Controller {
         // TODO!
         $this->_generic_activity_show($username,$activity_id);
 
-        $this->data['TODO']="activity ".$activity_id." page";
+        $this->data['TODO']="activity ".$activity_id." page - add running & last activities";
         $this->_render();
     }
 
@@ -212,7 +213,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
-        $this->data['TODO']="things todo page";
+        $this->data['TODO']="things todo page - add running & last activities";
         $this->_render();
     }
 
@@ -230,7 +231,7 @@ class Timetracker extends CI_Controller {
         //$this->data['tt_layout']='tt_activity';
         $this->_generic_activity_show($username,$activity_id);
 
-        $this->data['TODO']="todo ".$activity_id." page";
+        $this->data['TODO']="todo ".$activity_id." page - add running & last activities";
         $this->_render();
     }
 
@@ -259,7 +260,7 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
-        $this->data['TODO']="values page";
+        $this->data['TODO']="values page - add running & last activities";
         $this->_render();
     }
 
@@ -277,7 +278,7 @@ class Timetracker extends CI_Controller {
         $this->data['tt_layout']='tt_activity';
         $this->_generic_activity_show($username,$activity_id);
 
-        $this->data['TODO']="value ".$activity_id." page";
+        $this->data['TODO']="value ".$activity_id." page - add running & last activities";
         $this->_render();
     }
 
@@ -330,7 +331,7 @@ class Timetracker extends CI_Controller {
         $this->data['activities']=$this->timetracker_lib->get_categorie_activities( $categorie_id );
         $this->data['tt_layout']='tt_categorie';
 
-        $this->data['TODO']="categorie ".$categorie_id." page";
+        $this->data['TODO']="categorie ".$categorie_id." page - add sub activities";
         $this->_render();
     }
 

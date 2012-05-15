@@ -146,7 +146,7 @@ function fromPOST($post){
 
     function get_categories_tree()
     {
-        $categories=$this->ci->tt_categories->get_categories($this->user_id);
+        $categories=$this->ci->tt_categories->get_categories_with_count($this->user_id);
 
         return  $this->recur_tree($categories,'parent',NULL);
     }
