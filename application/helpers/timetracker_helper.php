@@ -93,7 +93,7 @@ if ( ! function_exists('record_time'))
 
       $html.= '<span class="record-duration">';
 
-      if ($record['duration']>0) $html.= duration2human($record['duration']);
+      if (($record['duration']>0)OR($record['running']==1)) $html.= duration2human($record['duration']);
         else if (($record['type_of_record']!='value')&&(!$record['running'])) $html.="<br/><span class='label label-info'>PING!</span>";
          else if ($record['type_of_record']=='value') $html.="<br/><span class='label label-info'>Value</span>";
 
@@ -126,7 +126,7 @@ if ( ! function_exists('activity_path'))
       if ($record['type_of_record']=='todo') $html.= '!';
 
       if (isset($record['duration']))
-        if (($record['type_of_record']!='value')&&($record['duration']==0))$html.= '.';
+        if (($record['type_of_record']!='value')&&($record['duration']==0)&&($record['running']==0))$html.= '.';
 
       $html.= "<a href='".site_url('tt/'.$username.'/'.$record['type_of_record'].'/'.$record['activity_ID'])."'>".$record['title']."</a>";
       if (isset($record['value']))  $html.=value($record['value'],$username);
