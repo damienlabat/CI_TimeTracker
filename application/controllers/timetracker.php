@@ -163,7 +163,7 @@ class Timetracker extends CI_Controller {
             else $alert= array( array('type'=>'error', 'alert'=>'error !') );
 
         $this->session->set_flashdata('alerts', $alert );
-       redirect('tt/'.$username, 'location');
+        redirect('tt/'.$username, 'location');
 
     }
 

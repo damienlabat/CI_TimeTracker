@@ -334,7 +334,6 @@ function fromPOST($post){
     function restart_record( $record_id )
     {
         $record=$this->get_record_by_id($record_id);
-        print_r($record);
         $param=array(
             'description'=> $record['description'],
             'diff_greenwich'=>$record['diff_greenwich']
