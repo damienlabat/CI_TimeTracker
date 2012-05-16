@@ -28,9 +28,9 @@
     <textarea class="span4" placeholder="description..." name="description" id="description"></textarea>
     <a class="popclick-trigger" data-content="TODO!" rel="popover" href="#" data-original-title="add a description"><i class='icon-question-sign'></i></a>
 
-    <input type="hidden" name="localtime" value="">
+    <input type="hidden" name="localtime" value="TODO">
     <button type="submit" class="btn btn-large btn-primary span4">Start</button>
 
 
 </form>
-TODO! fluid row problem
+TODO! fluid row problem/local time

@@ -55,6 +55,7 @@ if ( ! function_exists('record_li'))
 {
     function record_li($record,$username,$param=array() )
     {
+        print_r($record);
 
     if (!isset($param['duration'])) $param['duration']='normal'; // normal OR full (hide/show seconds for 1 minute min duration)
 
@@ -132,7 +133,7 @@ if ( ! function_exists('activity_path'))
       if (isset($record['value']))  $html.=value($record['value'],$username);
       $html.= "</span>";
 
-      $html.= categorie_path($record['path_array'],$username);
+      $html.= categorie_path($record['path_array'],$record['categorie_path'],$username);
 
       if (isset($record['running'])) {
         $html.= '<div class="buttons btn-group">';
@@ -157,20 +158,17 @@ if ( ! function_exists('activity_path'))
 
 if ( ! function_exists('categorie_path'))
 {
-    function categorie_path($categorie_path,$username)
+    function categorie_path($path_array,$categorie_path,$username)
     {
       $html='<span class="categorie-path">@';
-      if (count($categorie_path)==1)
+      if (count($path_array)==1)
       {
-          if ($categorie_path[0]['title']=='')   $html="";
-          $html.= categorie_a($categorie_path[0],$username);
+          if ($path_array[0]['title']=='')   $html="";
+          $html.= categorie_a($path_array[0],$username);
       }
       else
       {
-          foreach ($categorie_path as $k => $categorie) {
-              if ( $k>0 ) $html.="/";
-              $html.= categorie_a($categorie,$username);
-          }
+              $html.= "<a href='".site_url('tt/'.$username.'/categorie/'.$path_array[count($path_array)-1]['id'])."' class='category'>".$categorie_path."</a>";
       }
       $html.= '</span>';
       return $html;

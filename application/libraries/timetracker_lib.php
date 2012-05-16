@@ -34,6 +34,7 @@ class Timetracker_lib
         $this->ci->load->library('form_validation');
 
         if (element('start',$post)) $res=$this->start_record($post);
+        if (element('update_record',$post)) $res=$this->update_record($post);
 
         return $res;
         }
@@ -47,7 +48,6 @@ class Timetracker_lib
 
             if ($this->ci->form_validation->run() === TRUE) {
 
-
                 $res=array();
                 $param=array();
                 $post['start']=trim($post['start']);
@@ -58,23 +58,12 @@ class Timetracker_lib
                 if ($post['start'][0]=='.') $param['running']=0;  // ping
                 if (element('value_name',$post)) {  $type_record='value';    $param['running']=0;   }
 
-
-
-
-
-
                 preg_match('/\[{1}.+\]{1}/i',$post['start'], $path_tags); // get tags from path
                 if (($path_tags) && (!element('tags',$post))) $post['tags']=trim($path_tags[0],'[] ');
 
                  if (element('tags',$post)) $tags=preg_split('/,/', $post['tags'], -1, PREG_SPLIT_NO_EMPTY); // get tags from input
 
-
-
-
                  $post['start']=preg_replace('/(\!|\.|\[{1}.+\]{1})*/i', '', $post['start']); // clean activity path phase1
-
-
-
 
                  if ($type_record!='value') {
                      preg_match('/\#{1}.+\={1}.+/i', $post['start'],  $path_value); // get value from path
@@ -86,12 +75,7 @@ class Timetracker_lib
                         }
                  }
 
-
                  $post['start']=preg_replace('/\#{1}.+\={1}.+/i', '', $post['start']); // clean activity path phase2
-
-
-
-
 
                 if (strpos($post['start'], '@') === FALSE)
                 {
@@ -105,12 +89,8 @@ class Timetracker_lib
                     $title = trim( $split[0] );
                 }
 
-
-
                 if (isset($post['description'])) $param['description']=trim( $post['description'] );
                 if (isset($post['localtime'])) $param['diff_greenwich']=$post['localtime']; // TODO recup greenwich from time
-
-
 
                 $res['activity']= $this->create_record($title,$path,$type_record,$param);
                 $res['alerts']= array( array('type'=>'success', 'alert'=>'start new activity: '.$res['activity']['title']) );
@@ -124,6 +104,14 @@ class Timetracker_lib
             }
          return $res;
         }
+
+
+    function update_record($post)
+    {
+
+
+     //TODO!
+    }
 
 
 
@@ -334,8 +322,29 @@ class Timetracker_lib
             if ($record['running']) $record['duration']= $this->calcul_duration($record);
                 else $record['stop_at']= date ("Y-m-d H:i:s",  strtotime( $record['start_time'])+$record['duration'] );
 
+
             $record['tags']=$this->ci->tt_tags->get_record_tags($record['id']);
             $record['value']=$this->ci->tt_values->get_record_value($record['id']);
+
+            $record['tag_path']='';
+            if ($record['tags'])
+                foreach ($record['tags'] as $k => $tag) {
+                    if ($record['tag_path']!='') $record['tag_path'].=', ';
+                    $record['tag_path'].=$tag['tag'];
+                    }
+
+            $record['categorie_path']='';
+            if ($record['path_array'])
+                foreach ($record['path_array'] as $k => $cat) {
+                    if ($record['categorie_path']!='') $record['categorie_path'].='/';
+                    $record['categorie_path'].=$cat['title'];
+                    }
+
+            if ($record['categorie_path']!='')
+                $record['activity_path']=$record['title'].'@'.$record['categorie_path'];
+            else $record['activity_path']=$record['title'];
+
+            if ($record['type_of_record']=='todo') $record['activity_path']='!'.$record['activity_path'];
 
         return $record;
     }
