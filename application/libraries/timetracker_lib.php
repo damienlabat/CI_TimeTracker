@@ -26,88 +26,104 @@ class Timetracker_lib
 
 /* gestion POST */
 
-function fromPOST($post){
-    $res=array();
+    function fromPOST($post){
+        $res=NULL;
 
-    if (element('start',$post)){
-        $param=array();
-        $post['start']=trim($post['start']);
 
-        $type_record='activity';
+        $this->ci->load->helper('form');
+        $this->ci->load->library('form_validation');
 
-        if ($post['start'][0]=='!') $type_record='todo';
-        if ($post['start'][0]=='.') $param['running']=0;  // ping
-        if (element('value_name',$post)) {  $type_record='value';    $param['running']=0;   }
+        if (element('start',$post)) $res=$this->start_record($post);
 
+        return $res;
+        }
 
 
 
+    function start_record($post){
 
 
-        preg_match('/\[{1}.+\]{1}/i',$post['start'], $path_tags); // get tags from path
-        if (($path_tags) && (!element('tags',$post))) $post['tags']=trim($path_tags[0],'[] ');
+            $this->ci->form_validation->set_rules('start', 'Activity', 'required');
 
-         if (element('tags',$post)) $tags=preg_split('/,/', $post['tags'], -1, PREG_SPLIT_NO_EMPTY); // get tags from input
-
+            if ($this->ci->form_validation->run() === TRUE) {
 
 
+                $res=array();
+                $param=array();
+                $post['start']=trim($post['start']);
 
-         $post['start']=preg_replace('/(\!|\.|\[{1}.+\]{1})*/i', '', $post['start']); // clean activity path phase1
+                $type_record='activity';
+
+                if ($post['start'][0]=='!') $type_record='todo';
+                if ($post['start'][0]=='.') $param['running']=0;  // ping
+                if (element('value_name',$post)) {  $type_record='value';    $param['running']=0;   }
 
 
 
 
-         if ($type_record!='value') {
-             preg_match('/\#{1}.+\={1}.+/i', $post['start'],  $path_value); // get value from path
-             if ($path_value) {
-                 $path_value_array=preg_split('/=/', $path_value[0], -1, PREG_SPLIT_NO_EMPTY);
-                 $post['value_name']=trim($path_value_array[0],'# ');
-                 $post['value']=trim($path_value_array[1]);
-                 $type_record='value';    $param['running']=0;
+
+
+                preg_match('/\[{1}.+\]{1}/i',$post['start'], $path_tags); // get tags from path
+                if (($path_tags) && (!element('tags',$post))) $post['tags']=trim($path_tags[0],'[] ');
+
+                 if (element('tags',$post)) $tags=preg_split('/,/', $post['tags'], -1, PREG_SPLIT_NO_EMPTY); // get tags from input
+
+
+
+
+                 $post['start']=preg_replace('/(\!|\.|\[{1}.+\]{1})*/i', '', $post['start']); // clean activity path phase1
+
+
+
+
+                 if ($type_record!='value') {
+                     preg_match('/\#{1}.+\={1}.+/i', $post['start'],  $path_value); // get value from path
+                     if ($path_value) {
+                         $path_value_array=preg_split('/=/', $path_value[0], -1, PREG_SPLIT_NO_EMPTY);
+                         $post['value_name']=trim($path_value_array[0],'# ');
+                         $post['value']=trim($path_value_array[1]);
+                         $type_record='value';    $param['running']=0;
+                        }
+                 }
+
+
+                 $post['start']=preg_replace('/\#{1}.+\={1}.+/i', '', $post['start']); // clean activity path phase2
+
+
+
+
+
+                if (strpos($post['start'], '@') === FALSE)
+                {
+                    $path = '';
+                    $title = trim( $post['start'] );
                 }
-         }
+                else
+                {
+                    $split= preg_split('/@/', $post['start'], -1, PREG_SPLIT_NO_EMPTY);
+                    $path =  trim( $split[1] );
+                    $title = trim( $split[0] );
+                }
 
 
-         $post['start']=preg_replace('/\#{1}.+\={1}.+/i', '', $post['start']); // clean activity path phase2
+
+                if (isset($post['description'])) $param['description']=trim( $post['description'] );
+                if (isset($post['localtime'])) $param['diff_greenwich']=$post['localtime']; // TODO recup greenwich from time
 
 
 
+                $res['activity']= $this->create_record($title,$path,$type_record,$param);
+                $res['alerts']= array( array('type'=>'success', 'alert'=>'start new activity: '.$res['activity']['title']) );
 
+                if (isset($tags))
+                     foreach ($tags as $k => $tag)
+                                $this->add_tag( $res['activity']['record']['id'], trim($tag) );  // add tags
 
-        if (strpos($post['start'], '@') === FALSE)
-        {
-            $path = '';
-            $title = trim( $post['start'] );
+                if (element('value_name',$post))
+                    $this->add_value( $res['activity']['record']['id'], trim($post['value_name']), trim($post['value']) ); // add value
+            }
+         return $res;
         }
-        else
-        {
-            $split= preg_split('/@/', $post['start'], -1, PREG_SPLIT_NO_EMPTY);
-            $path =  trim( $split[1] );
-            $title = trim( $split[0] );
-        }
-
-
-
-        if (isset($post['description'])) $param['description']=trim( $post['description'] );
-        if (isset($post['localtime'])) $param['diff_greenwich']=$post['localtime']; // TODO recup greenwich from time
-
-
-
-        $res['activity']= $this->create_record($title,$path,$type_record,$param);
-        $res['alerts']= array( array('type'=>'success', 'alert'=>'start new activity: '.$res['activity']['title']) );
-
-        if (isset($tags))
-             foreach ($tags as $k => $tag)
-                        $this->add_tag( $res['activity']['record']['id'], trim($tag) );  // add tags
-
-        if (element('value_name',$post))
-            $this->add_value( $res['activity']['record']['id'], trim($post['value_name']), trim($post['value']) ); // add value
-
-
-
-        }
-    return $res;
-    }
 
 
 

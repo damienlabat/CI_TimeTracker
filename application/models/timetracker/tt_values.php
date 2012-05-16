@@ -25,12 +25,12 @@ class Tt_values extends CI_Model
     }
 
     /**
-     * get value_type
+     * get value_type_by_id
      *
      * @value_type_id   int
      * @return          array
      */
-    function get_value_type( $value_type_id )
+    function get_value_type_by_id( $value_type_id )
     {
         $this->db->where('id', $value_type_id);
 
@@ -38,6 +38,7 @@ class Tt_values extends CI_Model
         if ($query->num_rows() == 1) return $query->row_array();
         return NULL;
     }
+
 
 
      /**

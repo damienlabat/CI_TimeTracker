@@ -7,6 +7,7 @@ class Tt_activities extends CI_Model
     private $records_table      = 'records';
 
 
+
     /**
      * Get activity by Id
      *

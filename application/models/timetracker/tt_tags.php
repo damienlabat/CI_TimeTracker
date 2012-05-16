@@ -55,6 +55,7 @@ class Tt_tags extends CI_Model
      */
     function create_tag( $user_id, $tag )
     {
+        $tag=url_title($tag);
         if ( $this->db->insert($this->tags_table, array('tag'=>$tag, 'user_ID'=>$user_id)) ) {
                $data = $this->get_tag( $user_id, $tag );
             return $data;

@@ -20,6 +20,7 @@ class Tt_categories extends CI_Model
         return NULL;
     }
 
+
     /**
      * Get categorie by Title
      *
@@ -50,6 +51,7 @@ class Tt_categories extends CI_Model
      */
     function create_categorie($user_id,$title,$parent)
     {
+
         $data = array('title' => strtolower($title), 'parent' => $parent, 'user_ID' => $user_id);
 
         if ($this->db->insert($this->categories_table, $data)) {

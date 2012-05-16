@@ -1,4 +1,7 @@
 <?=form_open('tt/'.$user_name, array('id' => 'classicform') )?>
+<?php
+    print_r($record);
+?>
 
 
     <div class="row-fluid">
@@ -6,12 +9,6 @@
         <input type="text" placeholder="activity" name="start"  id="activity" value="">
         <a class="popclick-trigger" data-content="Use an <code>@</code> to add a categorie <code>activity@categorie</code><br/>Use <code>/</code> for sub-categories <code>activity@categorie/subcategorie</code></span>" rel="popover" href="#" data-original-title="start a new activitie"><i class='icon-question-sign'></i></a>
     </div>
-    <!--div class='well span5'>
-            will create new categorie .... TODO!
-            <div class='alert alert-success'>Ok all seems ok<br/>Let's go!</div>
-            <div class='alert alert-info'>Will create new categorie: toto<br/>Let's go!</div>
-            <div class='alert alert-error'>Activty truc@toto Already running!<br/>sorry :(</div>
-    </div-->
 
     <div class="row-fluid">
         <label for="tags">tags</label>

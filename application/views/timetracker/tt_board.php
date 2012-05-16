@@ -2,7 +2,7 @@
 <div id='commandebloc' class="span12"><div class='cadre'>
     <h2>Start a new activity</h2>
     <a href='#' class='configbtn btn-mini'><i class='icon-cog'></i></a>
-    <?php $this->load->view('timetracker/form/classicform'); ?>
+    <?php $this->load->view('timetracker/form/main_form'); ?>
 </div></div>
 
 

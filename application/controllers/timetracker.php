@@ -122,6 +122,10 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
         // TODO!
+        $this->data['record']= $this->timetracker_lib->get_record_by_id($record_id);
+        if (!$this->data['record']) show_404();
+         $this->data['tt_layout']='tt_record_edit';
+
         $this->data['TODO']="edit record ".$record_id;
         $this->_render();
     }
@@ -206,6 +210,7 @@ class Timetracker extends CI_Controller {
         $this->data['tt_layout']='tt_activity';
       }
 
+
     public function activity($username,$activity_id=NULL)
     {
         $this->_checkUsername($username);
@@ -228,7 +233,7 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername($username);
         $this->_checkRecordType($activity_id,'activity');
         // TODO!
-         $this->data['TODO']="activity ".$activity_id." edit";
+        $this->data['TODO']="activity ".$activity_id." edit";
         $this->_render();
     }
 
