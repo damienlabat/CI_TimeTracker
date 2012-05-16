@@ -55,7 +55,7 @@ class Timetracker extends CI_Controller {
     public function _checkRecordType($record_id,$type_of_record){
         // recup type
 
-        //if ($type_of_record!='tracking') $this->show404();  //TODO controlle du type
+        //if ($type_of_record!='tracking') show_404();  //TODO controlle du type
     }
 
 
@@ -90,6 +90,9 @@ class Timetracker extends CI_Controller {
     {
         $this->_checkUsername($username);
 
+        $this->data['record']= $this->timetracker_lib->get_record_by_id($record_id);
+        if (!$this->data['record']) show_404();
+
         $stopped= $this->timetracker_lib->stop_record($record_id);
 
         if (isset($stopped['alerts'])) $this->session->set_flashdata('alerts', $stopped['alerts'] );
@@ -105,6 +108,7 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername($username);
         $this->data['tt_layout']='tt_record';
         $this->data['record']= $this->timetracker_lib->get_record_by_id($record_id);
+        if (!$this->data['record']) show_404();
         $this->data['cat_tree']=$this->timetracker_lib->get_categories_tree();
         $this->data['activities']=$this->timetracker_lib->get_categorie_activities( $this->data['record']['categorie_ID'] );
         $this->_render();
@@ -131,6 +135,7 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername($username);
         $this->data['tt_layout']='tt_record';
         $this->data['record']= $this->timetracker_lib->get_record_by_id($record_id);
+        if (!$this->data['record']) show_404();
         $this->data['record']['delete_confirm']= TRUE;
         $this->data['cat_tree']=$this->timetracker_lib->get_categories_tree();
         $this->data['activities']=$this->timetracker_lib->get_categorie_activities( $this->data['record']['categorie_ID'] );
@@ -157,6 +162,9 @@ class Timetracker extends CI_Controller {
     public function restart($username,$record_id)
     {
         $this->_checkUsername($username);
+
+        $this->data['record']= $this->timetracker_lib->get_record_by_id($record_id);
+        if (!$this->data['record']) show_404();
 
         if ($this->timetracker_lib->restart_record($record_id))
                 $alert= array( array('type'=>'success', 'alert'=>'start new record !') );
@@ -190,6 +198,7 @@ class Timetracker extends CI_Controller {
      public function _generic_activity_show($username,$activity_id)
      {
         $this->data['activity']=$this->tt_activities->get_activity_by_id($activity_id);
+        if (!$this->data['activity']) show_404();
         $this->data['activity']['path_array']=$this->timetracker_lib->get_categorie_path_array($this->data['activity']['categorie_ID']);
         $this->data['breadcrumb']=$this->timetracker_lib->build_breadcrumb($this->data['activity']);
         $this->data['cat_tree']=$this->timetracker_lib->get_categories_tree();
@@ -345,6 +354,7 @@ class Timetracker extends CI_Controller {
         // TODO!
 
         $this->data['categorie']=$this->tt_categories->get_categorie_by_id($categorie_id);
+        if (!$this->data['categorie']) show_404();
         $this->data['categorie']['path_array']=$this->timetracker_lib->get_categorie_path_array($categorie_id);
         $this->data['breadcrumb']=$this->timetracker_lib->build_breadcrumb($this->data['categorie']);
         $this->data['cat_tree']=$this->timetracker_lib->get_categories_tree();

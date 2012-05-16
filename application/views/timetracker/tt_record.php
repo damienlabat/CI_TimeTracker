@@ -1,3 +1,4 @@
+<?php if($record): ?>
 <div id='activity' class="span4"><div class='cadre'>
     <?php
  $this->load->view('timetracker/tt_tree');
@@ -10,4 +11,5 @@
     <?=record_li($record,$user_name )?>
     </ul>
 </div></div>
+<?php endif; ?>
 

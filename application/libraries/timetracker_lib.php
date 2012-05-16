@@ -204,6 +204,7 @@ function fromPOST($post){
 
     function recur_tree($data,$var_root,$root){
         $res=array();
+        if ($data)
         foreach ($data as $k => $item)
             if ($item[$var_root] == $root)
             {
