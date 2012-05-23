@@ -55,16 +55,18 @@ if ( ! function_exists('record_li'))
 {
     function record_li($record,$username,$param=array() )
     {
-        print_r($record);
 
     if (!isset($param['duration'])) $param['duration']='normal'; // normal OR full (hide/show seconds for 1 minute min duration)
 
 
-    $html= "<li class='record-item activity-".$record['type_of_record']."'>";
+    $html= "<li class='record-item activity-".$record['activity']['type_of_record']."'>";
 
     $html.= record_time($record,$username);
-    $html.= activity_path($record,$username);
+    $html.= activity_path($record['activity'],$username);
+    $html.= value($record,$username);
     $html.= tag_list($record['tags'],$username);
+    $html.= record_buttons($record,$username);
+
 
 
 
@@ -95,10 +97,10 @@ if ( ! function_exists('record_time'))
       $html.= '<span class="record-duration">';
 
       if (($record['duration']>0)OR($record['running']==1)) $html.= duration2human($record['duration']);
-        else if (($record['type_of_record']!='value')&&(!$record['running'])) $html.="<br/><span class='label label-info'>PING!</span>";
-         else if ($record['type_of_record']=='value') $html.="<br/><span class='label label-info'>Value</span>";
+        else if (($record['activity']['type_of_record']!='value')&&(!$record['running'])) $html.="<br/><span class='label label-info'>PING!</span>";
+         else if ($record['activity']['type_of_record']=='value') $html.="<br/><span class='label label-info'>Value</span>";
 
-      if ($record['type_of_record']=='todo') {
+      if ($record['activity']['type_of_record']=='todo') {
             if ($record['running'])  $html.="<br/><span class='label label-warning'>TODO!</span>";
                 else  $html.="<br/><span class='label label-success'>DONE!</span>";
         }
@@ -117,25 +119,38 @@ if ( ! function_exists('record_time'))
 
 if ( ! function_exists('activity_path'))
 {
-    function activity_path($record,$username)
+    function activity_path($activity,$username)
     {
 
-      if (!isset($record['activity_ID'])) $record['activity_ID']=$record['id'];
       $html= '<div class="activity-path">';
       $html.= '<span class="activity-item">';
 
-      if ($record['type_of_record']=='todo') $html.= '!';
+      if ($activity['type_of_record']=='todo') $html.= '!';
 
-      if (isset($record['duration']))
-        if (($record['type_of_record']!='value')&&($record['duration']==0)&&($record['running']==0))$html.= '.';
-
-      $html.= "<a href='".site_url('tt/'.$username.'/'.$record['type_of_record'].'/'.$record['activity_ID'])."'>".$record['title']."</a>";
-      if (isset($record['value']))  $html.=value($record['value'],$username);
+      $html.= "<a href='".site_url('tt/'.$username.'/'.$activity['type_of_record'].'/'.$activity['id'])."'>".$activity['title']."</a>";
+     // if (isset($activity['value']))  $html.=value($record['value'],$username);
       $html.= "</span>";
 
-      $html.= categorie_path($record['path_array'],$record['categorie_path'],$username);
+      $html.= categorie_path($activity['path_array'],$activity['categorie_path'],$username);
+
+      $html.= '</div>';
+      return $html;
+    }
+}
+
+
+
+
+if ( ! function_exists('record_buttons'))
+{
+    function record_buttons($record,$username)
+    {
+
+      $html= '';
+
 
       if (isset($record['running'])) {
+
         $html.= '<div class="buttons btn-group">';
         $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/edit')."'>edit</a>";
         if (!$record['running'])
@@ -149,10 +164,10 @@ if ( ! function_exists('activity_path'))
     }
 
 
-      $html.= '</div>';
       return $html;
     }
 }
+
 
 
 
@@ -216,9 +231,12 @@ if ( ! function_exists('tag'))
 
 if ( ! function_exists('value'))
 {
-    function value($value,$username)
-    {
-      $html= "<div class='value'><a href='".site_url('tt/'.$username.'/valuetype/'.$value['id'])."'>#".$value['title']."</a> = <a href='".site_url('tt/'.$username.'/value/'.$value['record_ID'])."'>".$value['value']."</a></div>";
-      return $html;
+    function value($record,$username) {
+        $html='';
+
+        if (isset($record['value']))
+            $html= "<div class='value'><a href='".site_url('tt/'.$username.'/valuetype/'.$record['value']['id'])."'>#".$record['value']['title']."</a> = <a href='".site_url('tt/'.$username.'/value/'.$record['id'])."'>".$record['value']['value']."</a></div>";
+
+        return $html;
     }
 }

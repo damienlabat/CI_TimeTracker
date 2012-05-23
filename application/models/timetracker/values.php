@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Tt_values extends CI_Model
+class Values extends CI_Model
 {
     private $values_type_table          = 'values_types';
     private $l_record_values_table      = 'l_records_values';
@@ -201,5 +201,31 @@ class Tt_values extends CI_Model
         return NULL;
 
     }
+
+
+
+
+ /* =============
+ * TOOLS
+ * =============*/
+
+    function add_value_record($user_id,$record_id,$value_name,$value)
+    {
+        $value_obj=$this->getorcreate_value_type( $user_id, $value_name );
+        if ($this->add_value( $record_id,$value_obj['id'] ,$value ))
+            return $this->get_value( $record_id, $value_obj['id']  );
+        return NULL;
+    }
+
+
+    function remove_value_record($user_id,$record_id,$value_name)
+    {
+       $value_type_obj=$this->value_type_by_title($user_id, $value_name);
+       if (!$value_type_obj) return FALSE;
+        return $this->remove_value( $record_id, $value_type_obj['id'] );
+
+    }
+
+
 
 } // END Class

@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Tt_records extends CI_Model
+class Records extends CI_Model
 {
     private $activities_table   = 'activities';
     private $categories_table   = 'categories';
@@ -16,17 +16,17 @@ class Tt_records extends CI_Model
      */
     function get_record_by_id($record_id)
     {
-        //$this->db->where('id', $record_id);
+       $this->db->where('id', $record_id);
 
-       // $query = $this->db->get($this->records_table);
+       $query = $this->db->get($this->records_table);
 
 
-        $this->db->select($this->activities_table.'.title,type_of_record,categorie_ID,'.$this->records_table.'.*');
+      /*  $this->db->select($this->activities_table.'.title,type_of_record,categorie_ID,'.$this->records_table.'.*');
         $this->db->from($this->records_table);
         $this->db->join($this->activities_table, $this->activities_table.'.id = '. $this->records_table.'.activity_ID');
         $this->db->where($this->records_table.'.id',$record_id);
 
-        $query = $this->db->get();
+        $query = $this->db->get();*/
 
         if ($query->num_rows() == 1) return $query->row_array();
         return NULL;
@@ -171,6 +171,114 @@ class Tt_records extends CI_Model
         if ($this->db->delete($this->records_table)) return TRUE;
 
         return FALSE;
+    }
+
+
+
+    /* ===========
+     * TOOLS
+     * ===========*/
+
+    function get_running_activities_full($user_id){
+        $activities= $this->get_running_activities($user_id);
+        if ($activities) $activities= $this->complete_records_info($activities);
+
+        return $activities;
+    }
+
+
+    function get_running_TODO_full($user_id){
+        $activities= $this->get_running_TODO($user_id);
+        if ($activities) $activities= $this->complete_records_info($activities);
+
+        return $activities;
+    }
+
+
+    function get_record_by_id_full($record_id){
+        $activitie= $this->get_record_by_id($record_id);
+        if ($activitie) $activitie= $this->complete_record_info($activitie);
+
+        return $activitie;
+    }
+
+
+    function get_last_actions_full($user_id,$categorie_id=NULL, $offset=0,$count=10){
+        $records=$this->get_last_activities($user_id,$offset,$count);
+        if ($records) $records= $this->complete_records_info($records);
+
+        return $records;
+    }
+
+
+    function restart_record( $record_id )
+    {
+        $record=$this->get_record_by_id($record_id);
+        $param=array(
+            'description'=> $record['description'],
+            'diff_greenwich'=>$record['diff_greenwich']
+        );
+
+        if (($record['type_of_record']=='value') || ((!$record['running']) && ($record['duration']==0)) ) $param['running']=0;
+
+       $new_record= $this->create_record($record['activity_ID'],$param);
+
+       foreach ($record['tags'] as $k => $tag) $this->tags->add_tag( $new_record['id'], $tag['id'] );  // add tags
+
+       if ($record['type_of_record']=='value') $this->values->add_value( $new_record['id'], $record['value']['value_type_ID'], $record['value']['value'] );
+
+        return TRUE;
+    }
+
+
+    function stop_record($id){
+        $record= $this->get_record_by_id($id);
+        $duration= $this->calcul_duration($record);
+        return $this->update_record( $id, array('duration'=>$duration, 'running'=>0) );
+    }
+
+
+    function calcul_duration($record, $endtime=NULL )
+    {
+        if ($endtime==NULL) $endtime= time();
+        $duration= $endtime - strtotime( $record['start_time'] );
+        return $duration;
+    }
+
+
+
+     function complete_records_info($records) {
+
+        foreach ($records as $k => $record)
+            $records[$k]=$this->complete_record_info($record);
+
+        return $records;
+    }
+
+
+
+
+    function complete_record_info($record) {
+
+      //  $record['path_array']= $this->categories->get_categorie_path_array( $record['categorie_ID'] );
+
+            if ($record['running']) $record['duration']= $this->calcul_duration($record);
+                else $record['stop_at']= date ("Y-m-d H:i:s",  strtotime( $record['start_time'])+$record['duration'] );
+
+
+            $record['tags']=$this->tags->get_record_tags($record['id']);
+            $record['value']=$this->values->get_record_value($record['id']);
+
+            $record['tag_path']='';
+            if ($record['tags'])
+                foreach ($record['tags'] as $k => $tag) {
+                    if ($record['tag_path']!='') $record['tag_path'].=', ';
+                    $record['tag_path'].=$tag['tag'];
+                    }
+
+        $record['activity']=    $this->activities->get_activity_by_id_full( $record['activity_ID'] );
+
+        return $record;
     }
 
 

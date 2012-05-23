@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Tt_tags extends CI_Model
+class Tags extends CI_Model
 {
     private $tags_table              = 'tags';
     private $l_records_tags_table    = 'l_records_tags';
@@ -149,6 +149,25 @@ class Tt_tags extends CI_Model
 
 
 
+/* =============
+ * TOOLS
+ * =============*/
+
+     function add_tag_record($user_id,$record_id,$tag)
+    {
+        $tag_obj=$this->getorcreate_tag( $user_id,$tag );
+        if ($this->add_tag( $record_id,$tag_obj['id'] ))
+            return $tag_obj;
+        return NULL;
+    }
+
+    function remove_tag_record($user_id,$record_id,$tag)
+    {
+       $tag_obj=$this->get_tag( $user_id,$tag );
+       if (!$tag_obj) return FALSE;
+        return $this->remove_tag( $record_id,$tag_obj['id'] );
+
+    }
 
 
 

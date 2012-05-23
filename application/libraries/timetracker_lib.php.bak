@@ -7,25 +7,25 @@ class Timetracker_lib
 
     function __construct()
     {
-        $this->ci =& get_instance();
+       /*  $this->ci =& get_instance();
 
         $this->ci->load->library('tank_auth');
         $this->user_id= $this->ci->tank_auth->get_user_id();
         $this->user_name= $this->ci->tank_auth->get_username();
 
-        $this->ci->load->model('timetracker/tt_categories');
+       $this->ci->load->model('timetracker/tt_categories');
         $this->ci->load->model('timetracker/tt_activities');
         $this->ci->load->model('timetracker/tt_tags');
         $this->ci->load->model('timetracker/tt_values');
         $this->ci->load->model('timetracker/tt_records');
 
-        $this->ci->load->helper('array');
+        $this->ci->load->helper('array');*/
 
 
     }
 
 /* gestion POST */
-
+/*
     function fromPOST($post){
         $res=NULL;
 
@@ -65,9 +65,9 @@ class Timetracker_lib
 
                  $post['start']=preg_replace('/(\!|\.|\[{1}.+\]{1})*/i', '', $post['start']); // clean activity path phase1
 
-                 if ($type_record!='value') {
+                if ($type_record!='value') {
                      preg_match('/\#{1}.+\={1}.+/i', $post['start'],  $path_value); // get value from path
-                     if ($path_value) {
+           /*           if ($path_value) {
                          $path_value_array=preg_split('/=/', $path_value[0], -1, PREG_SPLIT_NO_EMPTY);
                          $post['value_name']=trim($path_value_array[0],'# ');
                          $post['value']=trim($path_value_array[1]);
@@ -111,12 +111,12 @@ class Timetracker_lib
 
 
      //TODO!
-    }
+    }*/
 
 
 
 
-    function build_breadcrumb($obj)
+  /*  function build_breadcrumb($obj)
     {
         $breadcrumb=array();
 
@@ -127,12 +127,12 @@ class Timetracker_lib
         foreach ($path_array as $k => $cat)  $breadcrumb[]= array('title'=>$cat['title'], 'url'=>'tt/'.$this->user_name.'/categorie/'.$cat['id']);
 
         return array_reverse($breadcrumb);
-    }
+    }*/
 
 
 
 /* CATEGORIES */
-
+/*
     function getorcreate_categoriespath($path)
     {
         $cat_array=preg_split("/\//", $path);
@@ -221,11 +221,11 @@ class Timetracker_lib
     }
 
 
-
-    function update_categorie($path,$data){
-        $cat=$this->getorcreate_categoriespath($path);
+*/
+  /*  function update_categorie($path,$data){
+        $cat=$this->getorcreate_categoriespath($user_id,$path);
         return $this->ci->tt_categories->update_categorie($this->user_id, $cat['title'],$cat['parent'],$data);
-    }
+    }*/
 
 
 
@@ -240,15 +240,11 @@ class Timetracker_lib
 
 /* ACTIVITIES */
 
-    function get_categorie_activities( $categorie_id, $show_empty= FALSE )
-    {
-        return $this->ci->tt_activities->get_categorie_activities( $categorie_id , $show_empty);
-    }
 
-
+/*
     function create_record($title,$path=NULL,$type_record,$param=array())
     {
-        $cat=$this->getorcreate_categoriespath($path); // BUG ?
+        $cat=$this->getorcreate_categoriespath($user_id,$path); // BUG ?
         if (isset($param['tags']))
         {
             $tags=$param['tags'];
@@ -266,8 +262,8 @@ class Timetracker_lib
         $activity['record']=$this->ci->tt_records->create_record($activity['id'],$param);
 
         return $activity;
-    }
-
+    }*/
+/*
 
     function get_running_activities(){
         $activities= $this->ci->tt_records->get_running_activities($this->user_id);
@@ -301,9 +297,9 @@ class Timetracker_lib
         if ($records) $records= $this->complete_records_info($records);
 
         return $records;
-    }
+    }*/
 
-
+/*
     function complete_records_info($records) {
 
         foreach ($records as $k => $record)
@@ -348,15 +344,15 @@ class Timetracker_lib
 
         return $record;
     }
+*/
 
-
-    function delete_record( $record_id )
+   /* function delete_record( $record_id )
     {
         return $this->ci->tt_records->delete_record( $record_id );
-    }
+    }*/
 
 
-
+/*
     function restart_record( $record_id )
     {
         $record=$this->get_record_by_id($record_id);
@@ -375,29 +371,29 @@ class Timetracker_lib
 
         return TRUE;
     }
-
+*/
 
 
 /* STOP activitie */
 
-function calcul_duration($record, $endtime=NULL )
+/*function calcul_duration($record, $endtime=NULL )
 {
     if ($endtime==NULL) $endtime= time();
     $duration= $endtime - strtotime( $record['start_time'] );
     return $duration;
-}
+}*/
 
-function stop_record($id){
+/*function stop_record($id){
     $record= $this->ci->tt_records->get_record_by_id($id);
     $duration= $this->calcul_duration($record);
     return $this->ci->tt_records->update_record( $id, array('duration'=>$duration, 'running'=>0) );
-    }
+    }*/
 
 
 
 /* TAGS */
 
-    function add_tag($record_id,$tag)
+  /*  function add_tag($record_id,$tag)
     {
         $tag_obj=$this->ci->tt_tags->getorcreate_tag( $this->user_id,$tag );
         if ($this->ci->tt_tags->add_tag( $record_id,$tag_obj['id'] ))
@@ -420,7 +416,7 @@ function stop_record($id){
 
     function get_tag_list(){
         return $this->ci->tt_tags->get_tag_list( $this->user_id );
-    }
+    }*/
 
 
 /* VALUES */
@@ -440,7 +436,7 @@ function stop_record($id){
 
     }
 
-    function update_value($record_id,$value_name,$value)
+   /* function update_value($record_id,$value_name,$value)
     {
         return $this->ci->tt_values->update_value( $this->user_id,$record_id,$value_name,$value );
 
@@ -458,7 +454,7 @@ function stop_record($id){
 
     function get_value($record_id){
          return $this->ci->tt_values->get_value( $record_id );
-    }
+    }*/
 
 }
 

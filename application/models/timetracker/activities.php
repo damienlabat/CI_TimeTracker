@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Tt_activities extends CI_Model
+class Activities extends CI_Model
 {
     private $activities_table   = 'activities';
     private $categories_table   = 'categories';
@@ -72,7 +72,7 @@ class Tt_activities extends CI_Model
      * @categorie_id    int
      * @return          array
      */
-    function get_categorie_activities( $categorie_id ,$show_empty )
+    function get_categorie_activities( $categorie_id ,$show_empty=FALSE )
     {
         $this->db->select($this->activities_table.'.*');
 
@@ -127,6 +127,38 @@ class Tt_activities extends CI_Model
 
 
 
+    /* =============
+     * TOOLS
+     * =============*/
+
+
+     function get_activity_by_id_full($activity_id){
+        $activity= $this->get_activity_by_id($activity_id);
+        if ($activity) $activity= $this->complete_activity_info($activity);
+
+        return $activity;
+    }
+
+
+    function complete_activity_info($activity) {
+
+        $activity['path_array']= $this->categories->get_categorie_path_array( $activity['categorie_ID'] );
+
+        $activity['categorie_path']='';
+            if ($activity['path_array'])
+                foreach ($activity['path_array'] as $k => $cat) {
+                    if ($activity['categorie_path']!='') $activity['categorie_path'].='/';
+                    $activity['categorie_path'].=$cat['title'];
+                    }
+
+            if ($activity['categorie_path']!='')
+                $activity['activity_path']=$activity['title'].'@'.$activity['categorie_path'];
+            else $activity['activity_path']=$activity['title'];
+
+            if ($activity['type_of_record']=='todo') $activity['activity_path']='!'.$activity['activity_path'];
+
+        return $activity;
+    }
 
 
 
