@@ -1,6 +1,10 @@
-<?=form_open('tt/'.$user_name, array('id' => 'classicform') )?>
+<?= form_open( 'tt/' . $user_name, array(
+     'id' => 'classicform'
+) ) ?>
 
-<?php echo validation_errors(); ?>
+<?php
+echo validation_errors();
+?>
 
     <div class="row-fluid">
         <label for="activity">activity</label>

@@ -1,10 +1,11 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
+if ( !defined( 'BASEPATH' ) )
+    exit( 'No direct script access allowed' );
 
-class Activities extends CI_Model
-{
-    private $activities_table   = 'activities';
-    private $categories_table   = 'categories';
-    private $records_table      = 'records';
+class Activities extends CI_Model {
+    private $activities_table = 'activities';
+    private $categories_table = 'categories';
+    private $records_table = 'records';
 
 
 
@@ -14,12 +15,12 @@ class Activities extends CI_Model
      * @activity_id     int
      * @return          array
      */
-    function get_activity_by_id($activity_id)
-    {
-        $this->db->where('id', $activity_id);
+    function get_activity_by_id( $activity_id ) {
+        $this->db->where( 'id', $activity_id );
 
-        $query = $this->db->get($this->activities_table);
-        if ($query->num_rows() == 1) return $query->row_array();
+        $query = $this->db->get( $this->activities_table );
+        if ( $query->num_rows() == 1 )
+            return $query->row_array();
         return NULL;
     }
 
@@ -32,14 +33,14 @@ class Activities extends CI_Model
      * @type_record     string
      * @return          array
      */
-    function get_activity( $categorie_id,$title,$type_record )
-    {
-        $this->db->where('categorie_ID', $categorie_id);
-        $this->db->where('title', $title);
-        $this->db->where('type_of_record', $type_record);
+    function get_activity( $categorie_id, $title, $type_record ) {
+        $this->db->where( 'categorie_ID', $categorie_id );
+        $this->db->where( 'title', $title );
+        $this->db->where( 'type_of_record', $type_record );
 
-        $query = $this->db->get($this->activities_table);
-        if ($query->num_rows() == 1) return $query->row_array();
+        $query = $this->db->get( $this->activities_table );
+        if ( $query->num_rows() == 1 )
+            return $query->row_array();
         return NULL;
     }
 
@@ -52,13 +53,16 @@ class Activities extends CI_Model
      * @type_record     string
      * @return          array
      */
-    function create_activity( $categorie_id,$title,$type_record )
-    {
-        $param =array('title' => strtolower($title), 'categorie_id' => $categorie_id, 'type_of_record' =>$type_record );
+    function create_activity( $categorie_id, $title, $type_record ) {
+        $param = array(
+             'title' => strtolower( $title ),
+            'categorie_id' => $categorie_id,
+            'type_of_record' => $type_record
+        );
 
 
-        if ($this->db->insert($this->activities_table, $param)) {
-               $data = $this->get_activity_by_id( $this->db->insert_id() );
+        if ( $this->db->insert( $this->activities_table, $param ) ) {
+            $data = $this->get_activity_by_id( $this->db->insert_id() );
             return $data;
         }
         return NULL;
@@ -66,26 +70,26 @@ class Activities extends CI_Model
 
 
 
-     /**
+    /**
      * Get cat activities
      *
      * @categorie_id    int
      * @return          array
      */
-    function get_categorie_activities( $categorie_id ,$show_empty=FALSE )
-    {
-        $this->db->select($this->activities_table.'.*');
+    function get_categorie_activities( $categorie_id, $show_empty = FALSE ) {
+        $this->db->select( $this->activities_table . '.*' );
 
-        if (!$show_empty) {
-            $this->db->join('records', $this->activities_table.'.id = '.$this->records_table.'.activity_ID');
-            $this->db->group_by($this->records_table.'.activity_ID');
-            }
+        if ( !$show_empty ) {
+            $this->db->join( 'records', $this->activities_table . '.id = ' . $this->records_table . '.activity_ID' );
+            $this->db->group_by( $this->records_table . '.activity_ID' );
+        }
 
-        $this->db->where('categorie_ID', $categorie_id);
-        $this->db->order_by('title');
-        $query = $this->db->get($this->activities_table);
+        $this->db->where( 'categorie_ID', $categorie_id );
+        $this->db->order_by( 'title' );
+        $query = $this->db->get( $this->activities_table );
 
-        if ($query->num_rows() >= 1) return $query->result_array();
+        if ( $query->num_rows() >= 1 )
+            return $query->result_array();
         return NULL;
     }
 
@@ -99,10 +103,10 @@ class Activities extends CI_Model
      * @param           array
      * @return          array
      */
-    function getorcreate_activity($categorie_id,$title,$type_record )
-    {
-        $res=$this->get_activity($categorie_id,$title,$type_record );
-        if (!$res) $res=$this->create_activity( $categorie_id,$title,$type_record );
+    function getorcreate_activity( $categorie_id, $title, $type_record ) {
+        $res = $this->get_activity( $categorie_id, $title, $type_record );
+        if ( !$res )
+            $res = $this->create_activity( $categorie_id, $title, $type_record );
 
         return $res;
     }
@@ -115,11 +119,11 @@ class Activities extends CI_Model
      * @title           string
      * @return          boolean
      */
-    function update_activity( $activity_id, $param )
-    {
-        $this->db->where('id', $activity_id);
+    function update_activity( $activity_id, $param ) {
+        $this->db->where( 'id', $activity_id );
 
-        if ($this->db->update($this->activities_table, $param)) return TRUE;
+        if ( $this->db->update( $this->activities_table, $param ) )
+            return TRUE;
 
         return FALSE;
     }
@@ -132,30 +136,33 @@ class Activities extends CI_Model
      * =============*/
 
 
-     function get_activity_by_id_full($activity_id){
-        $activity= $this->get_activity_by_id($activity_id);
-        if ($activity) $activity= $this->complete_activity_info($activity);
+    function get_activity_by_id_full( $activity_id ) {
+        $activity = $this->get_activity_by_id( $activity_id );
+        if ( $activity )
+            $activity = $this->complete_activity_info( $activity );
 
         return $activity;
     }
 
 
-    function complete_activity_info($activity) {
+    function complete_activity_info( $activity ) {
+        $activity[ 'path_array' ] = $this->categories->get_categorie_path_array( $activity[ 'categorie_ID' ] );
 
-        $activity['path_array']= $this->categories->get_categorie_path_array( $activity['categorie_ID'] );
+        $activity[ 'categorie_path' ] = '';
+        if ( $activity[ 'path_array' ] )
+            foreach ( $activity[ 'path_array' ] as $k => $cat ) {
+                if ( $activity[ 'categorie_path' ] != '' )
+                    $activity[ 'categorie_path' ] .= '/';
+                $activity[ 'categorie_path' ] .= $cat[ 'title' ];
+            }
 
-        $activity['categorie_path']='';
-            if ($activity['path_array'])
-                foreach ($activity['path_array'] as $k => $cat) {
-                    if ($activity['categorie_path']!='') $activity['categorie_path'].='/';
-                    $activity['categorie_path'].=$cat['title'];
-                    }
+        if ( $activity[ 'categorie_path' ] != '' )
+            $activity[ 'activity_path' ] = $activity[ 'title' ] . '@' . $activity[ 'categorie_path' ];
+        else
+            $activity[ 'activity_path' ] = $activity[ 'title' ];
 
-            if ($activity['categorie_path']!='')
-                $activity['activity_path']=$activity['title'].'@'.$activity['categorie_path'];
-            else $activity['activity_path']=$activity['title'];
-
-            if ($activity['type_of_record']=='todo') $activity['activity_path']='!'.$activity['activity_path'];
+        if ( $activity[ 'type_of_record' ] == 'todo' )
+            $activity[ 'activity_path' ] = '!' . $activity[ 'activity_path' ];
 
         return $activity;
     }
