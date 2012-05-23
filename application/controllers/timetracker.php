@@ -244,7 +244,7 @@ class Timetracker extends CI_Controller {
         //$this->data['activity']['path_array']=$this->categories->get_categorie_path_array($this->data['activity']['categorie_ID']);
         $this->data[ 'breadcrumb' ] = $this->_build_breadcrumb( $this->data[ 'activity' ] );
         $this->data[ 'cat_tree' ]   = $this->categories->get_categories_tree( $this->user_id );
-        $this->data[ 'activities' ] = $this->activities->get_categorie_activities( $this->data[ 'record' ][ 'activity' ][ 'categorie_ID' ] );
+        $this->data[ 'activities' ] = $this->activities->get_categorie_activities( $this->data[ 'activity' ][ 'categorie_ID' ] );
         $this->data[ 'tt_layout' ]  = 'tt_activity';
     }
 

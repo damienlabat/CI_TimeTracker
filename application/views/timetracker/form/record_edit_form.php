@@ -3,7 +3,7 @@
 ) ) ?>
 
         <label for="activity">activity</label>
-        <input type="text" placeholder="activity" name="start"  id="activity" value="<?= $record[ 'activity_path' ] ?>">
+        <input type="text" placeholder="activity" name="start"  id="activity" value="<?= $record['activity'][ 'activity_path' ] ?>">
         <a class="popclick-trigger" data-content="Use an <code>@</code> to add a categorie <code>activity@categorie</code><br/>Use <code>/</code> for sub-categories <code>activity@categorie/subcategorie</code></span>" rel="popover" href="#" data-original-title="start a new activitie"><i class='icon-question-sign'></i></a>
         <br/>
 
