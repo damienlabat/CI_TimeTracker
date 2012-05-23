@@ -70,7 +70,7 @@ if ( ! function_exists('record_li'))
 
 
 
-   // if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
+    if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
 
 
 

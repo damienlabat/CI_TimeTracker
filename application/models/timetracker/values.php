@@ -232,5 +232,11 @@ class Values extends CI_Model {
     }
 
 
+    function reset_record_values( $record_id ) {
+       $res = $this->db->delete( $this->l_record_values_table, array(
+             'record_ID' => $record_id
+       ) );
+       return $res;
+    }
 
 } // END Class

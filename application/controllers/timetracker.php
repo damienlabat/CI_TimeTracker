@@ -579,13 +579,13 @@ class Timetracker extends CI_Controller {
 
 
     function _start_record( $post ) {
-        $this->form_validation->set_rules( 'start', 'Activity', 'required' );
+        $this->form_validation->set_rules( 'start', 'Activity', 'trim|required' );
+
+        $res= array();
 
         if ( $this->form_validation->run() === TRUE ) {
-            $res             = array( );
-            $param           = array( );
-            $post[ 'start' ] = trim( $post[ 'start' ] );
 
+            $param  = array( );
             $type_record = 'activity';
 
             if ( $post[ 'start' ][ 0 ] == '!' )
@@ -649,12 +649,129 @@ class Timetracker extends CI_Controller {
             if ( element( 'value_name', $post ) )
                 $this->values->add_value_record( $this->user_id, $res[ 'activity' ][ 'record' ][ 'id' ], trim( $post[ 'value_name' ] ), trim( $post[ 'value' ] ) ); // add value
         }
+        else {
+            $res[ 'alerts' ]   = array(
+                 array(
+                     'type' => 'error',
+                    'alert' => 'error ' //TODO! tester
+                )
+            );
+        }
+
         return $res;
     }
 
 
+
+
+
     function _update_record( $post ) {
-        //TODO!
+        $this->form_validation->set_rules( 'update_record', 'Record id', 'required' );
+        $this->form_validation->set_rules( 'activity', 'Activity', 'trim|required' );
+        $this->form_validation->set_rules( 'start_time', 'Start time', 'required' );
+        //$this->form_validation->set_rules( 'start_time', 'Start time', 'required' ); TODO! add dureation check, check start and end date
+
+
+         $res= array();
+
+        if ( $this->form_validation->run() === TRUE ) {
+
+            $param  = array( );
+            $type_record = 'activity';
+
+            if ( $post[ 'activity' ][ 0 ] == '!' )
+                $type_record = 'todo';
+            if ( $post[ 'activity' ][ 0 ] == '.' )
+                $param[ 'running' ] = 0; // ping
+            if ( element( 'value_name', $post ) ) {
+                $type_record        = 'value';
+                $param[ 'running' ] = 0;
+            }
+
+            preg_match( '/\[{1}.+\]{1}/i', $post[ 'activity' ], $path_tags ); // get tags from path
+            if ( ( $path_tags ) && ( !element( 'tags', $post ) ) )
+                $post[ 'tags' ] = trim( $path_tags[ 0 ], '[] ' );
+
+            if ( element( 'tags', $post ) )
+                $tags = preg_split( '/,/', $post[ 'tags' ], -1, PREG_SPLIT_NO_EMPTY ); // get tags from input
+
+            $post[ 'activity' ] = preg_replace( '/(\!|\.|\[{1}.+\]{1})*/i', '', $post[ 'activity' ] ); // clean activity path phase1
+
+            if ( $type_record != 'value' ) {
+                preg_match( '/\#{1}.+\={1}.+/i', $post[ 'activity' ], $path_value ); // get value from path
+                if ( $path_value ) {
+                    $path_value_array     = preg_split( '/=/', $path_value[ 0 ], -1, PREG_SPLIT_NO_EMPTY );
+                    $post[ 'value_name' ] = trim( $path_value_array[ 0 ], '# ' );
+                    $post[ 'value' ]      = trim( $path_value_array[ 1 ] );
+                    $type_record          = 'value';
+                    $param[ 'running' ]   = 0;
+                }
+            }
+
+            $post[ 'activity' ] = preg_replace( '/\#{1}.+\={1}.+/i', '', $post[ 'activity' ] ); // clean activity path phase2
+
+            if ( strpos( $post[ 'activity' ], '@' ) === FALSE ) {
+                $path  = '';
+                $title = trim( $post[ 'activity' ] );
+            }
+            else {
+                $split = preg_split( '/@/', $post[ 'activity' ], -1, PREG_SPLIT_NO_EMPTY );
+                $path  = trim( $split[ 1 ] );
+                $title = trim( $split[ 0 ] );
+            }
+
+            if ( isset( $post[ 'description' ] ) )
+                $param[ 'description' ] = trim( $post[ 'description' ] );
+            if ( isset( $post[ 'localtime' ] ) )
+                $param[ 'diff_greenwich' ] = $post[ 'localtime' ]; // TODO recup greenwich from time
+
+            //$res[ 'activity' ] = $this->_create_record( $title, $path, $type_record, $param );
+
+            $cat = $this->categories->getorcreate_categoriespath( $this->user_id, $path );
+
+            $res ['activity'] = $this->activities->getorcreate_activity( $cat[ 'id' ], $title, $type_record );
+
+            $update_params=array(
+                     'description' => $post[ 'description' ],
+                    'start_time' => $post[ 'start_time' ],
+                    'activity_ID' => $res ['activity']['id']
+                );
+
+            if ( isset( $post[ 'duration' ] ) ) $update_params['duration'] = $post[ 'duration' ];
+            if ( isset( $post[ 'running' ] ) ) $update_params['running'] = $post[ 'running' ];
+            //if ( isset( $post[ 'diff_greenwich' ] ) ) $update_params['diff_greenwich'] = $post[ 'local_time' ];  TODO! gestion localtime
+
+            $this->records->update_record( $post[ 'update_record' ], $update_params);
+            $res[ 'activity' ][ 'record' ] = $this->records->get_record_by_id( $post[ 'update_record' ] );
+
+
+            $this->tags->reset_record_tags( $post[ 'update_record' ] );
+            $this->values->reset_record_values( $post[ 'update_record' ] );
+
+            if ( isset( $tags ) )
+                foreach ( $tags as $k => $tag )
+                    $this->tags->add_tag_record( $this->user_id, $res[ 'activity' ][ 'record' ][ 'id' ], trim( $tag ) ); // add tags
+
+            if ( element( 'value_name', $post ) )
+                $this->values->add_value_record( $this->user_id, $res[ 'activity' ][ 'record' ][ 'id' ], trim( $post[ 'value_name' ] ), trim( $post[ 'value' ] ) ); // add value
+
+            $res[ 'alerts' ]   = array(
+                 array(
+                     'type' => 'success',
+                    'alert' => 'update activity: ' . $res[ 'activity' ][ 'title' ]
+                )
+            );
+        }
+        else {
+            $res[ 'alerts' ]   = array(
+                 array(
+                     'type' => 'error',
+                    'alert' => 'error ' //TODO! tester
+                )
+            );
+        }
+
+        return $res;
     }
 
 

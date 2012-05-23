@@ -175,6 +175,14 @@ class Tags extends CI_Model {
     }
 
 
+    function reset_record_tags( $record_id ) {
+       $res = $this->db->delete( $this->l_records_tags_table, array(
+             'record_ID' => $record_id
+       ) );
+       return $res;
+    }
+
+
 
 
 } // END Class

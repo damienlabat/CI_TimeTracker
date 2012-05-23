@@ -31,6 +31,8 @@
             <input type="text" placeholder="started at" name="start_time" id="start_time" value="<?= $record[ 'start_time' ] ?>">
         <br/>
 
+<?php if ( !$record[ 'running' ] ) : ?>
+
         <label for="stop_at">stop at</label>
             <input type="text" placeholder="stop at" name="stop_at" id="stop_at" value="<?= $record[ 'stop_at' ] ?>">
         <br/>
@@ -44,6 +46,8 @@
 if ( $record[ 'running' ] )
     echo " CHECKED";
 ?>>
+
+<?php endif; ?>
 
         <input type="hidden" name="localtime" value="TODO!">
         <input type="hidden" name="update_record" value="<?= $record[ 'id' ] ?>">
