@@ -109,6 +109,7 @@ $route['tt/(:any)/record/(:num)/stop'] =              'timetracker/stop/$1/$2';
 $route['tt/(:any)/summary'] =        'timetracker/summary/$1';
 $route['tt/(:any)/stats'] =          'timetracker/stats/$1';
 $route['tt/(:any)/export'] =         'timetracker/export/$1';
+$route['tt/(:any)/log'] =            'timetracker/log/$1';
 $route['tt/(:any)/params'] =         'timetracker/params/$1';
 $route['tt/(:any)'] =                'timetracker/index/$1';
 $route['tt'] =                       'timetracker/index';

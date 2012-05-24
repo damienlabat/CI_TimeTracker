@@ -91,8 +91,9 @@ class Timetracker extends CI_Controller {
      * tt board
      * */
 
-    public function index( $username = NULL, $offset=0 ) {
-        $per_page = 20;
+    public function index( $username = NULL, $page=1 ) {
+        $per_page = 5;
+        $offset= ( $page-1 ) * $per_page;
         $this->_checkUsername( $username );
 
         $this->load->library('pagination');
