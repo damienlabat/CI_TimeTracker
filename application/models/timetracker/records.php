@@ -61,7 +61,7 @@ class Records extends CI_Model {
      * @user_id     int
      * @return      array
      */
-    function get_running_activities( $user_id ) {
+    function get_running_activities( $user_id, $categorie_id = NULL, $activity_id = NULL ) {
         $query = $this->db->query( 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*
              FROM ' . $this->records_table . '
              LEFT JOIN ' . $this->activities_table . '
@@ -86,7 +86,7 @@ class Records extends CI_Model {
      * @user_id     int
      * @return          array
      */
-    function get_running_TODO( $user_id ) {
+    function get_running_TODO( $user_id , $categorie_id = NULL, $activity_id = NULL ) {
         $query = $this->db->query( 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*
              FROM ' . $this->records_table . '
              LEFT JOIN ' . $this->activities_table . '
@@ -115,7 +115,7 @@ class Records extends CI_Model {
      * @count           int
      * @return          array
      */
-    function get_last_activities( $user_id, $offset, $count ) {
+    function get_last_activities( $user_id, $categorie_id = NULL, $activity_id = NULL, $offset, $count ) {
         $query = $this->db->query( 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*
              FROM ' . $this->records_table . '
              LEFT JOIN ' . $this->activities_table . '
@@ -141,7 +141,8 @@ class Records extends CI_Model {
      * @user_id     int
      * @return      int
      */
-     function get_last_records_count( $user_id ) {
+     function get_last_records_count( $user_id, $categorie_id = NULL, $activity_id = NULL ) {
+
         $query = $this->db->query( 'SELECT count(' . $this->records_table . '.id) as count
              FROM ' . $this->records_table . '
              LEFT JOIN ' . $this->activities_table . '
@@ -224,8 +225,10 @@ class Records extends CI_Model {
     }
 
 
-    function get_last_actions_full( $user_id, $categorie_id = NULL, $offset = 0, $count = 10 ) {
-        $records = $this->get_last_activities( $user_id, $offset, $count );
+    function get_last_actions_full( $user_id, $categorie_id = NULL, $activity_id = NULL, $offset = 0, $count = 10 ) {
+
+        $records = $this->get_last_activities( $user_id, $categorie_id, $activity_id, $offset, $count );
+
         if ( $records )
             $records = $this->complete_records_info( $records );
 

@@ -97,25 +97,11 @@ class Timetracker extends CI_Controller {
 
         $this->load->library('pagination');
 
+        $config = config_pagination();
+
         $config['base_url'] = site_url('tt/'.$username.'/');
         $config['total_rows'] = $this->records->get_last_records_count( $this->user_id );
         $config['per_page'] = $per_page;
-
-        //TODO set to default but where ???
-        $config['num_tag_open']     = '<li>';
-        $config['num_tag_close']    = '</li>';
-        $config['cur_tag_open']     = '<li class="active"><a href="#">';
-        $config['cur_tag_close']    = '</a></li>';
-        $config['first_tag_open']   = '<li>';
-        $config['first_tag_close']  = '</li>';
-        $config['first_link']       = 'First';
-        $config['last_tag_open']    = '<li>';
-        $config['last_tag_close']   = '</li>';
-        $config['last_link']        = 'Last';
-        $config['next_tag_open']    = '<li>';
-        $config['next_tag_close']   = '</li>';
-        $config['prev_tag_open']    = '<li>';
-        $config['prev_tag_close']   = '</li>';
 
         $this->pagination->initialize($config);
 
@@ -123,7 +109,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'tt_layout' ]          = 'tt_board';
         $this->data[ 'running_activities' ] = $this->records->get_running_activities_full( $this->user_id );
         $this->data[ 'todos' ]              = $this->records->get_running_TODO_full( $this->user_id );
-        $this->data[ 'last_actions' ]       = $this->records->get_last_actions_full( $this->user_id, NULL, $offset ,$per_page );
+        $this->data[ 'last_actions' ]       = $this->records->get_last_actions_full( $this->user_id, NULL, NULL, $offset ,$per_page );
         $this->data[ 'pager']               = $this->pagination->create_links();
 
         $this->_render();
