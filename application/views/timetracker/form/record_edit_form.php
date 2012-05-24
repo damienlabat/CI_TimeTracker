@@ -1,6 +1,5 @@
 <?= form_open( 'tt/' . $user_name, array(
-     'id' => 'classicform',
-     'class'=>'well'
+     'id' => 'classicform'
 ) ) ?>
 
         <label for="activity">activity</label>

@@ -40,10 +40,7 @@
     <div class="container">
 
 
-    <div class="row main-cont">
 
-
-    <div class="">
 
         <?php $this->load->view('bloc/breadcrumb'); ?>
 
@@ -60,12 +57,11 @@
     }
 
     ?>
-    </div>
 
 
         <?=@$content?>
 
-      </div>
+
 
       <footer>
         <?php $this->load->view('bloc/footer'); ?>
