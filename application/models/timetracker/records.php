@@ -136,6 +136,27 @@ class Records extends CI_Model {
 
 
     /**
+     * Get last records count
+     *
+     * @user_id     int
+     * @return      int
+     */
+     function get_last_records_count( $user_id ) {
+        $query = $this->db->query( 'SELECT count(' . $this->records_table . '.id) as count
+             FROM ' . $this->records_table . '
+             LEFT JOIN ' . $this->activities_table . '
+                ON ' . $this->records_table . '.activity_ID=' . $this->activities_table . '.id
+             LEFT JOIN ' . $this->categories_table . '
+                ON ' . $this->activities_table . '.categorie_ID=' . $this->categories_table . '.id
+            WHERE
+                user_ID=' . $user_id . '
+                AND running=0');
+
+        return $query->row()->count;
+    }
+
+
+    /**
      * Update record
      *
      * @record_id       int
@@ -174,6 +195,7 @@ class Records extends CI_Model {
     /* ===========
      * TOOLS
      * ===========*/
+
 
     function get_running_activities_full( $user_id ) {
         $activities = $this->get_running_activities( $user_id );

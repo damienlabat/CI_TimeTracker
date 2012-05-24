@@ -13,3 +13,9 @@ if ( isset( $last_actions ) ) {
 }
 ?>
 </ul>
+
+<div class="pagination pagination-centered"><ul>
+<?php
+    echo $pager;
+?>
+</ul></div>
