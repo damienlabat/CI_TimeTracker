@@ -270,7 +270,7 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername( $username );
         $this->_checkRecordType( $activity_id, 'activity' );
         // TODO!
-        $this->data[ 'TODO' ] = "activity " . $activity_id . " edit";
+        $this->data[ 'TODO' ] = "activity " . $activity_id . " edit (rename, hide)";
         $this->_render();
     }
 
@@ -314,7 +314,7 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername( $username );
         $this->_checkRecordType( $activity_id, 'todo' );
         // TODO!
-        $this->data[ 'TODO' ] = "todo " . $activity_id . " edit";
+        $this->data[ 'TODO' ] = "todo " . $activity_id . " edit (rename, hide)";
         $this->_render();
     }
 
@@ -359,7 +359,7 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername( $username );
         $this->_checkRecordType( $activity_id, 'value' );
         // TODO!
-        $this->data[ 'TODO' ] = "value " . $activity_id . " edit";
+        $this->data[ 'TODO' ] = "value " . $activity_id . " edit (rename, hide)";
         $this->_render();
     }
 
@@ -399,7 +399,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'activities' ]                = $this->activities->get_categorie_activities( $categorie_id );
         $this->data[ 'tt_layout' ]                 = 'tt_categorie';
 
-        $this->data[ 'TODO' ] = "categorie " . $categorie_id . " page - add sub activities";
+        $this->data[ 'TODO' ] = "categorie " . $categorie_id . " page - add sub activities show shared status total time & activity count list sub cat & running/close activities";
         $this->_render();
     }
 
@@ -412,7 +412,7 @@ class Timetracker extends CI_Controller {
     public function categorie_edit( $username, $categorie_id ) {
         $this->_checkUsername( $username );
         // TODO!
-        $this->data[ 'TODO' ] = "categorie " . $categorie_id . " edit";
+        $this->data[ 'TODO' ] = "categorie " . $categorie_id . " edit (rename, share, hide)";
         $this->_render();
     }
 
