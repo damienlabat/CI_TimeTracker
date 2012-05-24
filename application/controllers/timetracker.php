@@ -92,13 +92,14 @@ class Timetracker extends CI_Controller {
      * */
 
     public function index( $username = NULL, $offset=0 ) {
+        $per_page = 20;
         $this->_checkUsername( $username );
 
         $this->load->library('pagination');
 
         $config['base_url'] = site_url('tt/'.$username.'/');
         $config['total_rows'] = $this->records->get_last_records_count( $this->user_id );
-        $config['per_page'] = 5;
+        $config['per_page'] = $per_page;
 
         //TODO set to default but where ???
         $config['num_tag_open']     = '<li>';
@@ -122,7 +123,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'tt_layout' ]          = 'tt_board';
         $this->data[ 'running_activities' ] = $this->records->get_running_activities_full( $this->user_id );
         $this->data[ 'todos' ]              = $this->records->get_running_TODO_full( $this->user_id );
-        $this->data[ 'last_actions' ]       = $this->records->get_last_actions_full( $this->user_id, NULL, $offset ,10 );
+        $this->data[ 'last_actions' ]       = $this->records->get_last_actions_full( $this->user_id, NULL, $offset ,$per_page );
         $this->data[ 'pager']               = $this->pagination->create_links();
 
         $this->_render();
