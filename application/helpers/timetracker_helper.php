@@ -85,7 +85,7 @@ if ( ! function_exists('record_div'))
     if (!isset($param['duration'])) $param['duration']='normal'; // normal OR full (hide/show seconds for 1 minute min duration)
 
 
-    $html= "<li class='record-item activity-".$record['activity']['type_of_record']."'>";
+    $html= "<div class='record-item activity-".$record['activity']['type_of_record']."'>";
 
     $html.= record_time($record,$username);
     $html.= activity_path($record['activity'],$username);
@@ -96,7 +96,7 @@ if ( ! function_exists('record_div'))
     if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
 
 
-    echo "</li>";
+    echo "</div>";
         return $html;
     }
 }
