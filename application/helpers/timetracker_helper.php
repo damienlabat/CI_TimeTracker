@@ -107,7 +107,7 @@ if ( ! function_exists('record_time'))
 {
     function record_time($record,$username)
     {
-      $html=  '<div class="record-time">';
+      $html=  '<span class="record-time">';
 
       $html.= '<span class="record-period">';
       $html.= '<a href="'.site_url('tt/'.$username.'/record/'.$record['id']).'"><time datetime=\''.$record['start_time'].'\'>'.date2human($record['start_time']).'</time>';
@@ -127,7 +127,7 @@ if ( ! function_exists('record_time'))
 
       $html.= '</span>';
 
-      $html.= '</div>';
+      $html.= '</span>';
 
       return $html;
     }
@@ -142,7 +142,7 @@ if ( ! function_exists('activity_path'))
     function activity_path($activity,$username)
     {
 
-      $html= '<div class="activity-path">';
+      $html= ' <span class="activity-path">';
       $html.= '<span class="activity-item">';
 
       if ($activity['type_of_record']=='todo') $html.= '!';
@@ -153,7 +153,7 @@ if ( ! function_exists('activity_path'))
 
       $html.= categorie_path($activity['path_array'],$activity['categorie_path'],$username);
 
-      $html.= '</div>';
+      $html.= '</span>';
       return $html;
     }
 }
@@ -171,14 +171,14 @@ if ( ! function_exists('record_buttons'))
 
       if (isset($record['running'])) {
 
-        $html.= '<div class="buttons btn-group">';
+        $html.= ' <span class="buttons btn-group">';
         $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/edit')."'>edit</a>";
         if (!$record['running'])
             $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/restart')."'>restart</a>";
         if ($show_delete) $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete')."'>delete</a>";
         if ($record['running'])
               $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/stop')."'>stop</a>";
-        $html.= '</div>';
+        $html.= '</span>';
 
           if (element('delete_confirm',$record)==TRUE)    $html.= "<div><a class='btn btn-mini btn-danger' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete?delete=true')."'>delete ! confirmed ?</a></div>";
     }
