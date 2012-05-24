@@ -43,7 +43,7 @@
     <div class="row main-cont">
 
 
-    <div class="span12">
+    <div class="">
 
         <?php $this->load->view('bloc/breadcrumb'); ?>
 

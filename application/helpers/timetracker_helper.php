@@ -67,13 +67,33 @@ if ( ! function_exists('record_li'))
     $html.= tag_list($record['tags'],$username);
     $html.= record_buttons($record,$username);
 
-
-
-
     if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
 
 
+    echo "</li>";
+        return $html;
+    }
+}
 
+
+
+if ( ! function_exists('record_div'))
+{
+    function record_div($record,$username,$param=array() )
+    {
+
+    if (!isset($param['duration'])) $param['duration']='normal'; // normal OR full (hide/show seconds for 1 minute min duration)
+
+
+    $html= "<li class='record-item activity-".$record['activity']['type_of_record']."'>";
+
+    $html.= record_time($record,$username);
+    $html.= activity_path($record['activity'],$username);
+    $html.= value($record,$username);
+    $html.= tag_list($record['tags'],$username);
+    $html.= record_buttons($record,$username,TRUE);
+
+    if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
 
 
     echo "</li>";
@@ -94,15 +114,15 @@ if ( ! function_exists('record_time'))
       if ((!$record['running'])&&($record['duration']>0))  $html.= ' - <time datetime=\''.$record['stop_at'].'\'>'.date2human($record['stop_at']).'</time>';
       $html.= '</a></span>';
 
-      $html.= '<span class="record-duration">';
+      $html.= ' <span class="record-duration">';
 
       if (($record['duration']>0)OR($record['running']==1)) $html.= duration2human($record['duration']);
-        else if (($record['activity']['type_of_record']!='value')&&(!$record['running'])) $html.="<br/><span class='label label-info'>PING!</span>";
-         else if ($record['activity']['type_of_record']=='value') $html.="<br/><span class='label label-info'>Value</span>";
+        else if (($record['activity']['type_of_record']!='value')&&(!$record['running'])) $html.=" <span class='label label-info'>PING!</span>";
+         else if ($record['activity']['type_of_record']=='value') $html.=" <span class='label label-info'>Value</span>";
 
       if ($record['activity']['type_of_record']=='todo') {
-            if ($record['running'])  $html.="<br/><span class='label label-warning'>TODO!</span>";
-                else  $html.="<br/><span class='label label-success'>DONE!</span>";
+            if ($record['running'])  $html.=" <span class='label label-warning'>TODO!</span>";
+                else  $html.=" <span class='label label-success'>DONE!</span>";
         }
 
       $html.= '</span>';
@@ -143,7 +163,7 @@ if ( ! function_exists('activity_path'))
 
 if ( ! function_exists('record_buttons'))
 {
-    function record_buttons($record,$username)
+    function record_buttons($record,$username,$show_delete=FALSE)
     {
 
       $html= '';
@@ -155,12 +175,12 @@ if ( ! function_exists('record_buttons'))
         $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/edit')."'>edit</a>";
         if (!$record['running'])
             $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/restart')."'>restart</a>";
-        $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete')."'>delete</a>";
+        if ($show_delete) $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete')."'>delete</a>";
         if ($record['running'])
-              $html.= "<a class='btn btn-mini btn-inverse' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/stop')."'>stop</a>";
+              $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/stop')."'>stop</a>";
         $html.= '</div>';
 
-          if (element('delete_confirm',$record)==TRUE)    $html.= "<div><br/><a class='btn btn-mini btn-danger' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete?delete=true')."'>delete ! confirmed ?</a></div>";
+          if (element('delete_confirm',$record)==TRUE)    $html.= "<div><a class='btn btn-mini btn-danger' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete?delete=true')."'>delete ! confirmed ?</a></div>";
     }
 
 
