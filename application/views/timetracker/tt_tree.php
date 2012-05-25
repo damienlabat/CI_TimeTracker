@@ -1,14 +1,16 @@
 <?php
 
+//TODO! virer recursivite dossier
+
 if ( !isset( $activities ) )
     $activities = NULL;
-cat_content( $cat_tree, $activities, $user_name );
+cat_content( $categories, $activities, $user_name );
 
 
 function cat_content( $cat_array, $activities, $user_name ) {
     echo "<ul>";
     foreach ( $cat_array as $k => $cat )
-        if ( ( $cat[ 'nb_act' ] + $cat[ 'nb_cat' ] > 0 ) && ( $cat[ 'isshow' ] > 0 ) ) { {
+        if ( ( $cat[ 'isshow' ] > 0 ) ) { {
                 echo '<li><a href="' . site_url( 'tt/' . $user_name . '/categorie/' . $cat[ 'id' ] ) . '"><i class="icon-folder-open"></i> ' . $cat[ 'title' ] . '</a></li>';
                 if ( isset( $cat[ 'sub' ] ) )
                     cat_content( $cat[ 'sub' ], $activities, $user_name );

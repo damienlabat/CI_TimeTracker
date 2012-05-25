@@ -148,7 +148,7 @@ if ( ! function_exists('activity_path'))
      // if (isset($activity['value']))  $html.=value($record['value'],$username);
       $html.= "</span>";
 
-      $html.= categorie_path($activity['path_array'],$activity['categorie_path'],$username);
+      $html.= categorie_a($activity['categorie'],$username);
 
       $html.= '</span>';
       return $html;
@@ -188,32 +188,15 @@ if ( ! function_exists('record_buttons'))
 
 
 
-if ( ! function_exists('categorie_path'))
-{
-    function categorie_path($path_array,$categorie_path,$username)
-    {
-      $html='<span class="categorie-path">@';
-      if (count($path_array)==1)
-      {
-          if ($path_array[0]['title']=='')   $html="";
-          $html.= categorie_a($path_array[0],$username);
-      }
-      else
-      {
-              $html.= "<a href='".site_url('tt/'.$username.'/categorie/'.$path_array[count($path_array)-1]['id'])."' class='category'>".$categorie_path."</a>";
-      }
-      $html.= '</span>';
-      return $html;
-    }
-}
-
 
 
 if ( ! function_exists('categorie_a'))
 {
     function categorie_a($categorie,$username)
     {
-      $html="<a href='".site_url('tt/'.$username.'/categorie/'.$categorie['id'])."' class='category'>".$categorie['title']."</a>";
+      if ($categorie['title']=='')  return '';
+
+      $html="@<a href='".site_url('tt/'.$username.'/categorie/'.$categorie['id'])."' class='category'>".$categorie['title']."</a>";
       return $html;
     }
 }

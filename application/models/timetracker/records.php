@@ -288,7 +288,6 @@ class Records extends CI_Model {
 
 
     function complete_record_info( $record ) {
-        //  $record['path_array']= $this->categories->get_categorie_path_array( $record['categorie_ID'] );
 
         if ( $record[ 'running' ] ){
             $record[ 'duration' ] = $this->calcul_duration( $record );

@@ -146,18 +146,15 @@ class Activities extends CI_Model {
 
 
     function complete_activity_info( $activity ) {
-        $activity[ 'path_array' ] = $this->categories->get_categorie_path_array( $activity[ 'categorie_ID' ] );
 
-        $activity[ 'categorie_path' ] = '';
-        if ( $activity[ 'path_array' ] )
-            foreach ( $activity[ 'path_array' ] as $k => $cat ) {
-                if ( $activity[ 'categorie_path' ] != '' )
-                    $activity[ 'categorie_path' ] .= '/';
-                $activity[ 'categorie_path' ] .= $cat[ 'title' ];
-            }
 
-        if ( $activity[ 'categorie_path' ] != '' )
-            $activity[ 'activity_path' ] = $activity[ 'title' ] . '@' . $activity[ 'categorie_path' ];
+        $activity[ 'categorie' ] = $this->categories->get_categorie_by_id( $activity['categorie_ID'] );
+        $activity[ 'categorie_tile' ]= $activity[ 'categorie' ]['title'];
+
+
+
+       if ( $activity[ 'categorie_tile' ] != '' )
+            $activity[ 'activity_path' ] = $activity[ 'title' ] . '@' . $activity[ 'categorie_tile' ];
         else
             $activity[ 'activity_path' ] = $activity[ 'title' ];
 

@@ -92,7 +92,7 @@ class Timetracker extends CI_Controller {
      * */
 
     public function index( $username = NULL, $page=1 ) {
-        $per_page = 5;
+        $per_page = 20;
         $offset= ( $page-1 ) * $per_page;
         $this->_checkUsername( $username );
 
@@ -144,7 +144,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'record' ]    = $this->records->get_record_by_id_full( $record_id );
         if ( !$this->data[ 'record' ] )
             show_404();
-        $this->data[ 'cat_tree' ]   = $this->categories->get_categories_tree( $this->user_id );
+        $this->data[ 'categories' ]   = $this->categories->get_categories( $this->user_id );
         $this->data[ 'activities' ] = $this->activities->get_categorie_activities( $this->data[ 'record' ][ 'activity' ][ 'categorie_ID' ] );
         //print_r($this->data);
         $this->_render();
@@ -177,7 +177,7 @@ class Timetracker extends CI_Controller {
         if ( !$this->data[ 'record' ] )
             show_404();
         $this->data[ 'record' ][ 'delete_confirm' ] = TRUE;
-        $this->data[ 'cat_tree' ]                   = $this->categories->get_categories_tree( $this->user_id );
+        $this->data[ 'categories' ]                   = $this->categories->get_categories( $this->user_id );
         $this->data[ 'activities' ]                 = $this->activities->get_categorie_activities( $this->data[ 'record' ][ 'activity' ][ 'categorie_ID' ] );
 
         $confirmed = $this->input->get( 'delete', TRUE );
@@ -254,9 +254,11 @@ class Timetracker extends CI_Controller {
         $this->data[ 'activity' ] = $this->activities->get_activity_by_id_full( $activity_id );
         if ( !$this->data[ 'activity' ] )
             show_404();
-        //$this->data['activity']['path_array']=$this->categories->get_categorie_path_array($this->data['activity']['categorie_ID']);
-        $this->data[ 'breadcrumb' ] = $this->_build_breadcrumb( $this->data[ 'activity' ] );
-        $this->data[ 'cat_tree' ]   = $this->categories->get_categories_tree( $this->user_id );
+        $this->data[ 'breadcrumb' ] = array(
+            array( 'title'=> $this->data[ 'activity' ]['categorie']['title'], 'url'=>'tt'.$username.'/categorie/'.$this->data[ 'activity' ]['categorie_ID']),
+            array( 'title'=> $this->data[ 'activity' ]['title'], 'url'=>'')
+            );
+        $this->data[ 'categories' ]   = $this->categories->get_categories( $this->user_id );
         $this->data[ 'activities' ] = $this->activities->get_categorie_activities( $this->data[ 'activity' ][ 'categorie_ID' ] );
         $this->data[ 'tt_layout' ]  = 'tt_activity';
     }
@@ -387,7 +389,7 @@ class Timetracker extends CI_Controller {
     public function categories( $username ) {
         $this->_checkUsername( $username );
         // TODO!
-        $this->data[ 'cat_tree' ] = $this->categories->get_categories_tree( $this->user_id );
+        $this->data[ 'categories' ] = $this->categories->get_categories( $this->user_id );
         $this->data[ 'TODO' ]     = "categories";
         $this->_render();
     }
@@ -406,9 +408,10 @@ class Timetracker extends CI_Controller {
         $this->data[ 'categorie' ] = $this->categories->get_categorie_by_id( $categorie_id );
         if ( !$this->data[ 'categorie' ] )
             show_404();
-        $this->data[ 'categorie' ][ 'path_array' ] = $this->categories->get_categorie_path_array( $categorie_id );
-        $this->data[ 'breadcrumb' ]                = $this->_build_breadcrumb( $this->data[ 'categorie' ] );
-        $this->data[ 'cat_tree' ]                  = $this->categories->get_categories_tree( $this->user_id );
+        $this->data[ 'breadcrumb' ] = array(
+            array( 'title'=> $this->data[ 'categorie' ]['title'], 'url'=>'')
+            );
+        $this->data[ 'categories' ]                = $this->categories->get_categories( $this->user_id );
         $this->data[ 'activities' ]                = $this->activities->get_categorie_activities( $categorie_id );
         $this->data[ 'tt_layout' ]                 = 'tt_categorie';
 
@@ -633,12 +636,12 @@ class Timetracker extends CI_Controller {
             $post[ 'start' ] = preg_replace( '/\#{1}.+\={1}.+/i', '', $post[ 'start' ] ); // clean activity path phase2
 
             if ( strpos( $post[ 'start' ], '@' ) === FALSE ) {
-                $path  = '';
+                $categorie  = '';
                 $title = trim( $post[ 'start' ] );
             }
             else {
                 $split = preg_split( '/@/', $post[ 'start' ], -1, PREG_SPLIT_NO_EMPTY );
-                $path  = trim( $split[ 1 ] );
+                $categorie  = trim( $split[ 1 ] );
                 $title = trim( $split[ 0 ] );
             }
 
@@ -647,7 +650,7 @@ class Timetracker extends CI_Controller {
             if ( isset( $post[ 'localtime' ] ) )
                 $param[ 'diff_greenwich' ] = $post[ 'localtime' ]; // TODO recup greenwich from time
 
-            $res[ 'activity' ] = $this->_create_record( $title, $path, $type_record, $param );
+            $res[ 'activity' ] = $this->_create_record( $title, $categorie, $type_record, $param );
             $res[ 'alerts' ]   = array(
                  array(
                      'type' => 'success',
@@ -724,12 +727,12 @@ class Timetracker extends CI_Controller {
             $post[ 'activity' ] = preg_replace( '/\#{1}.+\={1}.+/i', '', $post[ 'activity' ] ); // clean activity path phase2
 
             if ( strpos( $post[ 'activity' ], '@' ) === FALSE ) {
-                $path  = '';
+                $categorie  = '';
                 $title = trim( $post[ 'activity' ] );
             }
             else {
                 $split = preg_split( '/@/', $post[ 'activity' ], -1, PREG_SPLIT_NO_EMPTY );
-                $path  = trim( $split[ 1 ] );
+                $categorie  = trim( $split[ 1 ] );
                 $title = trim( $split[ 0 ] );
             }
 
@@ -738,9 +741,8 @@ class Timetracker extends CI_Controller {
             if ( isset( $post[ 'localtime' ] ) )
                 $param[ 'diff_greenwich' ] = $post[ 'localtime' ]; // TODO recup greenwich from time
 
-            //$res[ 'activity' ] = $this->_create_record( $title, $path, $type_record, $param );
 
-            $cat = $this->categories->getorcreate_categoriespath( $this->user_id, $path );
+            $cat = $this->categories->getorcreate_categorie( $this->user_id, $categorie );
 
             $res ['activity'] = $this->activities->getorcreate_activity( $cat[ 'id' ], $title, $type_record );
 
@@ -788,8 +790,8 @@ class Timetracker extends CI_Controller {
     }
 
 
-    function _create_record( $title, $path = NULL, $type_record, $param = array( ) ) {
-        $cat = $this->categories->getorcreate_categoriespath( $this->user_id, $path );
+    function _create_record( $title, $categorie = '', $type_record, $param = array( ) ) {
+        $cat = $this->categories->getorcreate_categorie( $this->user_id, $categorie );
         if ( isset( $param[ 'tags' ] ) ) {
             $tags = $param[ 'tags' ];
             unset( $param[ 'tags' ] );
@@ -812,31 +814,6 @@ class Timetracker extends CI_Controller {
     /* =================
      * TOOLS
      * ================= */
-
-    function _build_breadcrumb( $obj ) {
-        $breadcrumb = array( );
-
-        if ( isset( $obj[ 'start_time' ] ) )
-            $breadcrumb[ ] = array(
-                 'title' => $obj[ 'start_time' ],
-                'url' => ''
-            );
-        else if ( ( isset( $obj[ 'id' ] ) ) && ( isset( $obj[ 'categorie_ID' ] ) ) )
-            $obj[ 'activity_ID' ] = $obj[ 'id' ];
-        if ( isset( $obj[ 'activity_ID' ] ) )
-            $breadcrumb[ ] = array(
-                 'title' => $obj[ 'title' ],
-                'url' => 'tt/' . $this->user_name . '/' . $obj[ 'type_of_record' ] . '/' . $obj[ 'activity_ID' ]
-            );
-        $path_array = array_reverse( $obj[ 'path_array' ] );
-        foreach ( $path_array as $k => $cat )
-            $breadcrumb[ ] = array(
-                 'title' => $cat[ 'title' ],
-                'url' => 'tt/' . $this->user_name . '/categorie/' . $cat[ 'id' ]
-            );
-
-        return array_reverse( $breadcrumb );
-    }
 
 
 }

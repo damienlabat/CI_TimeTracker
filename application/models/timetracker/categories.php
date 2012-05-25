@@ -27,13 +27,11 @@ class Categories extends CI_Model {
      *
      * @user_id         int
      * @title           string
-     * @parent          int
      * @return          array
      */
-    function get_categorie_by_title( $user_id, $title, $parent ) {
+    function get_categorie_by_title( $user_id, $title ) {
         $this->db->where( 'LOWER(title)', strtolower( $title ) );
         $this->db->where( 'user_ID', $user_id );
-        $this->db->where( 'parent', $parent );
 
         $query = $this->db->get( $this->categories_table );
         if ( $query->num_rows() == 1 )
@@ -47,13 +45,11 @@ class Categories extends CI_Model {
      *
      * @user_id         int
      * @title           string
-     * @parent          int
      * @return          array
      */
-    function create_categorie( $user_id, $title, $parent ) {
+    function create_categorie( $user_id, $title ) {
         $data = array(
              'title' => strtolower( $title ),
-            'parent' => $parent,
             'user_ID' => $user_id
         );
 
@@ -70,14 +66,12 @@ class Categories extends CI_Model {
      *
      * @user_id         int
      * @title           string
-     * @parent          int
      * @data            array
      * @return          boolean
      */
-    function update_categorie( $user_id, $title, $parent, $data ) {
+    function update_categorie( $user_id, $title, $data ) {
         $this->db->where( 'LOWER(title)', strtolower( $title ) );
         $this->db->where( 'user_ID', $user_id );
-        $this->db->where( 'parent', $parent );
 
         if ( $this->db->update( $this->categories_table, $data ) )
             return TRUE;
@@ -86,24 +80,18 @@ class Categories extends CI_Model {
     }
 
 
-    function update_categorie_path( $user_id, $path, $data ) {
-        $cat = $this->getorcreate_categoriespath( $user_id, $path );
-        return $this->update_categorie( $user_id, $cat[ 'title' ], $cat[ 'parent' ], $data );
-    }
-
 
     /**
      * Get or Create new categorie record
      *
      * @user_id         int
      * @title           string
-     * @parent          int
      * @return          array
      */
-    function getorcreate_categorie( $user_id, $title, $parent ) {
-        $res = $this->get_categorie_by_title( $user_id, $title, $parent );
+    function getorcreate_categorie( $user_id, $title ) {
+        $res = $this->get_categorie_by_title( $user_id, $title );
         if ( !$res )
-            $res = $this->create_categorie( $user_id, $title, $parent );
+            $res = $this->create_categorie( $user_id, $title );
 
         return $res;
     }
@@ -114,12 +102,11 @@ class Categories extends CI_Model {
      *
      * @user_id         int
      * @title           string
-     * @parent          int
      * @return          array
      */
     function get_categories( $user_id ) {
         $this->db->where( 'user_ID', $user_id );
-        $this->db->order_by( 'parent,title' );
+        $this->db->order_by( 'title' );
 
         $query = $this->db->get( $this->categories_table );
         if ( $query->num_rows() >= 1 )
@@ -128,122 +115,11 @@ class Categories extends CI_Model {
     }
 
 
-    /**
-     * Get categories with sub cat and activities count
-     *
-     * @user_id         int
-     * @title           string
-     * @parent          int
-     * @return          array
-     */
-    function get_categories_with_count( $user_id ) {
-        $this->db->select( $this->categories_table . '.*' );
-        $this->db->select( 'count(distinct ' . $this->activities_table . '.id) as nb_act' );
-        $this->db->select( 'count(distinct cat2.id) as nb_cat' );
-
-        $this->db->join( $this->activities_table, $this->categories_table . '.id = ' . $this->activities_table . '.categorie_ID', 'left' );
-        $this->db->join( $this->categories_table . ' as cat2', $this->categories_table . '.id = cat2.parent', 'left' );
-
-        $this->db->where( $this->categories_table . '.user_ID', $user_id );
-        $this->db->where( $this->categories_table . '.isshow', 1 );
-        $this->db->group_by( $this->categories_table . '.id' );
-        $this->db->order_by( $this->categories_table . '.parent,' . $this->categories_table . '.title' );
-
-        $query = $this->db->get( $this->categories_table );
-        if ( $query->num_rows() >= 1 )
-            return $query->result_array();
-        return NULL;
-    }
 
     // TODO! shared categorie gestion
 
 
-    /* =============
-     * action
-     * =============*/
-
-
-    function getorcreate_categoriespath( $user_id, $path ) {
-        $cat_array = preg_split( "/\//", $path );
-        $parent    = NULL;
-
-        foreach ( $cat_array as $k => $cat_title ) {
-            $res    = $this->getorcreate_categorie( $user_id, $cat_title, $parent );
-            $parent = $res[ 'id' ];
-        }
-
-        return $res;
-    }
-
-
-    function get_categories_tree( $user_id ) {
-        $categories = $this->get_categories_with_count( $user_id );
-
-        return $this->recur_tree( $categories, 'parent', NULL );
-    }
 
 
 
-    function get_categories_path( $user_id, $forceshow = FALSE ) {
-        $res        = array( );
-        $categories = $this->get_categories( $user_id );
-        foreach ( $categories as $k => $item ) {
-            if ( ( $forceshow OR $item[ 'show' ] ) && ( isset( $res[ $item[ 'parent' ] ] ) OR !$item[ 'parent' ] ) ) {
-                if ( $item[ 'parent' ] )
-                    $res[ $item[ 'id' ] ] = $res[ $item[ 'parent' ] ] . '/' . $item[ 'title' ];
-                else
-                    $res[ $item[ 'id' ] ] = $item[ 'title' ];
-            }
-        }
-
-        sort( $res );
-        return $res;
-    }
-
-
-
-    function get_categorie_path_array( $categorie_id ) {
-        $current_categorie = $this->get_categorie_by_id( $categorie_id );
-        $path_array        = array(
-             $current_categorie
-        );
-
-        while ( isset( $current_categorie[ 'parent' ] ) ) {
-            $current_categorie = $this->get_categorie_by_id( $current_categorie[ 'parent' ] );
-            $path_array[ ]     = $current_categorie;
-        }
-
-        return array_reverse( $path_array );
-    }
-
-
-    function get_categorie_from_path( $user_id, $path ) {
-        $cat_array = preg_split( "/\//", $path );
-        $parent    = NULL;
-        $res       = NULL;
-
-        foreach ( $cat_array as $k => $cat_title ) {
-            $res    = $this->get_categorie_by_title( $user_id, $cat_title, $parent );
-            $parent = $res[ 'id' ];
-        }
-        return $res;
-    }
-
-
-
-
-    function recur_tree( $data, $var_root, $root ) {
-        $res = array( );
-        if ( $data )
-            foreach ( $data as $k => $item )
-                if ( $item[ $var_root ] == $root ) {
-                    $sub = $this->recur_tree( $data, $var_root, $item[ 'id' ] );
-                    if ( $sub )
-                        $item[ 'sub' ] = $sub;
-                    $res[ ] = $item;
-                }
-        if ( count( $res ) > 0 )
-            return $res;
-        return NULL;
-    }
 } // END Class
