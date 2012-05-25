@@ -98,7 +98,6 @@ class Timetracker extends CI_Controller {
 
         $this->load->library('pagination');
 
-        $config = config_pagination();
 
         $config['base_url'] = site_url('tt/'.$username.'/');
         $config['total_rows'] = $this->records->get_last_records_count( $this->user_id );
