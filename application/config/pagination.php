@@ -2,6 +2,8 @@
 
 $config['use_page_numbers'] = TRUE;
 
+$config['per_page'] = 5;
+
 $config['num_tag_open']     = '<li>';
 $config['num_tag_close']    = '</li>';
 

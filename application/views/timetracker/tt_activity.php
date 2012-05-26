@@ -10,3 +10,6 @@ $this->load->view( 'timetracker/tt_tree' );
     </h2>
 
 <!--/div></div-->
+
+<?php
+$this->load->view( 'timetracker/3blocks' );

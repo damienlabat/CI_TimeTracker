@@ -9,3 +9,6 @@ $this->load->view( 'timetracker/tt_tree' );
     <a class='btn btn-mini' href='<?=site_url('tt/'.$user_name.'/categorie/'.$categorie['id'].'/edit');?>'>edit</a>
     </h2>
 <!--/div></div-->
+
+<?php
+$this->load->view( 'timetracker/3blocks' );

@@ -62,7 +62,7 @@ class Records extends CI_Model {
      * @return      array
      */
     function get_running_activities( $user_id, $categorie_id = NULL, $activity_id = NULL ) {
-        $query = $this->db->query( 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*
+        $req = 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*
              FROM ' . $this->records_table . '
              LEFT JOIN ' . $this->activities_table . '
                 ON ' . $this->records_table . '.activity_ID=' . $this->activities_table . '.id
@@ -71,8 +71,14 @@ class Records extends CI_Model {
             WHERE
                 user_ID=' . $user_id . '
                 AND running=1
-                AND type_of_record=\'activity\'
-            ORDER BY start_time DESC' );
+                AND type_of_record=\'activity\' ';
+
+         if ($categorie_id !== NULL ) $req .=' AND ' . $this->activities_table . '.categorie_ID='.$categorie_id;
+         if ($activity_id !== NULL ) $req .=' AND ' . $this->records_table . '.activity_ID='.$activity_id;
+
+        $req .= ' ORDER BY start_time DESC';
+
+        $query = $this->db->query( $req );
 
         if ( $query->num_rows() >= 1 )
             return $query->result_array();
@@ -87,7 +93,7 @@ class Records extends CI_Model {
      * @return          array
      */
     function get_running_TODO( $user_id , $categorie_id = NULL, $activity_id = NULL ) {
-        $query = $this->db->query( 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*
+        $req = 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*
              FROM ' . $this->records_table . '
              LEFT JOIN ' . $this->activities_table . '
                 ON ' . $this->records_table . '.activity_ID=' . $this->activities_table . '.id
@@ -96,8 +102,15 @@ class Records extends CI_Model {
             WHERE
                 user_ID=' . $user_id . '
                 AND running=1
-                AND type_of_record=\'todo\'
-            ORDER BY start_time DESC' );
+                AND type_of_record=\'todo\' ';
+
+         if ($categorie_id !== NULL ) $req .=' AND ' . $this->activities_table . '.categorie_ID='.$categorie_id;
+         if ($activity_id !== NULL ) $req .=' AND ' . $this->records_table . '.activity_ID='.$activity_id;
+
+         $req .= ' ORDER BY start_time DESC';
+
+
+        $query = $this->db->query( $req );
 
         if ( $query->num_rows() >= 1 )
             return $query->result_array();
@@ -116,7 +129,8 @@ class Records extends CI_Model {
      * @return          array
      */
     function get_last_activities( $user_id, $categorie_id = NULL, $activity_id = NULL, $offset, $count ) {
-        $query = $this->db->query( 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*
+
+        $req= 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*
              FROM ' . $this->records_table . '
              LEFT JOIN ' . $this->activities_table . '
                 ON ' . $this->records_table . '.activity_ID=' . $this->activities_table . '.id
@@ -124,10 +138,16 @@ class Records extends CI_Model {
                 ON ' . $this->activities_table . '.categorie_ID=' . $this->categories_table . '.id
             WHERE
                 user_ID=' . $user_id . '
-                AND running=0
+                AND running=0';
 
-            ORDER BY UNIX_TIMESTAMP(start_time)+duration DESC
-            LIMIT ' . $offset . ',' . $count );
+            if ($categorie_id !== NULL ) $req .=' AND ' . $this->activities_table . '.categorie_ID='.$categorie_id;
+            if ($activity_id !== NULL ) $req .=' AND ' . $this->records_table . '.activity_ID='.$activity_id;
+
+         $req .= '    ORDER BY UNIX_TIMESTAMP(start_time)+duration DESC
+            LIMIT ' . $offset . ',' . $count ;
+
+
+        $query = $this->db->query( $req );
 
         if ( $query->num_rows() >= 1 )
             return $query->result_array();
@@ -138,12 +158,14 @@ class Records extends CI_Model {
     /**
      * Get last records count
      *
-     * @user_id     int
-     * @return      int
+     * @user_id         int
+     * @categorie_id    int
+     * @activity_id     int
+     * @return          int
      */
      function get_last_records_count( $user_id, $categorie_id = NULL, $activity_id = NULL ) {
 
-        $query = $this->db->query( 'SELECT count(' . $this->records_table . '.id) as count
+        $req = 'SELECT count(' . $this->records_table . '.id) as count
              FROM ' . $this->records_table . '
              LEFT JOIN ' . $this->activities_table . '
                 ON ' . $this->records_table . '.activity_ID=' . $this->activities_table . '.id
@@ -151,10 +173,16 @@ class Records extends CI_Model {
                 ON ' . $this->activities_table . '.categorie_ID=' . $this->categories_table . '.id
             WHERE
                 user_ID=' . $user_id . '
-                AND running=0');
+                AND running=0';
+
+        if ($categorie_id != NULL) $req .= ' AND ' . $this->activities_table . '.categorie_ID=' . $categorie_id;
+        if ($activity_id != NULL)  $req .= ' AND ' . $this->records_table . '.activity_ID=' . $activity_id;
+
+        $query = $this->db->query( $req );
 
         return $query->row()->count;
     }
+
 
 
     /**
@@ -198,8 +226,8 @@ class Records extends CI_Model {
      * ===========*/
 
 
-    function get_running_activities_full( $user_id ) {
-        $activities = $this->get_running_activities( $user_id );
+    function get_running_activities_full( $user_id, $categorie_id = NULL, $activity_id = NULL ) {
+        $activities = $this->get_running_activities( $user_id, $categorie_id, $activity_id );
         if ( $activities )
             $activities = $this->complete_records_info( $activities );
 
@@ -207,8 +235,8 @@ class Records extends CI_Model {
     }
 
 
-    function get_running_TODO_full( $user_id ) {
-        $activities = $this->get_running_TODO( $user_id );
+    function get_running_TODO_full( $user_id, $categorie_id = NULL, $activity_id = NULL ) {
+        $activities = $this->get_running_TODO( $user_id, $categorie_id, $activity_id );
         if ( $activities )
             $activities = $this->complete_records_info( $activities );
 

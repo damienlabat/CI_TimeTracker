@@ -92,18 +92,18 @@ class Timetracker extends CI_Controller {
      * */
 
     public function index( $username = NULL, $page=1 ) {
-        $per_page = 20;
-        $offset= ( $page-1 ) * $per_page;
+
         $this->_checkUsername( $username );
 
         $this->load->library('pagination');
 
-
         $config['base_url'] = site_url('tt/'.$username.'/');
         $config['total_rows'] = $this->records->get_last_records_count( $this->user_id );
-        $config['per_page'] = $per_page;
 
         $this->pagination->initialize($config);
+
+        $per_page=$this->pagination->per_page;
+        $offset= ( $page-1 ) * $per_page;
 
 
         $this->data[ 'tt_layout' ]          = 'tt_board';
@@ -146,7 +146,6 @@ class Timetracker extends CI_Controller {
             show_404();
         $this->data[ 'categories' ]   = $this->categories->get_categories( $this->user_id );
         $this->data[ 'activities' ] = $this->activities->get_categorie_activities( $this->data[ 'record' ][ 'activity' ][ 'categorie_ID' ] );
-        //print_r($this->data);
         $this->_render();
     }
 
@@ -250,27 +249,45 @@ class Timetracker extends CI_Controller {
      *  */
 
 
-    public function _generic_activity_show( $username, $activity_id ) {
+    public function _generic_activity_show( $username, $activity_id, $page =1 ) {
         $this->data[ 'activity' ] = $this->activities->get_activity_by_id_full( $activity_id );
         if ( !$this->data[ 'activity' ] )
             show_404();
         $this->data[ 'breadcrumb' ] = array(
-            array( 'title'=> $this->data[ 'activity' ]['categorie']['title'], 'url'=>'tt'.$username.'/categorie/'.$this->data[ 'activity' ]['categorie_ID']),
+            array( 'title'=> $this->data[ 'activity' ]['categorie']['title'], 'url'=>'tt/'.$username.'/categorie/'.$this->data[ 'activity' ]['categorie_ID']),
             array( 'title'=> $this->data[ 'activity' ]['title'], 'url'=>'')
             );
-        $this->data[ 'categories' ]   = $this->categories->get_categories( $this->user_id );
-        $this->data[ 'activities' ] = $this->activities->get_categorie_activities( $this->data[ 'activity' ][ 'categorie_ID' ] );
-        $this->data[ 'tt_layout' ]  = 'tt_activity';
+
+        $this->load->library('pagination');
+
+        $config['base_url'] = site_url('tt/'.$username.'/'.$this->data[ 'activity' ][ 'type_of_record' ].'/'.$activity_id);
+        $config['total_rows'] = $this->records->get_last_records_count( $this->user_id, $this->data[ 'activity' ]['categorie_ID'], $activity_id );
+        $config['uri_segment'] = 5; // autodetection dont work ???
+
+        $this->pagination->initialize($config);
+
+        $per_page=$this->pagination->per_page;
+        $offset= ( $page-1 ) * $per_page;
+
+        $this->pagination->initialize($config);
+
+        $this->data[ 'categories' ]         = $this->categories->get_categories( $this->user_id );
+        $this->data[ 'activities' ]         = $this->activities->get_categorie_activities( $this->data[ 'activity' ][ 'categorie_ID' ] );
+        $this->data[ 'running_activities' ] = $this->records->get_running_activities_full( $this->user_id, $this->data[ 'activity' ]['categorie_ID'], $activity_id );
+        $this->data[ 'todos' ]              = $this->records->get_running_TODO_full( $this->user_id, $this->data[ 'activity' ]['categorie_ID'], $activity_id );
+        $this->data[ 'last_actions' ]       = $this->records->get_last_actions_full( $this->user_id, $this->data[ 'activity' ]['categorie_ID'], $activity_id, $offset ,$per_page );
+        $this->data[ 'pager']               = $this->pagination->create_links();
+        $this->data[ 'tt_layout' ]          = 'tt_activity';
     }
 
 
-    public function activity( $username, $activity_id = NULL ) {
+    public function activity( $username, $activity_id = NULL, $page =1 ) {
         $this->_checkUsername( $username );
         if ( $activity_id == NULL )
             redirect( 'tt/' . $username . '/activities', 'location', 301 );
         $this->_checkRecordType( $activity_id, 'activity' );
         // TODO!
-        $this->_generic_activity_show( $username, $activity_id );
+        $this->_generic_activity_show( $username, $activity_id, $page);
 
         $this->data[ 'TODO' ] = "activity " . $activity_id . " page - add running & last activities";
         $this->_render();
@@ -307,14 +324,14 @@ class Timetracker extends CI_Controller {
      *  show todo
      *  */
 
-    public function todo( $username, $activity_id = NULL ) {
+    public function todo( $username, $activity_id = NULL, $page =1 ) {
         $this->_checkUsername( $username );
         if ( $activity_id == NULL )
             redirect( 'tt/' . $username . '/thingstodo', 'location', 301 );
         $this->_checkRecordType( $activity_id, 'todo' );
         // TODO!
         //$this->data['tt_layout']='tt_activity';
-        $this->_generic_activity_show( $username, $activity_id );
+        $this->_generic_activity_show( $username, $activity_id, $page );
 
         $this->data[ 'TODO' ] = "todo " . $activity_id . " page - add running & last activities";
         $this->_render();
@@ -352,14 +369,14 @@ class Timetracker extends CI_Controller {
      *  show value
      *  */
 
-    public function value( $username, $activity_id = NULL ) {
+    public function value( $username, $activity_id = NULL, $page =1 ) {
         $this->_checkUsername( $username );
         if ( $activity_id == NULL )
             redirect( 'tt/' . $username . '/values', 'location', 301 );
         $this->_checkRecordType( $activity_id, 'value' );
         // TODO!
         $this->data[ 'tt_layout' ] = 'tt_activity';
-        $this->_generic_activity_show( $username, $activity_id );
+        $this->_generic_activity_show( $username, $activity_id, $page );
 
         $this->data[ 'TODO' ] = "value " . $activity_id . " page - add running & last activities";
         $this->_render();
@@ -399,23 +416,42 @@ class Timetracker extends CI_Controller {
      *  show categorie
      *  */
 
-    public function categorie( $username, $categorie_id = NULL ) {
+    public function categorie( $username, $categorie_id = NULL, $page = 1 ) {
+
         $this->_checkUsername( $username );
         if ( $categorie_id == NULL )
             redirect( 'tt/' . $username . '/categories', 'location', 301 );
-        // TODO!
 
         $this->data[ 'categorie' ] = $this->categories->get_categorie_by_id( $categorie_id );
         if ( !$this->data[ 'categorie' ] )
             show_404();
+
+        $this->load->library('pagination');
+
+        $config['base_url'] = site_url('tt/'.$username.'/categorie/'.$categorie_id);
+        $config['total_rows'] = $this->records->get_last_records_count( $this->user_id, $categorie_id );
+        $config['uri_segment'] = 5; // autodetection dont work ???
+
+        $this->pagination->initialize($config);
+
+        $per_page=$this->pagination->per_page;
+        $offset= ( $page-1 ) * $per_page;
+
+        $this->pagination->initialize($config);
+
+
         $this->data[ 'breadcrumb' ] = array(
             array( 'title'=> $this->data[ 'categorie' ]['title'], 'url'=>'')
             );
         $this->data[ 'categories' ]                = $this->categories->get_categories( $this->user_id );
         $this->data[ 'activities' ]                = $this->activities->get_categorie_activities( $categorie_id );
+        $this->data[ 'running_activities' ]        = $this->records->get_running_activities_full( $this->user_id, $categorie_id );
+        $this->data[ 'todos' ]                     = $this->records->get_running_TODO_full( $this->user_id, $categorie_id );
+        $this->data[ 'last_actions' ]              = $this->records->get_last_actions_full( $this->user_id, $categorie_id, NULL, $offset ,$per_page );
+        $this->data[ 'pager']                      = $this->pagination->create_links();
         $this->data[ 'tt_layout' ]                 = 'tt_categorie';
 
-        $this->data[ 'TODO' ] = "categorie " . $categorie_id . " page - add sub activities show shared status total time & activity count list sub cat & running/close activities";
+        $this->data[ 'TODO' ] = "categorie " . $categorie_id . " page - show shared status total time & activity";
         $this->_render();
     }
 
