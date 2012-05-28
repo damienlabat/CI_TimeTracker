@@ -472,15 +472,43 @@ class Timetracker extends CI_Controller {
      *  show tag
      *  */
 
-    public function tag( $username, $tag_id = NULL ) {
+    public function tag( $username, $tag_id = NULL, $page = 1 ) {
         $this->_checkUsername( $username );
         if ( $tag_id == NULL )
             redirect( 'tt/' . $username . '/tags', 'location', 301 );
-        // TODO!
+
+        $this->data[ 'tag' ] = $this->tags->get_tag_by_id( $tag_id );
+        if ( !$this->data[ 'tag' ] )
+            show_404();
+
+        $this->load->library('pagination');
+
+        $config['base_url'] = site_url('tt/'.$username.'/tag/'.$tag_id);
+        $config['total_rows'] = $this->records->get_records_count($this->user_id, array( 'tags'=> array($tag_id), 'running'=>0 ) );
+        $config['uri_segment'] = 5; // autodetection dont work ???
+
+        $this->pagination->initialize($config);
+
+        $per_page=$this->pagination->per_page;
+        $offset= ( $page-1 ) * $per_page;
+
+        $this->pagination->initialize($config);
+
+
+        $this->data[ 'breadcrumb' ] = array(
+            array( 'title'=> 'tags', 'url'=>site_url('tt/'.$username.'/tags')),
+            array( 'title'=> $this->data[ 'tag' ]['tag'], 'url'=>'')
+            );
+
+        $this->data[ 'running_activities' ]        = $this->records->get_records_full($this->user_id, array( 'tags'=> array($tag_id), 'type_of_record'=>'activity', 'running'=>1 ) );
+        $this->data[ 'todos' ]                     = $this->records->get_records_full($this->user_id, array( 'tags'=> array($tag_id), 'type_of_record'=>'todo', 'running'=>1 ) );
+        $this->data[ 'last_actions' ]              = $this->records->get_records_full($this->user_id, array( 'tags'=> array($tag_id), 'running'=>0  ), $offset, $per_page );
+        $this->data[ 'pager']                      = $this->pagination->create_links();
+        $this->data[ 'tt_layout' ]                 = 'tt_tag';
+
         $this->data[ 'TODO' ] = "tag " . $tag_id . " page";
         $this->_render();
     }
-
 
 
     /*****
@@ -511,14 +539,13 @@ class Timetracker extends CI_Controller {
 
 
     /*****
-     *  show value_types
+     *  show records for value type id
      *  */
 
     public function valuetype( $username, $valuetype_id = NULL, $page = 1 ) {
         $this->_checkUsername( $username );
         if ( $valuetype_id == NULL )
             redirect( 'tt/' . $username . '/valuetypes', 'location', 301 );
-        $this->_checkUsername( $username );
 
         $this->data[ 'value_type' ] = $this->values->get_value_type_by_id( $valuetype_id );
         if ( !$this->data[ 'value_type' ] )

@@ -250,11 +250,13 @@ class Records extends CI_Model {
             $req .=' LEFT JOIN ' . $this->records_values_table . '
                 ON ' . $this->records_table . '.id=' . $this->records_values_table . '.record_ID';
 
+        foreach ( $param['tags'] as $k => $tag )
+            $req .=' LEFT JOIN ' . $this->records_tags_table . ' as tag_table_'.$k.'
+                ON ' . $this->records_table . '.id= tag_table_'.$k.'.record_ID';
+
 
         $req .= ' WHERE
                 user_ID=' . $user_id ;
-
-        // TODO tags gestion
 
         if ($param['categorie_id'] !== NULL ) $req .= ' AND ' . $this->activities_table . '.categorie_ID=' . $param['categorie_id'];
         if ($param['activity_id'] !== NULL ) $req .= ' AND ' . $this->records_table . '.activity_ID=' . $param['activity_id'];
@@ -264,7 +266,8 @@ class Records extends CI_Model {
 
         if ($param['value_type'] !== NULL ) $req .=  ' AND ' . $this->records_values_table . '.value_type_ID='.$param['value_type'];
 
-        // TODO tags gestion
+        foreach ( $param['tags'] as $k => $tag )
+            $req .=' AND tag_table_'.$k.'.tag_ID='.$tag;
 
         $req .= ' ORDER BY start_time DESC';
 
@@ -299,14 +302,18 @@ function get_records_count($user_id, $param = array() ) {
 
 
          if ($param['value_type'] !== NULL )
-            $req .=' LEFT JOIN ' . $this->records_values_table . '
+            $req .=' LEFT JOIN ' . $this->records_tags_table . '
                 ON ' . $this->records_table . '.id=' . $this->records_values_table . '.record_ID';
+
+         foreach ( $param['tags'] as $k => $tag )
+            $req .=' LEFT JOIN ' . $this->records_tags_table . ' as tag_table_'.$k.'
+                ON ' . $this->records_table . '.id= tag_table_'.$k.'.record_ID';
 
 
         $req .= ' WHERE
                 user_ID=' . $user_id ;
 
-        // TODO tags gestion
+
 
         if ($param['categorie_id'] !== NULL ) $req .= ' AND ' . $this->activities_table . '.categorie_ID=' . $param['categorie_id'];
         if ($param['activity_id'] !== NULL ) $req .= ' AND ' . $this->records_table . '.activity_ID=' . $param['activity_id'];
@@ -315,6 +322,10 @@ function get_records_count($user_id, $param = array() ) {
         if ($param['running'] !== NULL )  $req .= ' AND running=' . $param['running'];
 
         if ($param['value_type'] !== NULL ) $req .=  ' AND ' . $this->records_values_table . '.value_type_ID='.$param['value_type'];
+
+        foreach ( $param['tags'] as $k => $tag )
+            $req .=' AND tag_table_'.$k.'.tag_ID='.$tag;
+
 
         // TODO tags gestion
 

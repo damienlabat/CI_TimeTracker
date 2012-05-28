@@ -6,6 +6,20 @@ class Tags extends CI_Model {
     private $tags_table = 'tags';
     private $l_records_tags_table = 'l_records_tags';
 
+    /**
+     * get tag by id
+     *
+     * @id         int
+     * @return          array
+     */
+    function get_tag_by_id( $id ) {
+        $this->db->where( 'id', $id );
+
+        $query = $this->db->get( $this->tags_table );
+        if ( $query->num_rows() >= 1 )
+            return $query->row_array();
+        return NULL;
+    }
 
 
     /**

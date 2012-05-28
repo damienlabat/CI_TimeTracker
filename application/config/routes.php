@@ -88,11 +88,11 @@ $route['tt/(:any)/stats/categorie/(:num)'] =        'timetracker/stats/$1/catego
 
 $route['tt/(:any)/tags'] =                          'timetracker/tags/$1';
 $route['tt/(:any)/tag'] =                           'timetracker/tag/$1';
-$route['tt/(:any)/tag/(:any)'] =                    'timetracker/tag/$1/$2';
+$route['tt/(:any)/tag/(:num)'] =                    'timetracker/tag/$1/$2';
 $route['tt/(:any)/tag/(:num)/(:num)'] =             'timetracker/tag/$1/$2/$3'; // page
-$route['tt/(:any)/tag/(:any)/edit'] =               'timetracker/tag_edit/$1/$2';
-$route['tt/(:any)/summary/tag/(:any)'] =            'timetracker/summary/$1/tag/$2';
-$route['tt/(:any)/stats/tag/(:any)'] =              'timetracker/stats/$1/tag/$2';
+$route['tt/(:any)/tag/(:num)/edit'] =               'timetracker/tag_edit/$1/$2';
+$route['tt/(:any)/summary/tag/(:num)'] =            'timetracker/summary/$1/tag/$2';
+$route['tt/(:any)/stats/tag/(:num)'] =              'timetracker/stats/$1/tag/$2';
 
 
 $route['tt/(:any)/valuetypes'] =                     'timetracker/valuetypes/$1';

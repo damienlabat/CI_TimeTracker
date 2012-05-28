@@ -221,7 +221,7 @@ if ( ! function_exists('tag'))
 {
     function tag($tag,$username)
     {
-      $html= "<a href='".site_url('tt/'.$username.'/tag/'.$tag['tag'])."'>".$tag['tag']."</a>";
+      $html= "<a href='".site_url('tt/'.$username.'/tag/'.$tag['id'])."'>".$tag['tag']."</a>";
       return $html;
     }
 }
