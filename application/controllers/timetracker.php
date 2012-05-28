@@ -98,7 +98,7 @@ class Timetracker extends CI_Controller {
         $this->load->library('pagination');
 
         $config['base_url'] = site_url('tt/'.$username.'/');
-        $config['total_rows'] = $this->records->get_last_records_count( $this->user_id );
+        $config['total_rows'] = $this->records->get_records_count($this->user_id, array( 'running'=>0 ) );
 
         $this->pagination->initialize($config);
 
@@ -107,9 +107,9 @@ class Timetracker extends CI_Controller {
 
 
         $this->data[ 'tt_layout' ]          = 'tt_board';
-        $this->data[ 'running_activities' ] = $this->records->get_running_activities_full( $this->user_id );
-        $this->data[ 'todos' ]              = $this->records->get_running_TODO_full( $this->user_id );
-        $this->data[ 'last_actions' ]       = $this->records->get_last_actions_full( $this->user_id, NULL, NULL, $offset ,$per_page );
+        $this->data[ 'running_activities' ] = $this->records->get_records_full($this->user_id, array( 'type_of_record'=>'activity', 'running'=>1 ) );
+        $this->data[ 'todos' ]              = $this->records->get_records_full($this->user_id, array( 'type_of_record'=>'todo', 'running'=>1 ) );
+        $this->data[ 'last_actions' ]       = $this->records->get_records_full($this->user_id, array( 'running'=>0 ), $offset ,$per_page );
         $this->data[ 'pager']               = $this->pagination->create_links();
 
         $this->_render();
@@ -258,7 +258,7 @@ class Timetracker extends CI_Controller {
         $this->load->library('pagination');
 
         $config['base_url'] = site_url('tt/'.$username.'/'.$this->data[ 'activity' ][ 'type_of_record' ].'/'.$activity_id);
-        $config['total_rows'] = $this->records->get_last_records_count( $this->user_id, $this->data[ 'activity' ]['categorie_ID'], $activity_id );
+        $config['total_rows'] = $this->records->get_records_count($this->user_id, array( 'activity'=>$activity_id, 'running'=>0 ) );
         $config['uri_segment'] = 5; // autodetection dont work ???
 
         $this->pagination->initialize($config);
@@ -270,9 +270,9 @@ class Timetracker extends CI_Controller {
 
         $this->data[ 'categories' ]         = $this->categories->get_categories( $this->user_id );
         $this->data[ 'activities' ]         = $this->activities->get_categorie_activities( $this->data[ 'activity' ][ 'categorie_ID' ] );
-        $this->data[ 'running_activities' ] = $this->records->get_running_activities_full( $this->user_id, $this->data[ 'activity' ]['categorie_ID'], $activity_id );
-        $this->data[ 'todos' ]              = $this->records->get_running_TODO_full( $this->user_id, $this->data[ 'activity' ]['categorie_ID'], $activity_id );
-        $this->data[ 'last_actions' ]       = $this->records->get_last_actions_full( $this->user_id, $this->data[ 'activity' ]['categorie_ID'], $activity_id, $offset ,$per_page );
+        $this->data[ 'running_activities' ]        = $this->records->get_records_full($this->user_id, array( 'activity'=>$activity_id, 'type_of_record'=>'activity', 'running'=>1 ) );
+        $this->data[ 'todos' ]                     = $this->records->get_records_full($this->user_id, array( 'activity'=>$activity_id, 'type_of_record'=>'todo', 'running'=>1 ) );
+        $this->data[ 'last_actions' ]              = $this->records->get_records_full($this->user_id, array( 'activity'=>$activity_id, 'running'=>0 ), $offset, $per_page );
         $this->data[ 'pager']               = $this->pagination->create_links();
         $this->data[ 'tt_layout' ]          = 'tt_activity';
     }
@@ -412,7 +412,7 @@ class Timetracker extends CI_Controller {
         $this->load->library('pagination');
 
         $config['base_url'] = site_url('tt/'.$username.'/categorie/'.$categorie_id);
-        $config['total_rows'] = $this->records->get_last_records_count( $this->user_id, $categorie_id );
+        $config['total_rows'] = $this->records->get_records_count($this->user_id, array( 'categorie'=>$categorie_id, 'running'=>0 ) );
         $config['uri_segment'] = 5; // autodetection dont work ???
 
         $this->pagination->initialize($config);
@@ -428,9 +428,9 @@ class Timetracker extends CI_Controller {
             );
         $this->data[ 'categories' ]                = $this->categories->get_categories( $this->user_id );
         $this->data[ 'activities' ]                = $this->activities->get_categorie_activities( $categorie_id );
-        $this->data[ 'running_activities' ]        = $this->records->get_running_activities_full( $this->user_id, $categorie_id );
-        $this->data[ 'todos' ]                     = $this->records->get_running_TODO_full( $this->user_id, $categorie_id );
-        $this->data[ 'last_actions' ]              = $this->records->get_last_actions_full( $this->user_id, $categorie_id, NULL, $offset ,$per_page );
+        $this->data[ 'running_activities' ]        = $this->records->get_records_full($this->user_id, array( 'categorie'=>$categorie_id, 'type_of_record'=>'activity', 'running'=>1 ) );
+        $this->data[ 'todos' ]                     = $this->records->get_records_full($this->user_id, array( 'categorie'=>$categorie_id, 'type_of_record'=>'todo', 'running'=>1 ) );
+        $this->data[ 'last_actions' ]              = $this->records->get_records_full($this->user_id, array( 'categorie'=>$categorie_id, 'running'=>0 ), $offset, $per_page );
         $this->data[ 'pager']                      = $this->pagination->create_links();
         $this->data[ 'tt_layout' ]                 = 'tt_categorie';
 

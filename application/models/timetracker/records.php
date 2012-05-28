@@ -6,6 +6,8 @@ class Records extends CI_Model {
     private $activities_table = 'activities';
     private $categories_table = 'categories';
     private $records_table = 'records';
+    private $records_values_table = 'l_records_values';
+    private $records_tags_table = 'l_records_tags';
 
 
 
@@ -61,7 +63,7 @@ class Records extends CI_Model {
      * @user_id     int
      * @return      array
      */
-    function get_running_activities( $user_id, $categorie_id = NULL, $activity_id = NULL ) {
+    /*function get_running_activities( $user_id, $categorie_id = NULL, $activity_id = NULL ) {
         $req = 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*
              FROM ' . $this->records_table . '
              LEFT JOIN ' . $this->activities_table . '
@@ -83,7 +85,7 @@ class Records extends CI_Model {
         if ( $query->num_rows() >= 1 )
             return $query->result_array();
         return NULL;
-    }
+    }*/
 
 
     /**
@@ -92,7 +94,7 @@ class Records extends CI_Model {
      * @user_id     int
      * @return          array
      */
-    function get_running_TODO( $user_id , $categorie_id = NULL, $activity_id = NULL ) {
+    /*function get_running_TODO( $user_id , $categorie_id = NULL, $activity_id = NULL ) {
         $req = 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*
              FROM ' . $this->records_table . '
              LEFT JOIN ' . $this->activities_table . '
@@ -115,7 +117,7 @@ class Records extends CI_Model {
         if ( $query->num_rows() >= 1 )
             return $query->result_array();
         return NULL;
-    }
+    }*/
 
 
 
@@ -128,7 +130,7 @@ class Records extends CI_Model {
      * @count           int
      * @return          array
      */
-    function get_last_activities( $user_id, $categorie_id = NULL, $activity_id = NULL, $offset, $count ) {
+   /* function get_last_activities( $user_id, $categorie_id = NULL, $activity_id = NULL, $offset, $count ) {
 
         $req= 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*
              FROM ' . $this->records_table . '
@@ -152,7 +154,7 @@ class Records extends CI_Model {
         if ( $query->num_rows() >= 1 )
             return $query->result_array();
         return NULL;
-    }
+    }*/
 
 
     /**
@@ -163,7 +165,7 @@ class Records extends CI_Model {
      * @activity_id     int
      * @return          int
      */
-     function get_last_records_count( $user_id, $categorie_id = NULL, $activity_id = NULL ) {
+    /* function get_last_records_count( $user_id, $categorie_id = NULL, $activity_id = NULL ) {
 
         $req = 'SELECT count(' . $this->records_table . '.id) as count
              FROM ' . $this->records_table . '
@@ -181,7 +183,7 @@ class Records extends CI_Model {
         $query = $this->db->query( $req );
 
         return $query->row()->count;
-    }
+    }*/
 
 
 
@@ -226,7 +228,122 @@ class Records extends CI_Model {
      * ===========*/
 
 
-    function get_running_activities_full( $user_id, $categorie_id = NULL, $activity_id = NULL ) {
+    function get_records($user_id, $param = array(), $offset= NULL, $count= NULL ) {
+
+        if (!isset( $param['categorie_id'] )) $param['categorie_id'] = NULL;
+        if (!isset( $param['activity_id'] )) $param['activity_id'] = NULL;
+        if (!isset( $param['type_of_record'] )) $param['type_of_record'] = NULL;
+        if (!isset( $param['running'] )) $param['running'] = NULL;
+        if (!isset( $param['tags'] )) $param['tags'] = array();
+        if (!isset( $param['value_type'] )) $param['value_type'] = NULL;
+
+
+        $req = 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*
+             FROM ' . $this->records_table . '
+             LEFT JOIN ' . $this->activities_table . '
+                ON ' . $this->records_table . '.activity_ID=' . $this->activities_table . '.id
+             LEFT JOIN ' . $this->categories_table . '
+                ON ' . $this->activities_table . '.categorie_ID=' . $this->categories_table . '.id';
+
+
+         if ($param['value_type'] !== NULL )
+            $res .=' LEFT JOIN ' . $this->records_values_table . '
+                ON ' . $this->record_table . '.id=' . $this->records_values_table . '.record_ID';
+
+
+        $req .= ' WHERE
+                user_ID=' . $user_id ;
+
+        // TODO tags gestion
+
+        if ($param['categorie_id'] !== NULL ) $req .= ' AND ' . $this->activities_table . '.categorie_ID=' . $param['categorie_id'];
+        if ($param['activity_id'] !== NULL ) $req .= ' AND ' . $this->records_table . '.activity_ID=' . $param['activity_id'];
+        if ($param['type_of_record'] !== NULL ) $req .= ' AND type_of_record=\'' . $param['type_of_record'] . '\'';
+
+        if ($param['running'] !== NULL )  $req .= ' AND running=' . $param['running'];
+
+        if ($param['value_type'] !== NULL ) $req .=  'AND ' . $this->records_values_table . '.value_type_ID='.$param['value_type'];
+
+        // TODO tags gestion
+
+        $req .= ' ORDER BY start_time DESC';
+
+        if ( ($offset!==NULL) && ($count!=NULL) ) $req .= ' LIMIT ' . $offset . ',' . $count ;
+
+        $query = $this->db->query( $req );
+
+        if ( $query->num_rows() >= 1 )
+            return $query->result_array();
+        return NULL;
+    }
+
+
+
+
+function get_records_count($user_id, $param = array() ) {
+
+        if (!isset( $param['categorie_id'] )) $param['categorie_id'] = NULL;
+        if (!isset( $param['activity_id'] )) $param['activity_id'] = NULL;
+        if (!isset( $param['type_of_record'] )) $param['type_of_record'] = NULL;
+        if (!isset( $param['running'] )) $param['running'] = NULL;
+        if (!isset( $param['tags'] )) $param['tags'] = array();
+        if (!isset( $param['value_type'] )) $param['value_type'] = NULL;
+
+
+        $req = 'SELECT  count(' . $this->records_table . '.id) as count
+             FROM ' . $this->records_table . '
+             LEFT JOIN ' . $this->activities_table . '
+                ON ' . $this->records_table . '.activity_ID=' . $this->activities_table . '.id
+             LEFT JOIN ' . $this->categories_table . '
+                ON ' . $this->activities_table . '.categorie_ID=' . $this->categories_table . '.id';
+
+
+         if ($param['value_type'] !== NULL )
+            $res .=' LEFT JOIN ' . $this->records_values_table . '
+                ON ' . $this->record_table . '.id=' . $this->records_values_table . '.record_ID';
+
+
+        $req .= ' WHERE
+                user_ID=' . $user_id ;
+
+        // TODO tags gestion
+
+        if ($param['categorie_id'] !== NULL ) $req .= ' AND ' . $this->activities_table . '.categorie_ID=' . $param['categorie_id'];
+        if ($param['activity_id'] !== NULL ) $req .= ' AND ' . $this->records_table . '.activity_ID=' . $param['activity_id'];
+        if ($param['type_of_record'] !== NULL ) $req .= ' AND type_of_record=\'' . $param['type_of_record'] . '\'';
+
+        if ($param['running'] !== NULL )  $req .= ' AND running=' . $param['running'];
+
+        if ($param['value_type'] !== NULL ) $req .=  'AND ' . $this->records_values_table . '.value_type_ID='.$param['value_type'];
+
+        // TODO tags gestion
+
+        $query = $this->db->query( $req );
+
+        return $query->row()->count;
+    }
+
+
+
+
+    function get_records_full($user_id, $param = array(), $offset= NULL, $count= NULL ) {
+
+        if (!isset( $param['categorie_id'] )) $param['categorie_id'] = NULL;
+        if (!isset( $param['activity_id'] )) $param['activity_id'] = NULL;
+        if (!isset( $param['type_of_record'] )) $param['type_of_record'] = NULL;
+        if (!isset( $param['running'] )) $param['running'] = NULL;
+        if (!isset( $param['tags'] )) $param['tags'] = array();
+        if (!isset( $param['value_type'] )) $param['value_type'] = NULL;
+
+        $activities = $this->get_records($user_id, $param, $offset, $count);
+        if ( $activities )
+            $activities = $this->complete_records_info( $activities );
+
+        return $activities;
+    }
+
+
+   /* function get_running_activities_full( $user_id, $categorie_id = NULL, $activity_id = NULL ) {
         $activities = $this->get_running_activities( $user_id, $categorie_id, $activity_id );
         if ( $activities )
             $activities = $this->complete_records_info( $activities );
@@ -241,7 +358,7 @@ class Records extends CI_Model {
             $activities = $this->complete_records_info( $activities );
 
         return $activities;
-    }
+    }*/
 
 
     function get_record_by_id_full( $record_id ) {
@@ -253,7 +370,7 @@ class Records extends CI_Model {
     }
 
 
-    function get_last_actions_full( $user_id, $categorie_id = NULL, $activity_id = NULL, $offset = 0, $count = 10 ) {
+   /* function get_last_actions_full( $user_id, $categorie_id = NULL, $activity_id = NULL, $offset = 0, $count = 10 ) {
 
         $records = $this->get_last_activities( $user_id, $categorie_id, $activity_id, $offset, $count );
 
@@ -261,7 +378,7 @@ class Records extends CI_Model {
             $records = $this->complete_records_info( $records );
 
         return $records;
-    }
+    }*/
 
 
     function restart_record( $record_id ) {
