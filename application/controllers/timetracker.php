@@ -155,13 +155,10 @@ class Timetracker extends CI_Controller {
      *  */
     public function edit_record( $username, $record_id ) {
         $this->_checkUsername( $username );
-        // TODO!
         $this->data[ 'record' ] = $this->records->get_record_by_id_full( $record_id );
         if ( !$this->data[ 'record' ] )
             show_404();
         $this->data[ 'tt_layout' ] = 'tt_record_edit';
-
-        $this->data[ 'TODO' ] = "edit record " . $record_id;
         $this->_render();
     }
 
@@ -286,10 +283,7 @@ class Timetracker extends CI_Controller {
         if ( $activity_id == NULL )
             redirect( 'tt/' . $username . '/activities', 'location', 301 );
         $this->_checkRecordType( $activity_id, 'activity' );
-        // TODO!
         $this->_generic_activity_show( $username, $activity_id, $page);
-
-        $this->data[ 'TODO' ] = "activity " . $activity_id . " page - add running & last activities";
         $this->_render();
     }
 
@@ -301,8 +295,8 @@ class Timetracker extends CI_Controller {
     public function activity_edit( $username, $activity_id ) {
         $this->_checkUsername( $username );
         $this->_checkRecordType( $activity_id, 'activity' );
-        // TODO!
-        $this->data[ 'TODO' ] = "activity " . $activity_id . " edit (rename, hide)";
+        $this->data[ 'activity' ] = $this->activities->get_activity_by_id_full( $activity_id );
+        $this->data[ 'tt_layout' ] = 'tt_activity_edit';
         $this->_render();
     }
 
@@ -329,11 +323,7 @@ class Timetracker extends CI_Controller {
         if ( $activity_id == NULL )
             redirect( 'tt/' . $username . '/thingstodo', 'location', 301 );
         $this->_checkRecordType( $activity_id, 'todo' );
-        // TODO!
-        //$this->data['tt_layout']='tt_activity';
         $this->_generic_activity_show( $username, $activity_id, $page );
-
-        $this->data[ 'TODO' ] = "todo " . $activity_id . " page - add running & last activities";
         $this->_render();
     }
 
@@ -345,8 +335,6 @@ class Timetracker extends CI_Controller {
     public function todo_edit( $username, $activity_id ) {
         $this->_checkUsername( $username );
         $this->_checkRecordType( $activity_id, 'todo' );
-        // TODO!
-        $this->data[ 'TODO' ] = "todo " . $activity_id . " edit (rename, hide)";
         $this->_render();
     }
 
@@ -374,11 +362,8 @@ class Timetracker extends CI_Controller {
         if ( $activity_id == NULL )
             redirect( 'tt/' . $username . '/values', 'location', 301 );
         $this->_checkRecordType( $activity_id, 'value' );
-        // TODO!
         $this->data[ 'tt_layout' ] = 'tt_activity';
         $this->_generic_activity_show( $username, $activity_id, $page );
-
-        $this->data[ 'TODO' ] = "value " . $activity_id . " page - add running & last activities";
         $this->_render();
     }
 
@@ -390,8 +375,6 @@ class Timetracker extends CI_Controller {
     public function value_edit( $username, $activity_id ) {
         $this->_checkUsername( $username );
         $this->_checkRecordType( $activity_id, 'value' );
-        // TODO!
-        $this->data[ 'TODO' ] = "value " . $activity_id . " edit (rename, hide)";
         $this->_render();
     }
 
@@ -407,7 +390,7 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername( $username );
         // TODO!
         $this->data[ 'categories' ] = $this->categories->get_categories( $this->user_id );
-        $this->data[ 'TODO' ]     = "categories";
+        $this->data[ 'TODO' ]     = "list categeories";
         $this->_render();
     }
 
@@ -622,8 +605,12 @@ class Timetracker extends CI_Controller {
 
         if ( element( 'start', $post ) )
             $res = $this->_start_record( $post );
+
         if ( element( 'update_record', $post ) )
             $res = $this->_update_record( $post );
+
+        if ( element( 'update_activity', $post ) )
+            $res = $this->_update_activity( $post );
 
         return $res;
     }
@@ -718,7 +705,7 @@ class Timetracker extends CI_Controller {
 
 
     function _update_record( $post ) {
-        $this->form_validation->set_rules( 'update_record', 'Record id', 'required' );
+        $this->form_validation->set_rules( 'update_record', 'Record id', 'required|integer' );
         $this->form_validation->set_rules( 'activity', 'Activity', 'trim|required' );
         $this->form_validation->set_rules( 'start_time', 'Start time', 'required' );
         //$this->form_validation->set_rules( 'start_time', 'Start time', 'required' ); TODO! add dureation check, check start and end date
@@ -843,6 +830,54 @@ class Timetracker extends CI_Controller {
         $activity[ 'record' ] = $this->records->create_record( $activity[ 'id' ], $param );
 
         return $activity;
+    }
+
+
+     function _update_activity( $post ) {
+        $this->form_validation->set_rules( 'update_activity', 'Activity id', 'required|integer' );
+        $this->form_validation->set_rules( 'activity', 'Activity', 'trim|required' );
+
+         $res= array();
+
+        if ( $this->form_validation->run() === TRUE ) {
+
+            $param  = array( 'description' => $post[ 'description' ] );
+
+
+            if ( strpos( $post[ 'activity' ], '@' ) === FALSE ) {
+                $categorie  = '';
+                $param['title']= trim( $post[ 'activity' ] );
+            }
+            else {
+                $split = preg_split( '/@/', $post[ 'activity' ], -1, PREG_SPLIT_NO_EMPTY );
+                $categorie  = trim( $split[ 1 ] );
+                $param['title'] = trim( $split[ 0 ] );
+            }
+
+
+            $categorie = $this->categories->getorcreate_categorie( $this->user_id, $categorie );
+            $param['categorie_ID'] = $categorie['id'];
+
+            $this->activities->update_activity( $post[ 'update_activity' ], $param);
+            $res[ 'activity' ]= $this->activities->get_activity_by_id( $post[ 'update_activity' ] );
+
+            $res[ 'alerts' ]   = array(
+                 array(
+                     'type' => 'success',
+                    'alert' => 'update activity: ' . $res[ 'activity' ][ 'title' ]
+                )
+            );
+        }
+        else {
+            $res[ 'alerts' ]   = array(
+                 array(
+                     'type' => 'error',
+                    'alert' => 'error ' //TODO! tester
+                )
+            );
+        }
+
+        return $res;
     }
 
 
