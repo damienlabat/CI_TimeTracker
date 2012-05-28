@@ -446,8 +446,9 @@ class Timetracker extends CI_Controller {
 
     public function categorie_edit( $username, $categorie_id ) {
         $this->_checkUsername( $username );
-        // TODO!
-        $this->data[ 'TODO' ] = "categorie " . $categorie_id . " edit (rename, share, hide)";
+        $this->data[ 'categorie' ] = $this->categories->get_categorie_by_id( $categorie_id );
+        $this->data[ 'tt_layout' ]  = 'tt_categorie_edit';
+        $this->data[ 'TODO' ]       = "categorie " . $categorie_id . "  add share function";
         $this->_render();
     }
 
@@ -611,6 +612,9 @@ class Timetracker extends CI_Controller {
 
         if ( element( 'update_activity', $post ) )
             $res = $this->_update_activity( $post );
+
+        if ( element( 'update_categorie', $post ) )
+            $res = $this->_update_categorie( $post );
 
         return $res;
     }
@@ -837,6 +841,9 @@ class Timetracker extends CI_Controller {
         $this->form_validation->set_rules( 'update_activity', 'Activity id', 'required|integer' );
         $this->form_validation->set_rules( 'activity', 'Activity', 'trim|required' );
 
+
+        // TODO check if unique
+
          $res= array();
 
         if ( $this->form_validation->run() === TRUE ) {
@@ -867,6 +874,7 @@ class Timetracker extends CI_Controller {
                     'alert' => 'update activity: ' . $res[ 'activity' ][ 'title' ]
                 )
             );
+
         }
         else {
             $res[ 'alerts' ]   = array(
@@ -875,6 +883,48 @@ class Timetracker extends CI_Controller {
                     'alert' => 'error ' //TODO! tester
                 )
             );
+        }
+
+        return $res;
+    }
+
+
+
+
+
+    function _update_categorie( $post ) {
+
+        $this->form_validation->set_rules( 'update_categorie', 'Activity id', 'required|integer' );
+
+        // TODO check if unique
+
+         $res= array();
+
+        if ( $this->form_validation->run() === TRUE ) {
+
+            $param  = array( 'description' => $post[ 'description' ], 'title' => $post['categorie'] );
+
+            $this->categories->update_categorie( $post[ 'update_categorie' ], $param);
+            $res[ 'categorie' ]= $this->categories->get_categorie_by_id( $post[ 'update_categorie' ] );
+
+            $res[ 'alerts' ]   = array(
+                 array(
+                     'type' => 'success',
+                    'alert' => 'update categorie: ' . $res[ 'categorie' ][ 'title' ]
+                )
+            );
+
+            $this->session->set_flashdata( 'alerts', $res[ 'alerts' ] );
+            redirect( 'tt/' . $this->user_name . '/categorie/'.$res[ 'categorie' ][ 'id' ], 'location' );
+        }
+        else {
+            $res[ 'alerts' ]   = array(
+                 array(
+                     'type' => 'error',
+                    'alert' => 'error ' //TODO! tester
+                )
+            );
+
         }
 
         return $res;

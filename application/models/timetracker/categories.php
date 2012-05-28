@@ -64,16 +64,13 @@ class Categories extends CI_Model {
     /**
      * Update  categorie record
      *
-     * @user_id         int
-     * @title           string
-     * @data            array
-     * @return          boolean
+     * @id         int
+     * @param            array
      */
-    function update_categorie( $user_id, $title, $data ) {
-        $this->db->where( 'LOWER(title)', strtolower( $title ) );
-        $this->db->where( 'user_ID', $user_id );
+    function update_categorie( $id, $param ) {
+        $this->db->where( 'id', $id );
 
-        if ( $this->db->update( $this->categories_table, $data ) )
+        if ( $this->db->update( $this->categories_table, $param ) )
             return TRUE;
 
         return FALSE;

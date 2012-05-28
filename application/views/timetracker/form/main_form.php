@@ -1,3 +1,4 @@
+<?php echo validation_errors(); ?>
 <?= form_open( 'tt/' . $user_name, array(
      'id' => 'classicform'
 ) ) ?>
