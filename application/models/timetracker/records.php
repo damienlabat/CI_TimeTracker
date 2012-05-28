@@ -247,8 +247,8 @@ class Records extends CI_Model {
 
 
          if ($param['value_type'] !== NULL )
-            $res .=' LEFT JOIN ' . $this->records_values_table . '
-                ON ' . $this->record_table . '.id=' . $this->records_values_table . '.record_ID';
+            $req .=' LEFT JOIN ' . $this->records_values_table . '
+                ON ' . $this->records_table . '.id=' . $this->records_values_table . '.record_ID';
 
 
         $req .= ' WHERE
@@ -262,7 +262,7 @@ class Records extends CI_Model {
 
         if ($param['running'] !== NULL )  $req .= ' AND running=' . $param['running'];
 
-        if ($param['value_type'] !== NULL ) $req .=  'AND ' . $this->records_values_table . '.value_type_ID='.$param['value_type'];
+        if ($param['value_type'] !== NULL ) $req .=  ' AND ' . $this->records_values_table . '.value_type_ID='.$param['value_type'];
 
         // TODO tags gestion
 
@@ -299,8 +299,8 @@ function get_records_count($user_id, $param = array() ) {
 
 
          if ($param['value_type'] !== NULL )
-            $res .=' LEFT JOIN ' . $this->records_values_table . '
-                ON ' . $this->record_table . '.id=' . $this->records_values_table . '.record_ID';
+            $req .=' LEFT JOIN ' . $this->records_values_table . '
+                ON ' . $this->records_table . '.id=' . $this->records_values_table . '.record_ID';
 
 
         $req .= ' WHERE
@@ -314,7 +314,7 @@ function get_records_count($user_id, $param = array() ) {
 
         if ($param['running'] !== NULL )  $req .= ' AND running=' . $param['running'];
 
-        if ($param['value_type'] !== NULL ) $req .=  'AND ' . $this->records_values_table . '.value_type_ID='.$param['value_type'];
+        if ($param['value_type'] !== NULL ) $req .=  ' AND ' . $this->records_values_table . '.value_type_ID='.$param['value_type'];
 
         // TODO tags gestion
 

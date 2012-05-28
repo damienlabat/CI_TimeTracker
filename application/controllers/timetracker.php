@@ -514,12 +514,40 @@ class Timetracker extends CI_Controller {
      *  show value_types
      *  */
 
-    public function valuetype( $username, $valuetype_id = NULL ) {
+    public function valuetype( $username, $valuetype_id = NULL, $page = 1 ) {
         $this->_checkUsername( $username );
         if ( $valuetype_id == NULL )
             redirect( 'tt/' . $username . '/valuetypes', 'location', 301 );
-        // TODO!
-        $this->data[ 'TODO' ] = "valuetype " . $valuetype_id . " page";
+        $this->_checkUsername( $username );
+
+        $this->data[ 'value_type' ] = $this->values->get_value_type_by_id( $valuetype_id );
+        if ( !$this->data[ 'value_type' ] )
+            show_404();
+
+        $this->load->library('pagination');
+
+        $config['base_url'] = site_url('tt/'.$username.'/valuetype/'.$valuetype_id);
+        $config['total_rows'] = $this->records->get_records_count($this->user_id, array( 'value_type'=>$valuetype_id ) );
+        $config['uri_segment'] = 5; // autodetection dont work ???
+
+        $this->pagination->initialize($config);
+
+        $per_page=$this->pagination->per_page;
+        $offset= ( $page-1 ) * $per_page;
+
+        $this->pagination->initialize($config);
+
+
+        $this->data[ 'breadcrumb' ] = array(
+            array( 'title'=> 'value types', 'url'=>site_url('tt/'.$username.'/valuetypes/')),
+            array( 'title'=> $this->data[ 'value_type' ]['title'], 'url'=>'')
+            );
+
+        $this->data[ 'last_actions' ]              = $this->records->get_records_full($this->user_id, array( 'value_type'=>$valuetype_id  ), $offset, $per_page );
+        $this->data[ 'pager']                      = $this->pagination->create_links();
+        $this->data[ 'tt_layout' ]                 = 'tt_valuetype';
+
+        $this->data[ 'TODO' ] = "value type " . $valuetype_id . " page";
         $this->_render();
     }
 

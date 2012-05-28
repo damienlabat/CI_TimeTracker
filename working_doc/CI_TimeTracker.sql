@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Serveur: localhost
--- Généré le : Ven 25 Mai 2012 à 16:43
+-- Généré le : Lun 28 Mai 2012 à 14:37
 -- Version du serveur: 5.1.61
 -- Version de PHP: 5.3.3-7+squeeze9
 
@@ -249,7 +249,7 @@ CREATE TABLE IF NOT EXISTS `user_params` (
 CREATE TABLE IF NOT EXISTS `values_types` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(100) COLLATE utf8_bin NOT NULL,
-  `desc` text COLLATE utf8_bin NOT NULL,
+  `description` text COLLATE utf8_bin NOT NULL,
   `type` varchar(100) COLLATE utf8_bin NOT NULL,
   `isshow` int(1) unsigned NOT NULL DEFAULT '1',
   `user_ID` int(10) unsigned NOT NULL,
