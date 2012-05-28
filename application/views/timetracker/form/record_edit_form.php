@@ -1,5 +1,6 @@
-<?php echo validation_errors(); ?>
-<?= form_open( 'tt/' . $user_name, array(
+<?php echo validation_errors();
+?>
+<?= form_open( 'tt/' . $user_name . '/record/'.$record[ 'id' ].'/edit', array(
      'id' => 'classicform'
 ) ) ?>
 
@@ -14,10 +15,10 @@
 
 
         <label for="value_name">value name</label>
-        <input type="text" placeholder="value name" name="value_name" id="value_name" value="">
+        <input type="text" placeholder="value name" name="value_name" id="value_name" value="<?= $record[ 'value' ][ 'title' ] ?>">
         =
         <label for="value">value</label>
-        <input type="text" placeholder="value" name="value" id="value" value="">
+        <input type="text" placeholder="value" name="value" id="value" value="<?= $record[ 'value' ][ 'value' ] ?>">
 
 
 

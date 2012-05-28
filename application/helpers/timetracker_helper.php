@@ -233,9 +233,8 @@ if ( ! function_exists('value'))
 {
     function value($record,$username) {
         $html='';
-
         if (isset($record['value']))
-            $html= "<div class='value'><a href='".site_url('tt/'.$username.'/valuetype/'.$record['value']['id'])."'>#".$record['value']['title']."</a> = <a href='".site_url('tt/'.$username.'/value/'.$record['id'])."'>".$record['value']['value']."</a></div>";
+            $html= "<div class='value'><a href='".site_url('tt/'.$username.'/valuetype/'.$record['value']['valuetype_ID'])."'>#".$record['value']['title']."</a> = <a href='".site_url('tt/'.$username.'/record/'.$record['id'])."'>".$record['value']['value']."</a></div>";
 
         return $html;
     }

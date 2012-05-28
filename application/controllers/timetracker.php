@@ -896,6 +896,8 @@ class Timetracker extends CI_Controller {
                     'alert' => 'update activity: ' . $res[ 'activity' ][ 'title' ]
                 )
             );
+            $this->session->set_flashdata( 'alerts', $res[ 'alerts' ] );
+            redirect( 'tt/' . $this->user_name . '/record/'.$res[ 'activity' ][ 'record' ][ 'id' ], 'location' );
         }
         else {
             $res[ 'alerts' ]   = array(
