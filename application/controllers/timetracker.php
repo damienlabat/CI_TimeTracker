@@ -251,6 +251,7 @@ class Timetracker extends CI_Controller {
         if ( !$this->data[ 'activity' ] )
             show_404();
         $this->data[ 'breadcrumb' ] = array(
+            array( 'title'=> $this->data[ 'activity' ][ 'type_of_record' ], 'url'=>'tt/'.$username.'/'.$this->data[ 'activity' ][ 'type_of_record' ]),
             array( 'title'=> $this->data[ 'activity' ]['categorie']['title'], 'url'=>'tt/'.$username.'/categorie/'.$this->data[ 'activity' ]['categorie_ID']),
             array( 'title'=> $this->data[ 'activity' ]['title'], 'url'=>'')
             );
@@ -424,7 +425,8 @@ class Timetracker extends CI_Controller {
 
 
         $this->data[ 'breadcrumb' ] = array(
-            array( 'title'=> $this->data[ 'categorie' ]['title'], 'url'=>'')
+            array( 'title'=> 'categories', 'url'=>'tt/'.$username.'/categories'),
+            array( 'title'=> $this->data[ 'categorie' ]['title'], 'url'=>site_url('tt/'.$username.'/categorie/'.$categorie_id))
             );
         $this->data[ 'categories' ]                = $this->categories->get_categories( $this->user_id );
         $this->data[ 'activities' ]                = $this->activities->get_categorie_activities( $categorie_id );
@@ -447,6 +449,14 @@ class Timetracker extends CI_Controller {
     public function categorie_edit( $username, $categorie_id ) {
         $this->_checkUsername( $username );
         $this->data[ 'categorie' ] = $this->categories->get_categorie_by_id( $categorie_id );
+                if ( !$this->data[ 'categorie' ] )
+            show_404();
+
+        $this->data[ 'breadcrumb' ] = array(
+            array( 'title'=> 'categories', 'url'=>site_url('tt/'.$username.'/categories')),
+            array( 'title'=> $this->data[ 'categorie' ]['title'], 'url'=>site_url('tt/'.$username.'/categorie/'.$categorie_id)),
+            array( 'title'=> 'edit', 'url'=>site_url('tt/'.$username.'/categorie/'.$categorie_id.'/edit'))
+            );
         $this->data[ 'tt_layout' ]  = 'tt_categorie_edit';
         $this->data[ 'TODO' ]       = "categorie " . $categorie_id . "  add share function";
         $this->_render();
@@ -496,7 +506,7 @@ class Timetracker extends CI_Controller {
 
 
         $this->data[ 'breadcrumb' ] = array(
-            array( 'title'=> 'tags', 'url'=>site_url('tt/'.$username.'/tags')),
+            array( 'title'=> 'tags', 'url'=>'tt/'.$username.'/tags'),
             array( 'title'=> $this->data[ 'tag' ]['tag'], 'url'=>'')
             );
 
@@ -517,8 +527,19 @@ class Timetracker extends CI_Controller {
 
     public function tag_edit( $username, $tag_id ) {
         $this->_checkUsername( $username );
-        // TODO!
-        $this->data[ 'TODO' ] = "tag " . $tag_id . " edit";
+        $this->data[ 'tag' ] = $this->tags->get_tag_by_id( $tag_id );
+        if ( !$this->data[ 'tag' ] )
+            show_404();
+
+        $this->data[ 'breadcrumb' ] = array(
+            array( 'title'=> 'tags', 'url'=>'tt/'.$username.'/tags'),
+            array( 'title'=> $this->data[ 'tag' ]['tag'], 'url'=>'tt/'.$username.'/tag/'.$tag_id),
+            array( 'title'=> 'edit', 'url'=>'tt/'.$username.'/tag/'.$tag_id.'/edit')
+            );
+
+        $this->data[ 'tt_layout' ]                 = 'tt_tag_edit';
+
+        $this->data[ 'TODO' ] = "tag " . $tag_id . " page";
         $this->_render();
     }
 
@@ -527,7 +548,7 @@ class Timetracker extends CI_Controller {
 
 
     /*****
-     *  list value_types
+     *  list valuetype
      *  */
 
     public function valuetypes( $username ) {
@@ -547,14 +568,14 @@ class Timetracker extends CI_Controller {
         if ( $valuetype_id == NULL )
             redirect( 'tt/' . $username . '/valuetypes', 'location', 301 );
 
-        $this->data[ 'value_type' ] = $this->values->get_value_type_by_id( $valuetype_id );
-        if ( !$this->data[ 'value_type' ] )
+        $this->data[ 'valuetype' ] = $this->values->get_valuetype_by_id( $valuetype_id );
+        if ( !$this->data[ 'valuetype' ] )
             show_404();
 
         $this->load->library('pagination');
 
         $config['base_url'] = site_url('tt/'.$username.'/valuetype/'.$valuetype_id);
-        $config['total_rows'] = $this->records->get_records_count($this->user_id, array( 'value_type'=>$valuetype_id ) );
+        $config['total_rows'] = $this->records->get_records_count($this->user_id, array( 'valuetype'=>$valuetype_id ) );
         $config['uri_segment'] = 5; // autodetection dont work ???
 
         $this->pagination->initialize($config);
@@ -566,11 +587,11 @@ class Timetracker extends CI_Controller {
 
 
         $this->data[ 'breadcrumb' ] = array(
-            array( 'title'=> 'value types', 'url'=>site_url('tt/'.$username.'/valuetypes/')),
-            array( 'title'=> $this->data[ 'value_type' ]['title'], 'url'=>'')
+            array( 'title'=> 'value types', 'url'=>'tt/'.$username.'/valuetypes/'),
+            array( 'title'=> $this->data[ 'valuetype' ]['title'], 'url'=>'tt/'.$username.'/valuetype/'.$valuetype_id)
             );
 
-        $this->data[ 'last_actions' ]              = $this->records->get_records_full($this->user_id, array( 'value_type'=>$valuetype_id  ), $offset, $per_page );
+        $this->data[ 'last_actions' ]              = $this->records->get_records_full($this->user_id, array( 'valuetype'=>$valuetype_id  ), $offset, $per_page );
         $this->data[ 'pager']                      = $this->pagination->create_links();
         $this->data[ 'tt_layout' ]                 = 'tt_valuetype';
 
@@ -581,13 +602,24 @@ class Timetracker extends CI_Controller {
 
 
     /*****
-     *  show value_types edit
+     *  show valuetype edit
      *  */
 
     public function valuetype_edit( $username, $valuetype_id ) {
         $this->_checkUsername( $username );
-        // TODO!
-        $this->data[ 'TODO' ] = "valuetype " . $valuetype_id . " edit";
+        $this->data[ 'valuetype' ] = $this->values->get_valuetype_by_id( $valuetype_id );
+        if ( !$this->data[ 'valuetype' ] )
+            show_404();
+
+        $this->data[ 'breadcrumb' ] = array(
+            array( 'title'=> 'value types', 'url'=>'tt/'.$username.'/valuetypes/'),
+            array( 'title'=> $this->data[ 'valuetype' ]['title'], 'url'=>'tt/'.$username.'/valuetype/'.$valuetype_id),
+            array( 'title'=> 'edit', 'url'=>'tt/'.$username.'/valuetype/'.$valuetype_id.'/edit')
+            );
+
+        $this->data[ 'tt_layout' ]                 = 'tt_valuetype_edit';
+
+        $this->data[ 'TODO' ] = "valuetype " . $valuetype_id . " edit page";
         $this->_render();
     }
 
@@ -670,6 +702,12 @@ class Timetracker extends CI_Controller {
 
         if ( element( 'update_categorie', $post ) )
             $res = $this->_update_categorie( $post );
+
+        if ( element( 'update_tag', $post ) )
+            $res = $this->_update_tag( $post );
+
+        if ( element( 'update_valuetype', $post ) )
+            $res = $this->_update_valuetype( $post );
 
         return $res;
     }
@@ -986,9 +1024,9 @@ class Timetracker extends CI_Controller {
         $this->form_validation->set_rules( 'update_categorie', 'Categorie id', 'required|integer' );
         $this->form_validation->set_rules( 'categorie', 'Categorie', 'callback__categoriename_check|trim' );
 
-        // TODO check if unique
+        if (!isset($post['isshow'])) $post['isshow']=0;
 
-         $res= array();
+        $res= array();
 
         if ( $this->form_validation->run() === TRUE ) {
 
@@ -1031,6 +1069,125 @@ class Timetracker extends CI_Controller {
         else
         {
             $this->form_validation->set_message('_categoriename_check', '%s named \''. trim($str) .'\' already exists');
+            return FALSE;
+        }
+    }
+
+
+
+
+    function _update_tag( $post ) {
+
+        $this->data['update_tag'] = $post[ 'update_tag' ];
+
+        $this->form_validation->set_rules( 'update_tag', 'Tag id', 'required|integer' );
+        $this->form_validation->set_rules( 'tag', 'Tag', 'callback__tagname_check|trim' );
+
+        if (!isset($post['isshow'])) $post['isshow']=0;
+
+        $res= array();
+
+        if ( $this->form_validation->run() === TRUE ) {
+
+            $param  = array( 'tag' => $post['tag'], 'isshow' => $post['isshow'] );
+
+            $this->tags->update_tag( $post[ 'update_tag' ], $param);
+            $res[ 'tag' ]= $this->tags->get_tag_by_id( $post[ 'update_tag' ] );
+
+            $res[ 'alerts' ]   = array(
+                 array(
+                     'type' => 'success',
+                    'alert' => 'update tag: ' . $res[ 'tag' ][ 'tag' ]
+                )
+            );
+
+            $this->session->set_flashdata( 'alerts', $res[ 'alerts' ] );
+            redirect( 'tt/' . $this->user_name . '/tag/'.$res[ 'tag' ][ 'id' ], 'location' );
+        }
+        else {
+            $res[ 'alerts' ]   = array(
+                 array(
+                     'type' => 'error',
+                    'alert' => 'error ' //TODO! tester
+                )
+            );
+
+        }
+
+        return $res;
+    }
+
+
+    public function _tagname_check($str)
+    {
+        $cat = $this->tags->get_tag( $this->user_id, trim($str) );
+        if ( ( $cat === NULL ) OR ( $cat['id'] == $this->data['update_tag'] ) )
+        {
+            return TRUE;
+        }
+        else
+        {
+            $this->form_validation->set_message('_tagname_check', '%s \''. trim($str) .'\' already exists');
+            return FALSE;
+        }
+    }
+
+
+
+
+    function _update_valuetype( $post ) {
+
+        $this->data['update_valuetype'] = $post[ 'update_valuetype' ];
+
+        $this->form_validation->set_rules( 'update_valuetype', 'Value type id', 'required|integer' );
+        $this->form_validation->set_rules( 'valuetype', 'Value type', 'callback__valuetypename_check|trim' );
+        //$this->form_validation->set_rules( 'typedata', 'Type', 'callback__valuetypename_check|trim' ); TODO check type
+
+        if (!isset($post['isshow'])) $post['isshow']=0;
+
+        $res= array();
+
+        if ( $this->form_validation->run() === TRUE ) {
+
+            $param  = array( 'title' => $post['valuetype'], 'isshow' => $post['isshow'], 'type'=>$post['typedata'], 'description'=>$post['description'] );
+
+            $this->values->update_valuetype( $post[ 'update_valuetype' ], $param);
+            $res[ 'valuetype' ]= $this->values->get_valuetype_by_id( $post[ 'update_valuetype' ] );
+
+            $res[ 'alerts' ]   = array(
+                 array(
+                     'type' => 'success',
+                    'alert' => 'update value type: ' . $res[ 'valuetype' ][ 'title' ]
+                )
+            );
+
+            $this->session->set_flashdata( 'alerts', $res[ 'alerts' ] );
+            redirect( 'tt/' . $this->user_name . '/valuetype/'.$res[ 'valuetype' ][ 'id' ], 'location' );
+        }
+        else {
+            $res[ 'alerts' ]   = array(
+                 array(
+                     'type' => 'error',
+                    'alert' => 'error ' //TODO! tester
+                )
+            );
+
+        }
+
+        return $res;
+    }
+
+
+    public function _valuetypename_check($str)
+    {
+        $cat = $this->values->get_valuetype( $this->user_id, trim($str) );
+        if ( ( $cat === NULL ) OR ( $cat['id'] == $this->data['update_valuetype'] ) )
+        {
+            return TRUE;
+        }
+        else
+        {
+            $this->form_validation->set_message('_valuetypename_check', '%s \''. trim($str) .'\' already exists');
             return FALSE;
         }
     }

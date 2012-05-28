@@ -84,14 +84,12 @@ class Tags extends CI_Model {
     /**
      * Update tag
      *
-     * @user_id         int
-     * @tag             string
+     * @id              int
      * @param           array
      * @return          boolean
      */
-    function update_tag( $user_id, $tag, $param ) {
-        $this->db->where( 'user_ID', $user_id );
-        $this->db->where( 'tag', $tag );
+    function update_tag( $id, $param ) {
+        $this->db->where( 'id', $id );
         if ( $this->db->update( $this->tags_table, $param ) )
             return TRUE;
 

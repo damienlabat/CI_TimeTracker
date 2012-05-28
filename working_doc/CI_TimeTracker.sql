@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `l_records_values` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `value` varchar(200) COLLATE utf8_bin NOT NULL,
   `record_ID` int(10) unsigned NOT NULL,
-  `value_type_ID` int(10) unsigned NOT NULL,
+  `valuetype_ID` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 

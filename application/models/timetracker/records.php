@@ -235,7 +235,7 @@ class Records extends CI_Model {
         if (!isset( $param['type_of_record'] )) $param['type_of_record'] = NULL;
         if (!isset( $param['running'] )) $param['running'] = NULL;
         if (!isset( $param['tags'] )) $param['tags'] = array();
-        if (!isset( $param['value_type'] )) $param['value_type'] = NULL;
+        if (!isset( $param['valuetype'] )) $param['valuetype'] = NULL;
 
 
         $req = 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*
@@ -246,7 +246,7 @@ class Records extends CI_Model {
                 ON ' . $this->activities_table . '.categorie_ID=' . $this->categories_table . '.id';
 
 
-         if ($param['value_type'] !== NULL )
+         if ($param['valuetype'] !== NULL )
             $req .=' LEFT JOIN ' . $this->records_values_table . '
                 ON ' . $this->records_table . '.id=' . $this->records_values_table . '.record_ID';
 
@@ -264,7 +264,7 @@ class Records extends CI_Model {
 
         if ($param['running'] !== NULL )  $req .= ' AND running=' . $param['running'];
 
-        if ($param['value_type'] !== NULL ) $req .=  ' AND ' . $this->records_values_table . '.value_type_ID='.$param['value_type'];
+        if ($param['valuetype'] !== NULL ) $req .=  ' AND ' . $this->records_values_table . '.valuetype_ID='.$param['valuetype'];
 
         foreach ( $param['tags'] as $k => $tag )
             $req .=' AND tag_table_'.$k.'.tag_ID='.$tag;
@@ -290,7 +290,7 @@ function get_records_count($user_id, $param = array() ) {
         if (!isset( $param['type_of_record'] )) $param['type_of_record'] = NULL;
         if (!isset( $param['running'] )) $param['running'] = NULL;
         if (!isset( $param['tags'] )) $param['tags'] = array();
-        if (!isset( $param['value_type'] )) $param['value_type'] = NULL;
+        if (!isset( $param['valuetype'] )) $param['valuetype'] = NULL;
 
 
         $req = 'SELECT  count(' . $this->records_table . '.id) as count
@@ -301,8 +301,8 @@ function get_records_count($user_id, $param = array() ) {
                 ON ' . $this->activities_table . '.categorie_ID=' . $this->categories_table . '.id';
 
 
-         if ($param['value_type'] !== NULL )
-            $req .=' LEFT JOIN ' . $this->records_tags_table . '
+         if ($param['valuetype'] !== NULL )
+            $req .=' LEFT JOIN ' . $this->records_values_table . '
                 ON ' . $this->records_table . '.id=' . $this->records_values_table . '.record_ID';
 
          foreach ( $param['tags'] as $k => $tag )
@@ -321,7 +321,7 @@ function get_records_count($user_id, $param = array() ) {
 
         if ($param['running'] !== NULL )  $req .= ' AND running=' . $param['running'];
 
-        if ($param['value_type'] !== NULL ) $req .=  ' AND ' . $this->records_values_table . '.value_type_ID='.$param['value_type'];
+        if ($param['valuetype'] !== NULL ) $req .=  ' AND ' . $this->records_values_table . '.valuetype_ID='.$param['valuetype'];
 
         foreach ( $param['tags'] as $k => $tag )
             $req .=' AND tag_table_'.$k.'.tag_ID='.$tag;
@@ -344,7 +344,7 @@ function get_records_count($user_id, $param = array() ) {
         if (!isset( $param['type_of_record'] )) $param['type_of_record'] = NULL;
         if (!isset( $param['running'] )) $param['running'] = NULL;
         if (!isset( $param['tags'] )) $param['tags'] = array();
-        if (!isset( $param['value_type'] )) $param['value_type'] = NULL;
+        if (!isset( $param['valuetype'] )) $param['valuetype'] = NULL;
 
         $activities = $this->get_records($user_id, $param, $offset, $count);
         if ( $activities )
@@ -408,7 +408,7 @@ function get_records_count($user_id, $param = array() ) {
             $this->tags->add_tag( $new_record[ 'id' ], $tag[ 'id' ] ); // add tags
 
         if ( $record[ 'type_of_record' ] == 'value' )
-            $this->values->add_value( $new_record[ 'id' ], $record[ 'value' ][ 'value_type_ID' ], $record[ 'value' ][ 'value' ] );
+            $this->values->add_value( $new_record[ 'id' ], $record[ 'value' ][ 'valuetype_ID' ], $record[ 'value' ][ 'value' ] );
 
         return TRUE;
     }
