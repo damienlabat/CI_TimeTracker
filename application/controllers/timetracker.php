@@ -894,7 +894,10 @@ class Timetracker extends CI_Controller {
 
     function _update_categorie( $post ) {
 
-        $this->form_validation->set_rules( 'update_categorie', 'Activity id', 'required|integer' );
+        $this->data['update_categorie'] = $post[ 'update_categorie' ];
+
+        $this->form_validation->set_rules( 'update_categorie', 'Categorie id', 'required|integer' );
+        $this->form_validation->set_rules( 'categorie', 'Categorie', 'callback__categorie_check|trim' );
 
         // TODO check if unique
 
@@ -929,6 +932,23 @@ class Timetracker extends CI_Controller {
 
         return $res;
     }
+
+
+    public function _categorie_check($str)
+    {
+        $cat = $this->categories->get_categorie_by_title( $this->user_id, trim($str) );
+        if ( ( $cat === NULL ) OR ( $cat['id'] == $this->data['update_categorie'] ) )
+        {
+            return TRUE;
+        }
+        else
+        {
+
+            $this->form_validation->set_message('_categorie_check', '%s named \''. trim($str) .'\' already exists');
+            return FALSE;
+        }
+    }
+
 
 
 
