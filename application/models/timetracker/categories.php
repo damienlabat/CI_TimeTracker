@@ -16,7 +16,7 @@ class Categories extends CI_Model {
         $this->db->where( 'id', $categorie_id );
 
         $query = $this->db->get( $this->categories_table );
-        if ( $query->num_rows() == 1 )
+        if ( $query->num_rows() >= 1 )
             return $query->row_array();
         return NULL;
     }
@@ -34,7 +34,7 @@ class Categories extends CI_Model {
         $this->db->where( 'user_ID', $user_id );
 
         $query = $this->db->get( $this->categories_table );
-        if ( $query->num_rows() == 1 )
+        if ( $query->num_rows() >= 1 )
             return $query->row_array();
         return NULL;
     }

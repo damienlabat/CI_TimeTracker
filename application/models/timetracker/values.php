@@ -20,7 +20,7 @@ class Values extends CI_Model {
         $this->db->where( 'record_ID', $record_id );
 
         $query = $this->db->get( $this->l_record_values_table );
-        if ( $query->num_rows() == 1 )
+        if ( $query->num_rows() >= 1 )
             return $query->row_array();
         return NULL;
     }
@@ -35,7 +35,7 @@ class Values extends CI_Model {
         $this->db->where( 'id', $value_type_id );
 
         $query = $this->db->get( $this->values_type_table );
-        if ( $query->num_rows() == 1 )
+        if ( $query->num_rows() >= 1 )
             return $query->row_array();
         return NULL;
     }
@@ -74,7 +74,7 @@ class Values extends CI_Model {
         $this->db->where( 'title', $title );
 
         $query = $this->db->get( $this->values_type_table );
-        if ( $query->num_rows() == 1 )
+        if ( $query->num_rows() >= 1 )
             return $query->row_array();
         return NULL;
     }
@@ -202,7 +202,7 @@ class Values extends CI_Model {
         $this->db->where( 'record_ID', $record_id );
 
         $query = $this->db->get();
-        if ( $query->num_rows() == 1 )
+        if ( $query->num_rows() >= 1 )
             return $query->row_array();
         return NULL;
 

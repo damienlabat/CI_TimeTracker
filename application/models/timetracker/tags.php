@@ -20,7 +20,7 @@ class Tags extends CI_Model {
         $this->db->where( 'user_ID', $user_id );
 
         $query = $this->db->get( $this->tags_table );
-        if ( $query->num_rows() == 1 )
+        if ( $query->num_rows() >= 1 )
             return $query->row_array();
         return NULL;
     }

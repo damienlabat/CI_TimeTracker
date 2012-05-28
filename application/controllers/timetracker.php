@@ -838,13 +838,13 @@ class Timetracker extends CI_Controller {
 
 
      function _update_activity( $post ) {
+
+        $this->actual_activity= $this->activities->get_activity_by_id( $post[ 'update_activity' ] );
         $this->form_validation->set_rules( 'update_activity', 'Activity id', 'required|integer' );
-        $this->form_validation->set_rules( 'activity', 'Activity', 'trim|required' );
+        $this->form_validation->set_rules( 'activity', 'Activity', 'callback__activityname_check|trim|required' );
 
 
-        // TODO check if unique
-
-         $res= array();
+        $res= array();
 
         if ( $this->form_validation->run() === TRUE ) {
 
@@ -874,6 +874,8 @@ class Timetracker extends CI_Controller {
                     'alert' => 'update activity: ' . $res[ 'activity' ][ 'title' ]
                 )
             );
+            $this->session->set_flashdata( 'alerts', $res[ 'alerts' ] );
+            redirect( 'tt/' . $this->user_name . '/activity/'.$res[ 'activity' ][ 'id' ], 'location' );
 
         }
         else {
@@ -887,6 +889,36 @@ class Timetracker extends CI_Controller {
 
         return $res;
     }
+
+
+
+
+    public function _activityname_check($str)
+    {
+        if ( strpos( $str, '@' ) === FALSE ) {
+                $categorie_title  = '';
+                $title= trim( $str );
+            }
+        else {
+                $split = preg_split( '/@/', $str, -1, PREG_SPLIT_NO_EMPTY );
+                $categorie_title  = trim( $split[ 1 ] );
+                $title = trim( $split[ 0 ] );
+            }
+         $categorie = $this->categories->getorcreate_categorie( $this->user_id, $categorie_title );
+
+
+        $act = $this->activities->get_activity(  $categorie['id'], $title, $this->actual_activity['type_of_record'] );
+        if ( ( $act === NULL ) OR ( $act['id'] ==  $this->actual_activity['id'] ) )
+        {
+            return TRUE;
+        }
+        else        {
+
+            $this->form_validation->set_message('_activityname_check', $this->actual_activity['type_of_record'].' %s named \''. trim($str) .'\' already exists');
+            return FALSE;
+        }
+    }
+
 
 
 
@@ -943,11 +975,11 @@ class Timetracker extends CI_Controller {
         }
         else
         {
-
-            $this->form_validation->set_message('_categorie_check', '%s named \''. trim($str) .'\' already exists');
+            $this->form_validation->set_message('_categoriename_check', '%s named \''. trim($str) .'\' already exists');
             return FALSE;
         }
     }
+
 
 
 

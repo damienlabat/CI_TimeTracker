@@ -19,7 +19,7 @@ class Activities extends CI_Model {
         $this->db->where( 'id', $activity_id );
 
         $query = $this->db->get( $this->activities_table );
-        if ( $query->num_rows() == 1 )
+        if ( $query->num_rows() >= 1 )
             return $query->row_array();
         return NULL;
     }
@@ -39,7 +39,7 @@ class Activities extends CI_Model {
         $this->db->where( 'type_of_record', $type_record );
 
         $query = $this->db->get( $this->activities_table );
-        if ( $query->num_rows() == 1 )
+        if ( $query->num_rows() >= 1 )
             return $query->row_array();
         return NULL;
     }
