@@ -902,7 +902,7 @@ class Timetracker extends CI_Controller {
 
         if ( $this->form_validation->run() === TRUE ) {
 
-            $param  = array( 'description' => $post[ 'description' ], 'title' => $post['categorie'] );
+            $param  = array( 'description' => $post[ 'description' ], 'title' => $post['categorie'], 'isshow' => $post['isshow'] );
 
             $this->categories->update_categorie( $post[ 'update_categorie' ], $param);
             $res[ 'categorie' ]= $this->categories->get_categorie_by_id( $post[ 'update_categorie' ] );
