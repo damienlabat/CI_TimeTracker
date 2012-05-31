@@ -169,15 +169,15 @@ if ( ! function_exists('record_buttons'))
       if (isset($record['running'])) {
 
         $html.= ' <span class="buttons btn-group">';
-        $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/edit')."'>edit</a>";
+        $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/edit')."'><i class='icon-pencil'></i> edit</a>";
         if (!$record['running'])
-            $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/restart')."'>restart</a>";
-        if ($show_delete) $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete')."'>delete</a>";
+            $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/restart')."'><i class='icon-play'></i> restart</a>";
+        if ($show_delete) $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete')."'><i class='icon-trash'></i> delete</a>";
         if ($record['running'])
-              $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/stop')."'>stop</a>";
+              $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/stop')."'><i class='icon-stop'></i> stop</a>";
         $html.= '</span>';
 
-          if (element('delete_confirm',$record)==TRUE)    $html.= "<div><a class='btn btn-mini btn-danger' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete?delete=true')."'>delete ! confirmed ?</a></div>";
+          if (element('delete_confirm',$record)==TRUE)    $html.= "<div><a class='btn btn-mini btn-danger' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete?delete=true')."'><i class='icon-trash'></i> delete ! confirmed ?</a></div>";
     }
 
 
