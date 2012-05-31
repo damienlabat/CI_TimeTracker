@@ -18,7 +18,7 @@
 
                 <li><a href='<?=site_url('tt/'.$user_name)?>'>Your TimeTracker</a></li>
                 <li><a href='<?=site_url('tt/'.$user_name.'/summary')?>'>summary</a></li>
-                <li><a href='<?=site_url('tt/'.$user_name.'/stats')?>'>stats</a></li>
+                <li><a href='<?=site_url('tt/'.$user_name.'/graph')?>'>graph</a></li>
 
 
                 <?php else: ?>
