@@ -83,7 +83,7 @@ class Timetracker_viz extends CI_Controller {
 
         if ($this->data['records']) {
             usort( $this->data['records'] , array("Timetracker_viz", "_orderByCat"));
-            $this->data['stats']= $this->_getStats($this->data['records'], $type_cat);
+            $this->data['stats']= $this->_getStats($this->data['records'], $type_cat,$this->data['dates']['min'],$this->data['dates']['max']);
         }
 
 
@@ -197,6 +197,18 @@ class Timetracker_viz extends CI_Controller {
 
 
 
+    public function _trim_duration($record,$datemin,$datemax) {
+        $date_deb = strtotime( $record['start_time'] );
+        $date_fin = $date_deb + $record['duration'];
+
+        if ($record['running']==1) $date_fin = time();
+
+        if ($datemin) $date_deb = max( $date_deb , strtotime($datemin) );
+        if ($datemax) $date_fin = min( $date_fin , strtotime($datemax) );
+
+        return $date_fin-$date_deb;
+    }
+
 
     public function _getStats($records, $type_cat, $datemin=NULL, $datemax=NULL) {
         $res = array( );
@@ -204,10 +216,12 @@ class Timetracker_viz extends CI_Controller {
         //TODO couper les duree en fonction datemin max et pour les runnings
         foreach ($records as $k => $record ) {
 
+            $record['trimmed_duration']=$this->_trim_duration($record,$datemin,$datemax);
+
             if (!isset(  $res[ $record['activity']['type_of_record'].'_total'] ))  $res[ $record['activity']['type_of_record'].'_total']=0;
             if (!isset(  $res[ $record['activity']['type_of_record'].'_count'] ))  $res[ $record['activity']['type_of_record'].'_count']=0;
 
-            $res[ $record['activity']['type_of_record'].'_total'] += $record['duration'];
+            $res[ $record['activity']['type_of_record'].'_total'] += $record['trimmed_duration'];
             $res[ $record['activity']['type_of_record'].'_count'] ++;
 
             // stat categorie
@@ -218,7 +232,7 @@ class Timetracker_viz extends CI_Controller {
              }
 
              $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]['count'] ++;
-             $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]['total'] += $record['duration'];
+             $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]['total'] += $record['trimmed_duration'];
 
             // stat activity
              if (!isset( $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ] )) {
@@ -228,7 +242,7 @@ class Timetracker_viz extends CI_Controller {
              }
 
              $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ]['count'] ++;
-             $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ]['total'] += $record['duration'];
+             $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ]['total'] += $record['trimmed_duration'];
 
 
             // stat activity
@@ -238,7 +252,7 @@ class Timetracker_viz extends CI_Controller {
                 if (!isset(  $res[ $record['activity']['type_of_record'].'_tag_total'] ))  $res[ $record['activity']['type_of_record'].'_tag_total']=0;
                 if (!isset(  $res[ $record['activity']['type_of_record'].'_tag_count'] ))  $res[ $record['activity']['type_of_record'].'_tag_count']=0;
 
-                $res[ $record['activity']['type_of_record'].'_tag_total'] += $record['duration'];
+                $res[ $record['activity']['type_of_record'].'_tag_total'] += $record['trimmed_duration'];
                 $res[ $record['activity']['type_of_record'].'_tag_count'] ++;
 
                 if (!isset( $res[ $record['activity']['type_of_record'].'_tag' ][ $tag['id'] ] )) {
@@ -248,7 +262,7 @@ class Timetracker_viz extends CI_Controller {
                     }
 
                 $res[ $record['activity']['type_of_record'].'_tag' ][ $tag['id'] ]['count'] ++;
-                $res[ $record['activity']['type_of_record'].'_tag' ][ $tag['id'] ]['total'] += $record['duration'];
+                $res[ $record['activity']['type_of_record'].'_tag' ][ $tag['id'] ]['total'] += $record['trimmed_duration'];
 
             }
 

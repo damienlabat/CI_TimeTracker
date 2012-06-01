@@ -20,7 +20,10 @@ if ( ! function_exists('duration2human'))
         /*  if ( $H%24 ==1 ) $html.= ($H % 24).'h ';
           if ( $H%24>1 )  $html.= ($H % 24).'h ';*/
 
-          $html.= ($H % 24).':'.($M % 60);
+          $M=$M % 60;
+          if ($M<10) $M='0'.$M;
+
+          $html.= ($H % 24).':'.$M;
 
           if (($duration<60)||($mode=='full')) $html.= ':'.($duration % 60);
 

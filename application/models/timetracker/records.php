@@ -143,11 +143,11 @@ class Records extends CI_Model {
         foreach ( $param['tags'] as $k => $tag )
             $req .=' AND tag_table_'.$k.'.tag_ID='.$tag;
 
-        if (isset( $param['datemin'] ))
-            $req .=' AND UNIX_TIMESTAMP(start_time)+duration >= \''.  strtotime($param['datemin']. " UTC") .'\'';
-
-        if (isset( $param['datemax'] ))
-            $req .=' AND start_time<\''.$param['datemax'].'\'';
+        if ((isset( $param['datemin'] ))&&(isset( $param['datemax'] )))
+            $req .=' AND
+                        (UNIX_TIMESTAMP(start_time)+duration >= \''.  strtotime($param['datemin']. " UTC") .'\'
+                        OR running=1)
+                     AND start_time<\''.$param['datemax'].'\'';
 
         $req .= ' ORDER BY start_time '.$param['order'];
 
@@ -206,11 +206,12 @@ function get_records_count($user_id, $param = array() ) {
         foreach ( $param['tags'] as $k => $tag )
             $req .=' AND tag_table_'.$k.'.tag_ID='.$tag;
 
-        if (isset( $param['datemin'] ))
-            $req .=' AND UNIX_TIMESTAMP(start_time)+duration >= \''.  strtotime($param['datemin']. " UTC") .'\'';
+        if ((isset( $param['datemin'] ))&&(isset( $param['datemax'] )))
+            $req .=' AND
+                        (UNIX_TIMESTAMP(start_time)+duration >= \''.  strtotime($param['datemin']. " UTC") .'\'
+                        OR running=1)
+                     AND start_time<\''.$param['datemax'].'\'';
 
-        if (isset( $param['datemax'] ))
-            $req .=' AND start_time<\''.$param['datemax'].'\'';
 
 
 
