@@ -239,3 +239,25 @@ if ( ! function_exists('value'))
         return $html;
     }
 }
+
+
+
+
+if ( ! function_exists('viz_url'))
+{
+    function viz_url($username,$type,$cat=NULL,$id=NULL,$dateuri=NULL,$graph=NULL )
+    {
+        $url='tt/'.$username.'/'.$type;
+
+        if ($cat!==NULL) $url.='/'.$cat;
+        if ($cat=='categories') $id='all';
+
+        if ($id!==NULL) $url.='/'.$id;
+
+        if ($dateuri!==NULL) $url.='/'.$dateuri;
+
+        if ($graph!==NULL) $url.='/'.$graph;
+
+        return site_url($url);
+    }
+}

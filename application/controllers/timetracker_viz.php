@@ -81,8 +81,10 @@ class Timetracker_viz extends CI_Controller {
 
         $this->data['records']= $this->_getRecords($username, $type_cat, $id, $date_plage);
 
-        if ($this->data['records'])
+        if ($this->data['records']) {
+            usort( $this->data['records'] , array("Timetracker_viz", "_orderByCat"));
             $this->data['stats']= $this->_getStats($this->data['records'], $type_cat);
+        }
 
 
         $this->data[ 'tt_layout' ]          = 'tt_summary';
@@ -119,7 +121,7 @@ class Timetracker_viz extends CI_Controller {
 
         $sp= preg_split("/_/",$date_plage);
 
-        if (count($sp)!=2) return array(NULL,NULL,'all');
+        if (count($sp)!=2) return  array( 'min'=> NULL, 'max' => NULL, 'type'=> 'all', 'uri' => $date_plage);;
 
         if ( $sp[1] == 'Y' ) {
             $d1 =  new DateTime( $sp[0].'-01-01');
@@ -155,7 +157,7 @@ class Timetracker_viz extends CI_Controller {
             $type='manual';
             }
 
-        return array( $d1->format('Y-m-d H:i:s'), $d2->format('Y-m-d H:i:s'), $type );
+        return array( 'min'=> $d1->format('Y-m-d H:i:s'), 'max' => $d2->format('Y-m-d H:i:s'), 'type'=> $type, 'uri' => $date_plage);
     }
 
 
@@ -174,15 +176,23 @@ class Timetracker_viz extends CI_Controller {
 
             $date_array=$this->_getDatePlage($date_plage);
             $this->data['dates']= $date_array;
-            $param['datemin'] = $date_array[0];
-            $param['datemax'] = $date_array[1];
+            $param['datemin'] = $date_array['min'];
+            $param['datemax'] = $date_array['max'];
 
 
 
 
         $param['order']='ASC';
 
-        return $this->records->get_records_full($this->user_id, $param);
+        $res= $this->records->get_records_full($this->user_id, $param);
+
+        return $res;
+    }
+
+
+
+    public function _orderByCat( $a,$b ) {
+        return ($a['activity']['categorie']['title'] < $b['activity']['categorie']['title']) ? -1 : 1;
     }
 
 
@@ -200,7 +210,17 @@ class Timetracker_viz extends CI_Controller {
             $res[ $record['activity']['type_of_record'].'_total'] += $record['duration'];
             $res[ $record['activity']['type_of_record'].'_count'] ++;
 
+            // stat categorie
+             if (!isset( $res[ 'categorie' ][ $record['activity']['categorie']['id'] ] )) {
+                    $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]= $record['activity']['categorie'];
+                    $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]['count'] = 0;
+                    $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]['total'] = 0;
+             }
 
+             $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]['count'] ++;
+             $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]['total'] += $record['duration'];
+
+            // stat activity
              if (!isset( $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ] )) {
                     $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ]= $record['activity'];
                     $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ]['count'] = 0;
@@ -210,6 +230,8 @@ class Timetracker_viz extends CI_Controller {
              $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ]['count'] ++;
              $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ]['total'] += $record['duration'];
 
+
+            // stat activity
             if (isset($record['tags']))
             foreach ($record['tags'] as $kt => $tag) {
 
