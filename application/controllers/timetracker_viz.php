@@ -79,16 +79,15 @@ class Timetracker_viz extends CI_Controller {
 
         $this->_checkUsername( $username );
 
-        $records= $this->_getRecords($username, $type_cat, $id, $date_plage);
+        $this->data['records']= $this->_getRecords($username, $type_cat, $id, $date_plage);
 
-        print_r($records);
+        if ($this->data['records'])
+            $this->data['stats']= $this->_getStats($this->data['records'], $type_cat);
 
-       // echo json_encode($records,JSON_NUMERIC_CHECK);
 
+        $this->data[ 'tt_layout' ]          = 'tt_summary';
 
-       /* $this->data[ 'tt_layout' ]          = 'tt_board';
-
-        $this->_render();*/
+        $this->_render();
     }
 
 
@@ -115,42 +114,48 @@ class Timetracker_viz extends CI_Controller {
 
     public function _getDatePlage($date_plage) {
 
-        $res=NULL;
+        $d1=$d2=NULL;
+        $type='all';
 
         $sp= preg_split("/_/",$date_plage);
 
-        if (count($sp)!=2) return NULL;
+        if (count($sp)!=2) return array(NULL,NULL,'all');
 
         if ( $sp[1] == 'Y' ) {
             $d1 =  new DateTime( $sp[0].'-01-01');
             $d2 =  new DateTime( $sp[0].'-01-01');
             $d2->add( new DateInterval( 'P1Y' ) );
+            $type='year';
             }
 
        elseif ( $sp[1] == 'M' )  {
             $d1 =  new DateTime( $sp[0].'-01');
             $d2 =  new DateTime( $sp[0].'-01');
             $d2->add( new DateInterval( 'P1M' ) );
+            $type='month';
             }
 
         elseif ( $sp[1] == 'W' )  {
             $d1 =  new DateTime( $sp[0]);
             $d2 =  new DateTime( $sp[0]);
             $d2->add( new DateInterval( 'P1W' ) );
+            $type='week';
             }
 
         elseif ( $sp[1] == 'D' )  {
             $d1 =  new DateTime( $sp[0]);
             $d2 =  new DateTime( $sp[0]);
             $d2->add( new DateInterval( 'P1D' ) );
+            $type='day';
             }
 
         else {
             $d1 =  new DateTime( $sp[0]);
             $d2 =  new DateTime( $sp[1]);
+            $type='manual';
             }
 
-        return array( $d1->format('Y-m-d H:i:s'), $d2->format('Y-m-d H:i:s') );
+        return array( $d1->format('Y-m-d H:i:s'), $d2->format('Y-m-d H:i:s'), $type );
     }
 
 
@@ -166,15 +171,72 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-        if ($date_plage) {
+
             $date_array=$this->_getDatePlage($date_plage);
+            $this->data['dates']= $date_array;
             $param['datemin'] = $date_array[0];
             $param['datemax'] = $date_array[1];
-            }
+
+
+
 
         $param['order']='ASC';
 
         return $this->records->get_records_full($this->user_id, $param);
+    }
+
+
+
+
+    public function _getStats($records, $type_cat, $datemin=NULL, $datemax=NULL) {
+        $res = array( );
+
+        //TODO couper les duree en fonction datemin max et pour les runnings
+        foreach ($records as $k => $record ) {
+
+            if (!isset(  $res[ $record['activity']['type_of_record'].'_total'] ))  $res[ $record['activity']['type_of_record'].'_total']=0;
+            if (!isset(  $res[ $record['activity']['type_of_record'].'_count'] ))  $res[ $record['activity']['type_of_record'].'_count']=0;
+
+            $res[ $record['activity']['type_of_record'].'_total'] += $record['duration'];
+            $res[ $record['activity']['type_of_record'].'_count'] ++;
+
+
+             if (!isset( $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ] )) {
+                    $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ]= $record['activity'];
+                    $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ]['count'] = 0;
+                    $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ]['total'] = 0;
+             }
+
+             $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ]['count'] ++;
+             $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ]['total'] += $record['duration'];
+
+            if (isset($record['tags']))
+            foreach ($record['tags'] as $kt => $tag) {
+
+                if (!isset(  $res[ $record['activity']['type_of_record'].'_tag_total'] ))  $res[ $record['activity']['type_of_record'].'_tag_total']=0;
+                if (!isset(  $res[ $record['activity']['type_of_record'].'_tag_count'] ))  $res[ $record['activity']['type_of_record'].'_tag_count']=0;
+
+                $res[ $record['activity']['type_of_record'].'_tag_total'] += $record['duration'];
+                $res[ $record['activity']['type_of_record'].'_tag_count'] ++;
+
+                if (!isset( $res[ $record['activity']['type_of_record'].'_tag' ][ $tag['id'] ] )) {
+                    $res[ $record['activity']['type_of_record'].'_tag' ][ $tag['id'] ]['tag']= $tag['tag'];
+                    $res[ $record['activity']['type_of_record'].'_tag' ][ $tag['id'] ]['count'] = 0;
+                    $res[ $record['activity']['type_of_record'].'_tag' ][ $tag['id'] ]['total'] = 0;
+                    }
+
+                $res[ $record['activity']['type_of_record'].'_tag' ][ $tag['id'] ]['count'] ++;
+                $res[ $record['activity']['type_of_record'].'_tag' ][ $tag['id'] ]['total'] += $record['duration'];
+
+            }
+
+
+
+
+        } // end foreach
+
+
+        return $res;
     }
 
 
