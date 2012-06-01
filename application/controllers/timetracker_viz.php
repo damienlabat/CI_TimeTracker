@@ -107,7 +107,7 @@ class Timetracker_viz extends CI_Controller {
 
        if ($format == 'csv') echo 'csv';
 
-       if ($format == 'json') echo json_encode($records,JSON_NUMERIC_CHECK);
+       if ($format == 'json') echo json_encode($records,JSON_NUMERIC_CHECK); //add date and select params to json
 
        if ($format == 'txt') echo 'txt';
     }
@@ -197,17 +197,7 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-    public function _trim_duration($record,$datemin,$datemax) {
-        $date_deb = strtotime( $record['start_time'] );
-        $date_fin = $date_deb + $record['duration'];
 
-        if ($record['running']==1) $date_fin = time();
-
-        if ($datemin) $date_deb = max( $date_deb , strtotime($datemin) );
-        if ($datemax) $date_fin = min( $date_fin , strtotime($datemax) );
-
-        return $date_fin-$date_deb;
-    }
 
 
     public function _getStats($records, $type_cat, $datemin=NULL, $datemax=NULL) {
@@ -216,7 +206,7 @@ class Timetracker_viz extends CI_Controller {
         //TODO couper les duree en fonction datemin max et pour les runnings
         foreach ($records as $k => $record ) {
 
-            $record['trimmed_duration']=$this->_trim_duration($record,$datemin,$datemax);
+
 
             if (!isset(  $res[ $record['activity']['type_of_record'].'_total'] ))  $res[ $record['activity']['type_of_record'].'_total']=0;
             if (!isset(  $res[ $record['activity']['type_of_record'].'_count'] ))  $res[ $record['activity']['type_of_record'].'_count']=0;

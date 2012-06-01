@@ -155,13 +155,30 @@ class Records extends CI_Model {
 
         $query = $this->db->query( $req );
 
-        if ( $query->num_rows() >= 1 )
-            return $query->result_array();
+        if ( $query->num_rows() >= 1 ) {
+            $res=$query->result_array();
+
+            if ((isset( $param['datemin'] ))&&(isset( $param['datemax'] )))
+                foreach ( $res as $k => $item ) $res[$k]['trimmed_duration']= $this->trim_duration($item,$param['datemin'],$param['datemax']);
+
+            return $res;
+        }
+
         return NULL;
     }
 
 
+    function trim_duration($record,$datemin,$datemax) {
+        $date_deb = strtotime( $record['start_time'] );
+        $date_fin = $date_deb + $record['duration'];
 
+        if ($record['running']==1) $date_fin = time();
+
+        if ($datemin) $date_deb = max( $date_deb , strtotime($datemin) );
+        if ($datemax) $date_fin = min( $date_fin , strtotime($datemax) );
+
+        return $date_fin-$date_deb;
+    }
 
 function get_records_count($user_id, $param = array() ) {
 
