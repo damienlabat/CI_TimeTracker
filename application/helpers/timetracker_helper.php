@@ -264,3 +264,78 @@ if ( ! function_exists('viz_url'))
         return site_url($url);
     }
 }
+
+
+
+if ( ! function_exists('draw_text_table'))
+{
+    function draw_text_table ($table) {
+
+        // Work out max lengths of each cell
+
+        foreach ($table AS $row) {
+            $cell_count = 0;
+            foreach ($row AS $key=>$cell) {
+
+                $cell=str_replace( array("\r","\n"), " ", $cell);
+                if (!is_array($cell)) $cell_length = strlen($cell);
+                    else $cell_length = 0;
+
+                $cell_count++;
+                if (!isset($cell_lengths[$key]) || $cell_length > $cell_lengths[$key]) $cell_lengths[$key] = $cell_length;
+
+                if (!isset($cell_show[$key])) $cell_show[$key]=FALSE;
+                if ($cell_length>0) $cell_show[$key]=TRUE;
+
+            }
+        }
+
+        // Build header bar
+
+        $bar = '+';
+        $header = '|';
+        $i=0;
+
+        foreach ($cell_lengths AS $fieldname => $length) {
+            if ($cell_show[$fieldname]) {
+                $name = $fieldname;
+                if (strlen($name) > $length) {
+                    // crop long headings
+
+                    //$name = substr($name, 0, $length-1);
+                    $cell_lengths[$fieldname]=strlen($name);
+
+                }
+                $bar .= str_pad('', $cell_lengths[$fieldname]+2, '-')."+";
+                $header .= ' '.str_pad($name,  $cell_lengths[$fieldname], ' ', STR_PAD_RIGHT) . " |";
+            }
+        }
+
+        $output = '';
+
+        $output .= $bar."\n";
+        $output .= $header."\n";
+
+        $output .= $bar."\n";
+
+        // Draw rows
+
+        foreach ($table AS $row) {
+            $output .= "|";
+
+            foreach ($row AS $key=>$cell) {
+                if ($cell_show[$key]) {
+                    $cell=str_replace( array("\r","\n"), " ", $cell);
+                    $output .= ' '.str_pad($cell, $cell_lengths[$key], ' ', STR_PAD_RIGHT) . " |";
+                }
+
+            }
+            $output .= "\n";
+        }
+
+        $output .= $bar."\n";
+
+        return $output;
+
+    }
+}

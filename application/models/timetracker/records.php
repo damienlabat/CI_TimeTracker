@@ -180,7 +180,7 @@ class Records extends CI_Model {
         return $date_fin-$date_deb;
     }
 
-function get_records_count($user_id, $param = array() ) {
+    function get_records_count($user_id, $param = array() ) {
 
         if (!isset( $param['categorie_id'] )) $param['categorie_id'] = NULL;
         if (!isset( $param['activity_id'] )) $param['activity_id'] = NULL;
@@ -342,6 +342,10 @@ function get_records_count($user_id, $param = array() ) {
                     $record[ 'tag_path' ] .= ', ';
                 $record[ 'tag_path' ] .= $tag[ 'tag' ];
             }
+
+        if ( $record[ 'value' ] )
+            $record[ 'value' ][ 'value_path' ] = '#'.$record[ 'value' ]['title'].'='.$record[ 'value' ]['value'];
+
 
         $record[ 'activity' ] = $this->activities->get_activity_by_id_full( $record[ 'activity_ID' ] );
 

@@ -96,20 +96,64 @@ class Timetracker_viz extends CI_Controller {
 
     public function export( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = NULL, $format = 'json' ) {
 
+        $this->load->helper('download');
         $this->_checkUsername( $username );
 
         $records= $this->_getRecords($username, $type_cat, $id, $date_plage);
+
+        if ($records) {
+            usort($records , array("Timetracker_viz", "_orderByCat"));
+            $stats= $this->_getStats($records, $type_cat,$this->data['dates']['min'],$this->data['dates']['max']);
+        }
 
         $this->output->enable_profiler( FALSE );
 
         // TODO modif entetes
 
 
-       if ($format == 'csv') echo 'csv';
+        if ($format == 'csv') { // use content_output
+            $content = '"id","start_time","diff_greenwich","duration","stop_at","trim_duration","running","title","activity_ID","categorie_ID","type_of_record","tags","value","description"'."\r\n";
+            foreach ( $records as $k => $record )
+                $content .= str_replace( array("\r","\n"), " ", $record['id'].',"'.$record['start_time'].'",'.$record['diff_greenwich'].','.$record['duration'].',"'.$record['stop_at'].'",'.@$record['trim_duration'].','.$record['running'].',"'.$record['activity']['activity_path'].'",'.$record['activity_ID'].','.$record['categorie_ID'].',"'.$record['activity']['type_of_record'].'","'.@$record['tags_path'].'","'.@$record['value']['value_path'].'","'.$record['description'].'"')."\r\n";
 
-       if ($format == 'json') echo json_encode($records,JSON_NUMERIC_CHECK); //add date and select params to json
+            $this->output
+                ->set_content_type('text/csv');
+            force_download("tt_".$username."_ci.csv", $content);
 
-       if ($format == 'txt') echo 'txt';
+        }
+
+        if ($format == 'json') {
+            $content= json_encode($records,JSON_NUMERIC_CHECK);
+            $this->output
+            ->set_content_type('application/json')
+            ->set_output( $content );
+        }
+
+
+         if ($format == 'txt') { // use content_output
+
+            $content= draw_text_table($records);
+
+            if (isset($stats['categorie']))  $content .=  "\r\n\r\ncategories\r\n".draw_text_table($stats['categorie']);
+
+            if (isset($stats['activity']))  $content .=  "\r\n\r\nactivities\r\n".draw_text_table($stats['activity']);
+            if (isset($stats['activity_tag']))  $content .=  "\r\n\r\nactivities tags\r\n".draw_text_table($stats['activity_tag']);
+
+            if (isset($stats['todo']))  $content .=  "\r\n\r\ntodos\r\n".draw_text_table($stats['todo']);
+            if (isset($stats['todo_tag']))  $content .=  "\r\n\r\ntodos tags\r\n".draw_text_table($stats['todo_tag']);
+
+            if (isset($stats['value']))  $content .=  "\r\n\r\nvalues\r\n".draw_text_table($stats['value']);
+            if (isset($stats['value_tag']))  $content .=  "\r\n\r\nvalues tags\r\n".draw_text_table($stats['value_tag']);
+
+            $this->output
+                ->set_content_type('text/txt')
+                ->set_output( $content );
+            force_download("tt_".$username."_ci.txt", $content);
+
+             //TODO add date and select params to json
+        }
+
+
     }
 
 
@@ -206,12 +250,15 @@ class Timetracker_viz extends CI_Controller {
         //TODO couper les duree en fonction datemin max et pour les runnings
         foreach ($records as $k => $record ) {
 
+            if (isset($record['trimmed_duration'])) $duration=$record['trimmed_duration'];
+                else $duration=$record['duration'];
+
 
 
             if (!isset(  $res[ $record['activity']['type_of_record'].'_total'] ))  $res[ $record['activity']['type_of_record'].'_total']=0;
             if (!isset(  $res[ $record['activity']['type_of_record'].'_count'] ))  $res[ $record['activity']['type_of_record'].'_count']=0;
 
-            $res[ $record['activity']['type_of_record'].'_total'] += $record['trimmed_duration'];
+            $res[ $record['activity']['type_of_record'].'_total'] += $duration;
             $res[ $record['activity']['type_of_record'].'_count'] ++;
 
             // stat categorie
@@ -222,7 +269,7 @@ class Timetracker_viz extends CI_Controller {
              }
 
              $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]['count'] ++;
-             $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]['total'] += $record['trimmed_duration'];
+             $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]['total'] += $duration;
 
             // stat activity
              if (!isset( $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ] )) {
@@ -232,7 +279,7 @@ class Timetracker_viz extends CI_Controller {
              }
 
              $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ]['count'] ++;
-             $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ]['total'] += $record['trimmed_duration'];
+             $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ]['total'] += $duration;
 
 
             // stat activity
@@ -242,7 +289,7 @@ class Timetracker_viz extends CI_Controller {
                 if (!isset(  $res[ $record['activity']['type_of_record'].'_tag_total'] ))  $res[ $record['activity']['type_of_record'].'_tag_total']=0;
                 if (!isset(  $res[ $record['activity']['type_of_record'].'_tag_count'] ))  $res[ $record['activity']['type_of_record'].'_tag_count']=0;
 
-                $res[ $record['activity']['type_of_record'].'_tag_total'] += $record['trimmed_duration'];
+                $res[ $record['activity']['type_of_record'].'_tag_total'] += $duration;
                 $res[ $record['activity']['type_of_record'].'_tag_count'] ++;
 
                 if (!isset( $res[ $record['activity']['type_of_record'].'_tag' ][ $tag['id'] ] )) {
@@ -252,7 +299,7 @@ class Timetracker_viz extends CI_Controller {
                     }
 
                 $res[ $record['activity']['type_of_record'].'_tag' ][ $tag['id'] ]['count'] ++;
-                $res[ $record['activity']['type_of_record'].'_tag' ][ $tag['id'] ]['total'] += $record['trimmed_duration'];
+                $res[ $record['activity']['type_of_record'].'_tag' ][ $tag['id'] ]['total'] += $duration;
 
             }
 
