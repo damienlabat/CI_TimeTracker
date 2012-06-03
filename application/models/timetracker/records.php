@@ -343,8 +343,11 @@ class Records extends CI_Model {
                 $record[ 'tag_path' ] .= $tag[ 'tag' ];
             }
 
-        if ( $record[ 'value' ] )
+        if ( $record[ 'value' ] ) {
             $record[ 'value' ][ 'value_path' ] = '#'.$record[ 'value' ]['title'].'='.$record[ 'value' ]['value'];
+            $record[ 'value_title' ] = $record[ 'value' ]['title'];
+            $record[ 'value_data' ] = $record[ 'value' ]['value'];
+            }
 
 
         $record[ 'activity' ] = $this->activities->get_activity_by_id_full( $record[ 'activity_ID' ] );

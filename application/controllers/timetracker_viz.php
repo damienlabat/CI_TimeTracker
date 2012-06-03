@@ -75,10 +75,15 @@ class Timetracker_viz extends CI_Controller {
      * ========================== */
 
 
-    public function summary( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = NULL ) {
+    public function summary( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = 'all' ) {
 
         $this->_checkUsername( $username );
 
+        $this->data['current']= array(
+            "type_cat"=>$type_cat,
+            "id"=>$id,
+            "date_plage"=>$date_plage
+            );
         $this->data['records']= $this->_getRecords($username, $type_cat, $id, $date_plage);
 
         if ($this->data['records']) {
@@ -88,6 +93,7 @@ class Timetracker_viz extends CI_Controller {
 
 
         $this->data[ 'tt_layout' ]          = 'tt_summary';
+
 
         $this->_render();
     }
@@ -134,6 +140,9 @@ class Timetracker_viz extends CI_Controller {
 
             $content= draw_text_table($records);
 
+
+            //STATS
+
             if (isset($stats['categorie']))  $content .=  "\r\n\r\ncategories\r\n".draw_text_table($stats['categorie']);
 
             if (isset($stats['activity']))  $content .=  "\r\n\r\nactivities\r\n".draw_text_table($stats['activity']);
@@ -144,6 +153,7 @@ class Timetracker_viz extends CI_Controller {
 
             if (isset($stats['value']))  $content .=  "\r\n\r\nvalues\r\n".draw_text_table($stats['value']);
             if (isset($stats['value_tag']))  $content .=  "\r\n\r\nvalues tags\r\n".draw_text_table($stats['value_tag']);
+
 
             $this->output
                 ->set_content_type('text/txt')
