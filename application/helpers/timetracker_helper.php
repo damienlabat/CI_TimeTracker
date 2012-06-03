@@ -261,6 +261,11 @@ if ( ! function_exists('viz_url'))
 
         if ($graph!==NULL) $url.='/'.$graph;
 
+
+        if ($type=='records')
+             $url='tt/'.$username.'/'.$cat.'/'.$id;
+
+
         return site_url($url);
     }
 }

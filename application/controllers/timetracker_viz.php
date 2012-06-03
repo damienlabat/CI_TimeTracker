@@ -100,6 +100,24 @@ class Timetracker_viz extends CI_Controller {
 
 
 
+     public function graph( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = 'all', $type_graph = NULL ) {
+
+        $this->_checkUsername( $username );
+
+        $this->data['current']= array(
+            "type_cat"=>$type_cat,
+            "id"=>$id,
+            "date_plage"=>$date_plage,
+            "type_graph"=>$type_graph
+            );
+        $this->data['records']= $this->_getRecords($username, $type_cat, $id, $date_plage);
+
+        $this->data[ 'tt_layout' ]          = 'tt_graph';
+        $this->_render();
+    }
+
+
+
     public function export( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = NULL, $format = 'json' ) {
 
         $this->load->helper('download');
@@ -220,8 +238,8 @@ class Timetracker_viz extends CI_Controller {
         $param=array('order'=>'ASC');
 
 
-        if ($type_cat=='categorie') $param['categorie_id']=$id;
-        if ($type_cat=='activity')  $param['activity_id']=$id;
+        if ($type_cat=='categorie') $param['categorie']=$id;
+        if ($type_cat=='activity')  $param['activity']=$id;
         if ($type_cat=='tag')       $param['tags']= array( $id );
         if ($type_cat=='valuetype') $param['valuetype']=  $id;
 

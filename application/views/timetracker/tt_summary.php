@@ -70,6 +70,10 @@ if (isset($stats[$rub])){
 <div class="btn-toolbar">
 
     <div class="btn-group">
+        <a href='<?php echo viz_url($user_name,'records',$current['type_cat'],$current['id'],$dates['uri'] ) ?>' class="btn"> Records</a>
+    </div>
+
+    <div class="btn-group">
         <a href='<?php echo viz_url($user_name,'graph',$current['type_cat'],$current['id'],$dates['uri'] ) ?>' class="btn"><i class="icon-bar-chart"></i> Graph</a>
     </div>
 

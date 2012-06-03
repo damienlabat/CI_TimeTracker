@@ -103,8 +103,8 @@ class Records extends CI_Model {
 
     function get_records($user_id, $param = array(), $offset= NULL, $count= NULL ) {
 
-        if (!isset( $param['categorie_id'] )) $param['categorie_id'] = NULL;
-        if (!isset( $param['activity_id'] )) $param['activity_id'] = NULL;
+        if (!isset( $param['categorie'] )) $param['categorie'] = NULL;
+        if (!isset( $param['activity'] )) $param['activity'] = NULL;
         if (!isset( $param['type_of_record'] )) $param['type_of_record'] = NULL;
         if (!isset( $param['running'] )) $param['running'] = NULL;
         if (!isset( $param['tags'] )) $param['tags'] = array();
@@ -132,8 +132,8 @@ class Records extends CI_Model {
         $req .= ' WHERE
                 user_ID=' . $user_id ;
 
-        if ($param['categorie_id'] !== NULL ) $req .= ' AND ' . $this->activities_table . '.categorie_ID=' . $param['categorie_id'];
-        if ($param['activity_id'] !== NULL ) $req .= ' AND ' . $this->records_table . '.activity_ID=' . $param['activity_id'];
+        if ($param['categorie'] !== NULL ) $req .= ' AND ' . $this->activities_table . '.categorie_ID=' . $param['categorie'];
+        if ($param['activity'] !== NULL ) $req .= ' AND ' . $this->records_table . '.activity_ID=' . $param['activity'];
         if ($param['type_of_record'] !== NULL ) $req .= ' AND type_of_record=\'' . $param['type_of_record'] . '\'';
 
         if ($param['running'] !== NULL )  $req .= ' AND running=' . $param['running'];
@@ -182,8 +182,8 @@ class Records extends CI_Model {
 
     function get_records_count($user_id, $param = array() ) {
 
-        if (!isset( $param['categorie_id'] )) $param['categorie_id'] = NULL;
-        if (!isset( $param['activity_id'] )) $param['activity_id'] = NULL;
+        if (!isset( $param['categorie'] )) $param['categorie'] = NULL;
+        if (!isset( $param['activity'] )) $param['activity'] = NULL;
         if (!isset( $param['type_of_record'] )) $param['type_of_record'] = NULL;
         if (!isset( $param['running'] )) $param['running'] = NULL;
         if (!isset( $param['tags'] )) $param['tags'] = array();
@@ -212,8 +212,8 @@ class Records extends CI_Model {
 
 
 
-        if ($param['categorie_id'] !== NULL ) $req .= ' AND ' . $this->activities_table . '.categorie_ID=' . $param['categorie_id'];
-        if ($param['activity_id'] !== NULL ) $req .= ' AND ' . $this->records_table . '.activity_ID=' . $param['activity_id'];
+        if ($param['categorie'] !== NULL ) $req .= ' AND ' . $this->activities_table . '.categorie_ID=' . $param['categorie'];
+        if ($param['activity'] !== NULL ) $req .= ' AND ' . $this->records_table . '.activity_ID=' . $param['activity'];
         if ($param['type_of_record'] !== NULL ) $req .= ' AND type_of_record=\'' . $param['type_of_record'] . '\'';
 
         if ($param['running'] !== NULL )  $req .= ' AND running=' . $param['running'];
@@ -244,8 +244,8 @@ class Records extends CI_Model {
 
     function get_records_full($user_id, $param = array(), $offset= NULL, $count= NULL ) {
 
-        if (!isset( $param['categorie_id'] )) $param['categorie_id'] = NULL;
-        if (!isset( $param['activity_id'] )) $param['activity_id'] = NULL;
+        if (!isset( $param['categorie'] )) $param['categorie'] = NULL;
+        if (!isset( $param['activity'] )) $param['activity'] = NULL;
         if (!isset( $param['type_of_record'] )) $param['type_of_record'] = NULL;
         if (!isset( $param['running'] )) $param['running'] = NULL;
         if (!isset( $param['tags'] )) $param['tags'] = array();
