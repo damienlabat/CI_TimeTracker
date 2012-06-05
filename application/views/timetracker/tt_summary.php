@@ -9,7 +9,7 @@ if (isset($stats['categorie'])){
 
     foreach ($stats['categorie'] as $ki => $item) {
         if ($item['title']=='') $item['title']='/root/';
-        echo "<li><a href='".viz_url($user_name,'summary','categorie',$item['id'],$dates['uri'] )."'>".$item['title']."</a> => ".$item['count']." record(s), total time: ".duration2human($item['total'])."</li>";
+        echo "<li><a href='".tt_url($user_name,'summary','categorie',$item['id'],$dates['uri'] )."'>".$item['title']."</a> => ".$item['count']." record(s), total time: ".duration2human($item['total'])."</li>";
     }
 
     echo "</ul><br/>";
@@ -40,7 +40,7 @@ if (isset($stats[$rub])){
     echo "records: <ul>";
 
     foreach ($stats[$rub] as $ki => $item) {
-        echo "<li><a href='".viz_url($user_name,'summary','activity',$item['id'],$dates['uri'] )."'>".$item['activity_path']."</a> => ".$item['count']." record(s), total time: ".duration2human($item['total'])."</li>";
+        echo "<li><a href='".tt_url($user_name,'summary','activity',$item['id'],$dates['uri'] )."'>".$item['activity_path']."</a> => ".$item['count']." record(s), total time: ".duration2human($item['total'])."</li>";
     }
 
     echo "</ul><br/>";
@@ -54,7 +54,7 @@ if (isset($stats[$rub])){
         echo "tags: <ul>";
 
         foreach ($stats[$rub.'_tag'] as $kt => $tag) {
-            echo "<li><a href='".viz_url($user_name,'summary','tag',$kt,$dates['uri'] )."'>".$tag['tag']."</a> => ".$tag['count']." record(s), total time: ".duration2human($tag['total'])."</li>";
+            echo "<li><a href='".tt_url($user_name,'summary','tag',$kt,$dates['uri'] )."'>".$tag['tag']."</a> => ".$tag['count']." record(s), total time: ".duration2human($tag['total'])."</li>";
         }
 
         echo "</ul><br/>";
@@ -65,28 +65,9 @@ if (isset($stats[$rub])){
 
 
 }
-?>
 
-<div class="btn-toolbar">
+$this->load->view( 'timetracker/tt_buttons' );
 
-    <div class="btn-group">
-        <a href='<?php echo viz_url($user_name,'records',$current['type_cat'],$current['id'],$dates['uri'] ) ?>' class="btn"> Records</a>
-    </div>
-
-    <div class="btn-group">
-        <a href='<?php echo viz_url($user_name,'graph',$current['type_cat'],$current['id'],$dates['uri'] ) ?>' class="btn"><i class="icon-bar-chart"></i> Graph</a>
-    </div>
-
-    <div class="btn-group">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-download-alt"></i> Download <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href='<?php echo viz_url($user_name,'export',$current['type_cat'],$current['id'],$dates['uri'],'json' ) ?>' target='_blank'>json</a></li>
-            <li><a href='<?php echo viz_url($user_name,'export',$current['type_cat'],$current['id'],$dates['uri'],'csv' ) ?>' >csv</a></li>
-            <li><a href='<?php echo viz_url($user_name,'export',$current['type_cat'],$current['id'],$dates['uri'],'txt' ) ?>' >txt</a></li>
-          </ul>
-    </div>
-
-</div>
 
 
 

@@ -42,6 +42,10 @@ class Timetracker extends CI_Controller {
         else {
             $this->data[ 'user_name' ] = $this->user_name;
             $this->data[ 'user_id' ]   = $this->user_id;
+            $this->data['current']= array(
+                "action" => 'record',
+                "date_plage" => NULL
+                );
 
         }
 
@@ -105,6 +109,8 @@ class Timetracker extends CI_Controller {
         $per_page=$this->pagination->per_page;
         $offset= ( $page-1 ) * $per_page;
 
+        $this->data[ 'current' ]['type_cat'] = 'categorie';
+        $this->data[ 'current' ]['id'] = NULL;
 
         $this->data[ 'tt_layout' ]          = 'tt_board';
         $this->data[ 'running_activities' ] = $this->records->get_records_full($this->user_id, array( 'type_of_record'=>'activity', 'running'=>1 ) );
@@ -127,6 +133,9 @@ class Timetracker extends CI_Controller {
         if ( !$this->data[ 'record' ] )
             show_404();
 
+        $this->data[ 'current' ]['type_cat'] = 'record';
+        $this->data[ 'current' ]['id'] = $record_id;
+
         $stopped = $this->records->stop_record( $record_id );
 
         if ( isset( $stopped[ 'alerts' ] ) )
@@ -144,6 +153,10 @@ class Timetracker extends CI_Controller {
         $this->data[ 'record' ]    = $this->records->get_record_by_id_full( $record_id );
         if ( !$this->data[ 'record' ] )
             show_404();
+
+        $this->data[ 'current' ]['type_cat'] = 'record';
+        $this->data[ 'current' ]['id'] = $record_id;
+
         $this->data[ 'categories' ]   = $this->categories->get_categories( $this->user_id );
         $this->data[ 'activities' ] = $this->activities->get_categorie_activities( $this->data[ 'record' ][ 'activity' ][ 'categorie_ID' ] );
         $this->_render();
@@ -158,6 +171,10 @@ class Timetracker extends CI_Controller {
         $this->data[ 'record' ] = $this->records->get_record_by_id_full( $record_id );
         if ( !$this->data[ 'record' ] )
             show_404();
+
+        $this->data[ 'current' ]['type_cat'] = 'record';
+        $this->data[ 'current' ]['id'] = $record_id;
+
         $this->data[ 'tt_layout' ] = 'tt_record_edit';
         $this->_render();
     }
@@ -172,6 +189,10 @@ class Timetracker extends CI_Controller {
         $this->data[ 'record' ]    = $this->records->get_record_by_id_full( $record_id );
         if ( !$this->data[ 'record' ] )
             show_404();
+
+        $this->data[ 'current' ]['type_cat'] = 'record';
+        $this->data[ 'current' ]['id'] = $record_id;
+
         $this->data[ 'record' ][ 'delete_confirm' ] = TRUE;
         $this->data[ 'categories' ]                   = $this->categories->get_categories( $this->user_id );
         $this->data[ 'activities' ]                 = $this->activities->get_categorie_activities( $this->data[ 'record' ][ 'activity' ][ 'categorie_ID' ] );
@@ -207,6 +228,9 @@ class Timetracker extends CI_Controller {
         if ( !$this->data[ 'record' ] )
             show_404();
 
+        $this->data[ 'current' ]['type_cat'] = 'categorie';
+        $this->data[ 'current' ]['id'] = NULL;
+
         if ( $this->records->restart_record( $record_id ) )
             $alert = array(
                  array(
@@ -235,8 +259,7 @@ class Timetracker extends CI_Controller {
 
     public function activities( $username ) {
         $this->_checkUsername( $username );
-        // TODO!
-        $this->data[ 'TODO' ] = "activities page - add running & last activities";
+        $this->_generic_activity_show( $username, 'activity' );
         $this->_render();
     }
 
@@ -246,20 +269,30 @@ class Timetracker extends CI_Controller {
      *  */
 
 
-    public function _generic_activity_show( $username, $activity_id, $page =1 ) {
+    public function _generic_activity_show( $username, $type_of_record, $activity_id =NULL, $page =1 ) {
         $this->data[ 'activity' ] = $this->activities->get_activity_by_id_full( $activity_id );
-        if ( !$this->data[ 'activity' ] )
-            show_404();
+        if ( $activity_id != NULL )
+            if ( !$this->data[ 'activity' ] )
+                show_404();
+
+        $this->data[ 'current' ]['type_cat'] = $type_of_record;
+        $this->data[ 'current' ]['id'] = $activity_id;
+
+        if ( $activity_id != NULL )
         $this->data[ 'breadcrumb' ] = array(
-            array( 'title'=> $this->data[ 'activity' ][ 'type_of_record' ], 'url'=>'tt/'.$username.'/'.$this->data[ 'activity' ][ 'type_of_record' ]),
+            array( 'title'=> $this->data[ 'activity' ][ 'type_of_record' ], 'url'=>'tt/'.$username.'/'.$type_of_record),
             array( 'title'=> $this->data[ 'activity' ]['categorie']['title'], 'url'=>'tt/'.$username.'/categorie/'.$this->data[ 'activity' ]['categorie_ID']),
             array( 'title'=> $this->data[ 'activity' ]['title'], 'url'=>'')
+            );
+        else
+        $this->data[ 'breadcrumb' ] = array(
+            array( 'title'=> $type_of_record, 'url'=>'tt/'.$username.'/'.$type_of_record)
             );
 
         $this->load->library('pagination');
 
-        $config['base_url'] = site_url('tt/'.$username.'/'.$this->data[ 'activity' ][ 'type_of_record' ].'/'.$activity_id);
-        $config['total_rows'] = $this->records->get_records_count($this->user_id, array( 'activity'=>$activity_id, 'running'=>0 ) );
+        $config['base_url'] = site_url('tt/'.$username.'/'.$type_of_record.'/'.$activity_id);
+        $config['total_rows'] = $this->records->get_records_count($this->user_id, array( 'activity'=>$activity_id, 'type_of_record'=>$type_of_record, 'running'=>0 ) );
         $config['uri_segment'] = 5; // autodetection dont work ???
 
         $this->pagination->initialize($config);
@@ -271,9 +304,8 @@ class Timetracker extends CI_Controller {
 
         $this->data[ 'categories' ]         = $this->categories->get_categories( $this->user_id );
         $this->data[ 'activities' ]         = $this->activities->get_categorie_activities( $this->data[ 'activity' ][ 'categorie_ID' ] );
-        $this->data[ 'running_activities' ]        = $this->records->get_records_full($this->user_id, array( 'activity'=>$activity_id, 'type_of_record'=>'activity', 'running'=>1 ) );
-        $this->data[ 'todos' ]                     = $this->records->get_records_full($this->user_id, array( 'activity'=>$activity_id, 'type_of_record'=>'todo', 'running'=>1 ) );
-        $this->data[ 'last_actions' ]              = $this->records->get_records_full($this->user_id, array( 'activity'=>$activity_id, 'running'=>0 ), $offset, $per_page );
+        $this->data[ 'running_activities' ]        = $this->records->get_records_full($this->user_id, array( 'activity'=>$activity_id, 'type_of_record'=>$type_of_record, 'running'=>1 ) );
+        $this->data[ 'last_actions' ]              = $this->records->get_records_full($this->user_id, array( 'activity'=>$activity_id, 'type_of_record'=>$type_of_record, 'running'=>0 ), $offset, $per_page );
         $this->data[ 'pager']               = $this->pagination->create_links();
         $this->data[ 'tt_layout' ]          = 'tt_activity';
     }
@@ -283,8 +315,9 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername( $username );
         if ( $activity_id == NULL )
             redirect( 'tt/' . $username . '/activities', 'location', 301 );
+
         $this->_checkRecordType( $activity_id, 'activity' );
-        $this->_generic_activity_show( $username, $activity_id, $page);
+        $this->_generic_activity_show( $username, 'activity', $activity_id, $page);
         $this->_render();
     }
 
@@ -296,6 +329,7 @@ class Timetracker extends CI_Controller {
     public function activity_edit( $username, $activity_id ) {
         $this->_checkUsername( $username );
         $this->_checkRecordType( $activity_id, 'activity' );
+
         $this->data[ 'activity' ] = $this->activities->get_activity_by_id_full( $activity_id );
         $this->data[ 'tt_layout' ] = 'tt_activity_edit';
         $this->_render();
@@ -309,8 +343,7 @@ class Timetracker extends CI_Controller {
 
     public function thingstodo( $username ) {
         $this->_checkUsername( $username );
-        // TODO!
-        $this->data[ 'TODO' ] = "things todo page - add running & last activities";
+        $this->_generic_activity_show( $username, 'todo' );
         $this->_render();
     }
 
@@ -323,8 +356,9 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername( $username );
         if ( $activity_id == NULL )
             redirect( 'tt/' . $username . '/thingstodo', 'location', 301 );
+
         $this->_checkRecordType( $activity_id, 'todo' );
-        $this->_generic_activity_show( $username, $activity_id, $page );
+        $this->_generic_activity_show( $username, 'todo', $activity_id, $page );
         $this->_render();
     }
 
@@ -336,6 +370,10 @@ class Timetracker extends CI_Controller {
     public function todo_edit( $username, $activity_id ) {
         $this->_checkUsername( $username );
         $this->_checkRecordType( $activity_id, 'todo' );
+
+        $this->data[ 'current' ]['type_cat'] = 'todo';
+        $this->data[ 'current' ]['id'] = $activity_id;
+
         $this->_render();
     }
 
@@ -348,8 +386,7 @@ class Timetracker extends CI_Controller {
 
     public function values( $username ) {
         $this->_checkUsername( $username );
-        // TODO!
-        $this->data[ 'TODO' ] = "values page - add running & last activities";
+        $this->_generic_activity_show( $username, 'values' );
         $this->_render();
     }
 
@@ -363,8 +400,12 @@ class Timetracker extends CI_Controller {
         if ( $activity_id == NULL )
             redirect( 'tt/' . $username . '/values', 'location', 301 );
         $this->_checkRecordType( $activity_id, 'value' );
+
+        $this->data[ 'current' ]['type_cat'] = 'value';
+        $this->data[ 'current' ]['id'] = $activity_id;
+
         $this->data[ 'tt_layout' ] = 'tt_activity';
-        $this->_generic_activity_show( $username, $activity_id, $page );
+        $this->_generic_activity_show( $username, 'value', $activity_id, $page );
         $this->_render();
     }
 
@@ -376,6 +417,10 @@ class Timetracker extends CI_Controller {
     public function value_edit( $username, $activity_id ) {
         $this->_checkUsername( $username );
         $this->_checkRecordType( $activity_id, 'value' );
+
+        $this->data[ 'current' ]['type_cat'] = 'value';
+        $this->data[ 'current' ]['id'] = $activity_id;
+
         $this->_render();
     }
 
@@ -390,6 +435,10 @@ class Timetracker extends CI_Controller {
     public function categories( $username ) {
         $this->_checkUsername( $username );
         // TODO!
+
+        $this->data[ 'current' ]['type_cat'] = 'categorie';
+        $this->data[ 'current' ]['id'] = NULL;
+
         $this->data[ 'categories' ] = $this->categories->get_categories( $this->user_id );
         $this->data[ 'TODO' ]     = "list categeories";
         $this->_render();
@@ -405,6 +454,9 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername( $username );
         if ( $categorie_id == NULL )
             redirect( 'tt/' . $username . '/categories', 'location', 301 );
+
+        $this->data[ 'current' ]['type_cat'] = 'categorie';
+        $this->data[ 'current' ]['id'] = $categorie_id;
 
         $this->data[ 'categorie' ] = $this->categories->get_categorie_by_id( $categorie_id );
         if ( !$this->data[ 'categorie' ] )
@@ -452,6 +504,9 @@ class Timetracker extends CI_Controller {
                 if ( !$this->data[ 'categorie' ] )
             show_404();
 
+        $this->data[ 'current' ]['type_cat'] = 'categorie';
+        $this->data[ 'current' ]['id'] = $categorie_id;
+
         $this->data[ 'breadcrumb' ] = array(
             array( 'title'=> 'categories', 'url'=>site_url('tt/'.$username.'/categories')),
             array( 'title'=> $this->data[ 'categorie' ]['title'], 'url'=>site_url('tt/'.$username.'/categorie/'.$categorie_id)),
@@ -472,6 +527,10 @@ class Timetracker extends CI_Controller {
 
     public function tags( $username ) {
         $this->_checkUsername( $username );
+
+        $this->data[ 'current' ]['type_cat'] = 'tag';
+        $this->data[ 'current' ]['id'] = NULL;
+
         // TODO!
         $this->data[ 'TODO' ] = "tags page";
         $this->_render();
@@ -486,6 +545,9 @@ class Timetracker extends CI_Controller {
         $this->_checkUsername( $username );
         if ( $tag_id == NULL )
             redirect( 'tt/' . $username . '/tags', 'location', 301 );
+
+        $this->data[ 'current' ]['type_cat'] = 'tag';
+        $this->data[ 'current' ]['id'] = $tag_id;
 
         $this->data[ 'tag' ] = $this->tags->get_tag_by_id( $tag_id );
         if ( !$this->data[ 'tag' ] )
@@ -531,6 +593,9 @@ class Timetracker extends CI_Controller {
         if ( !$this->data[ 'tag' ] )
             show_404();
 
+        $this->data[ 'current' ]['type_cat'] = 'tag';
+        $this->data[ 'current' ]['id'] = $tag_id;
+
         $this->data[ 'breadcrumb' ] = array(
             array( 'title'=> 'tags', 'url'=>'tt/'.$username.'/tags'),
             array( 'title'=> $this->data[ 'tag' ]['tag'], 'url'=>'tt/'.$username.'/tag/'.$tag_id),
@@ -553,6 +618,10 @@ class Timetracker extends CI_Controller {
 
     public function valuetypes( $username ) {
         $this->_checkUsername( $username );
+
+        $this->data[ 'current' ]['type_cat'] = 'valuetype';
+        $this->data[ 'current' ]['id'] = NULL;
+
         // TODO!
         $this->data[ 'TODO' ] = "value types page";
         $this->_render();
@@ -571,6 +640,9 @@ class Timetracker extends CI_Controller {
         $this->data[ 'valuetype' ] = $this->values->get_valuetype_by_id( $valuetype_id );
         if ( !$this->data[ 'valuetype' ] )
             show_404();
+
+        $this->data[ 'current' ]['type_cat'] = 'valuetype';
+        $this->data[ 'current' ]['id'] = $valuetype_id;
 
         $this->load->library('pagination');
 
@@ -611,6 +683,9 @@ class Timetracker extends CI_Controller {
         if ( !$this->data[ 'valuetype' ] )
             show_404();
 
+        $this->data[ 'current' ]['type_cat'] = 'valuetype';
+        $this->data[ 'current' ]['id'] = $valuetype_id;
+
         $this->data[ 'breadcrumb' ] = array(
             array( 'title'=> 'value types', 'url'=>'tt/'.$username.'/valuetypes/'),
             array( 'title'=> $this->data[ 'valuetype' ]['title'], 'url'=>'tt/'.$username.'/valuetype/'.$valuetype_id),
@@ -626,54 +701,6 @@ class Timetracker extends CI_Controller {
 
 
 
-
-    /*****
-     *  show summary
-     *  */
-
-    public function summary( $username, $type_obj = NULL, $id_obj = NULL ) {
-        $this->_checkUsername( $username );
-        // TODO!
-        $this->data[ 'TODO' ] = "summary $type_obj $id_obj";
-        $this->_render();
-    }
-
-
-    /*****
-     *  show stats
-     *  */
-
-    public function stats( $username, $type_obj = NULL, $id_obj = NULL ) {
-        $this->_checkUsername( $username );
-        // TODO!
-        $this->data[ 'TODO' ] = "stats $type_obj $id_obj";
-        $this->_render();
-    }
-
-
-    /*****
-     *  show export
-     *  */
-
-    public function export( $username, $type_obj = NULL, $id_obj = NULL ) {
-        $this->_checkUsername( $username );
-        // TODO!
-        $this->data[ 'TODO' ] = "export $type_obj $id_obj";
-        $this->_render();
-    }
-
-
-
-    /*****
-     *  show params
-     *  */
-
-    public function params( $username ) {
-        $this->_checkUsername( $username );
-        // TODO!
-        $this->data[ 'TODO' ] = "params";
-        $this->_render();
-    }
 
 
 

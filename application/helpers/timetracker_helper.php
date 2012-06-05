@@ -246,11 +246,13 @@ if ( ! function_exists('value'))
 
 
 
-if ( ! function_exists('viz_url'))
+if ( ! function_exists('tt_url'))
 {
-    function viz_url($username,$type,$cat=NULL,$id=NULL,$dateuri=NULL,$graph=NULL )
+    function tt_url($username,$type,$cat=NULL,$id=NULL,$dateuri=NULL,$graph=NULL )
     {
         $url='tt/'.$username.'/'.$type;
+
+        if ($dateuri==NULL) $dateuri='all';
 
         if ($cat!==NULL) $url.='/'.$cat;
         if ($cat=='categories') $id='all';
@@ -262,9 +264,12 @@ if ( ! function_exists('viz_url'))
         if ($graph!==NULL) $url.='/'.$graph;
 
 
-        if ($type=='records')
-             $url='tt/'.$username.'/'.$cat.'/'.$id;
+        if ($type=='records') {
+             if ($cat==NULL) $url='tt/'.$username;
+             elseif ($id=='all') $url='tt/'.$username.'/'.$cat;
+             else  $url='tt/'.$username.'/'.$cat.'/'.$id;
 
+            }
 
         return site_url($url);
     }

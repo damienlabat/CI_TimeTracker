@@ -80,9 +80,10 @@ class Timetracker_viz extends CI_Controller {
         $this->_checkUsername( $username );
 
         $this->data['current']= array(
-            "type_cat"=>$type_cat,
-            "id"=>$id,
-            "date_plage"=>$date_plage
+            "action" => 'summary',
+            "type_cat" => $type_cat,
+            "id" => $id,
+            "date_plage" => $date_plage
             );
         $this->data['records']= $this->_getRecords($username, $type_cat, $id, $date_plage);
 
@@ -105,6 +106,7 @@ class Timetracker_viz extends CI_Controller {
         $this->_checkUsername( $username );
 
         $this->data['current']= array(
+            "action" => 'graph',
             "type_cat"=>$type_cat,
             "id"=>$id,
             "date_plage"=>$date_plage,
@@ -122,6 +124,13 @@ class Timetracker_viz extends CI_Controller {
 
         $this->load->helper('download');
         $this->_checkUsername( $username );
+
+        $this->data['current']= array(
+            "action" => 'export',
+            "type_cat"=>$type_cat,
+            "id"=>$id,
+            "date_plage"=>$date_plage
+            );
 
         $records= $this->_getRecords($username, $type_cat, $id, $date_plage);
 
@@ -237,9 +246,15 @@ class Timetracker_viz extends CI_Controller {
     public function _getRecords( $username, $type_cat, $id, $date_plage ) {
         $param=array('order'=>'ASC');
 
+        if ($id=='all') $id=NULL;
+
 
         if ($type_cat=='categorie') $param['categorie']=$id;
-        if ($type_cat=='activity')  $param['activity']=$id;
+
+        if ($type_cat=='activity')  { $param['activity']=$id; $param['type_of_record']='activity'; }
+        if ($type_cat=='todo')      { $param['activity']=$id; $param['type_of_record']='todo'; }
+        if ($type_cat=='value')     { $param['activity']=$id; $param['type_of_record']='value'; }
+
         if ($type_cat=='tag')       $param['tags']= array( $id );
         if ($type_cat=='valuetype') $param['valuetype']=  $id;
 
