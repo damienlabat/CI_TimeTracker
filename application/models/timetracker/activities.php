@@ -149,12 +149,11 @@ class Activities extends CI_Model {
 
 
         $activity[ 'categorie' ] = $this->categories->get_categorie_by_id( $activity['categorie_ID'] );
-        $activity[ 'categorie_tile' ]= $activity[ 'categorie' ]['title'];
+        $activity[ 'categorie_title' ]= $activity[ 'categorie' ]['title'];
 
 
-
-       if ( $activity[ 'categorie_tile' ] != '' )
-            $activity[ 'activity_path' ] = $activity[ 'title' ] . '@' . $activity[ 'categorie_tile' ];
+       if ( $activity[ 'categorie_title' ] != '' )
+            $activity[ 'activity_path' ] = $activity[ 'title' ] . '@' . $activity[ 'categorie_title' ];
         else
             $activity[ 'activity_path' ] = $activity[ 'title' ];
 

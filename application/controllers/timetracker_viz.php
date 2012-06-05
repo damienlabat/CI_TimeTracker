@@ -77,6 +77,8 @@ class Timetracker_viz extends CI_Controller {
 
     public function summary( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = 'all' ) {
 
+        //TODO add title and breadcrumb
+
         $this->_checkUsername( $username );
 
         $this->data['current']= array(
@@ -86,6 +88,7 @@ class Timetracker_viz extends CI_Controller {
             "date_plage" => $date_plage
             );
         $this->data['records']= $this->_getRecords($username, $type_cat, $id, $date_plage);
+
 
         if ($this->data['records']) {
             usort( $this->data['records'] , array("Timetracker_viz", "_orderByCat"));

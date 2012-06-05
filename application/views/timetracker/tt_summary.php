@@ -40,7 +40,7 @@ if (isset($stats[$rub])){
     echo "records: <ul>";
 
     foreach ($stats[$rub] as $ki => $item) {
-        echo "<li><a href='".tt_url($user_name,'summary','activity',$item['id'],$dates['uri'] )."'>".$item['activity_path']."</a> => ".$item['count']." record(s), total time: ".duration2human($item['total'])."</li>";
+        echo "<li><a href='".tt_url($user_name,'summary',$item['type_of_record'],$item['id'],$dates['uri'] )."'>".$item['activity_path']."</a> => ".$item['count']." record(s), total time: ".duration2human($item['total'])."</li>";
     }
 
     echo "</ul><br/>";

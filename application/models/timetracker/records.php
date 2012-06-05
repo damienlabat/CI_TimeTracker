@@ -324,6 +324,8 @@ class Records extends CI_Model {
 
     function complete_record_info( $record ) {
 
+
+
         if ( $record[ 'running' ] ){
             $record[ 'duration' ] = $this->calcul_duration( $record );
             $record[ 'stop_at' ] = NULL;
@@ -351,6 +353,7 @@ class Records extends CI_Model {
 
 
         $record[ 'activity' ] = $this->activities->get_activity_by_id_full( $record[ 'activity_ID' ] );
+
 
         return $record;
     }

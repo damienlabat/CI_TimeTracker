@@ -270,24 +270,28 @@ class Timetracker extends CI_Controller {
 
 
     public function _generic_activity_show( $username, $type_of_record, $activity_id =NULL, $page =1 ) {
-        $this->data[ 'activity' ] = $this->activities->get_activity_by_id_full( $activity_id );
-        if ( $activity_id != NULL )
+
+        if ( $activity_id != NULL ) {
+            $this->data[ 'activity' ] = $this->activities->get_activity_by_id_full( $activity_id );
+
             if ( !$this->data[ 'activity' ] )
                 show_404();
+        }
 
         $this->data[ 'current' ]['type_cat'] = $type_of_record;
         $this->data[ 'current' ]['id'] = $activity_id;
 
-        if ( $activity_id != NULL )
-        $this->data[ 'breadcrumb' ] = array(
-            array( 'title'=> $this->data[ 'activity' ][ 'type_of_record' ], 'url'=>'tt/'.$username.'/'.$type_of_record),
-            array( 'title'=> $this->data[ 'activity' ]['categorie']['title'], 'url'=>'tt/'.$username.'/categorie/'.$this->data[ 'activity' ]['categorie_ID']),
-            array( 'title'=> $this->data[ 'activity' ]['title'], 'url'=>'')
-            );
-        else
-        $this->data[ 'breadcrumb' ] = array(
-            array( 'title'=> $type_of_record, 'url'=>'tt/'.$username.'/'.$type_of_record)
-            );
+        if ( $activity_id != NULL ) {
+            if ($this->data[ 'activity' ]['categorie']['title']!='')
+                $this->data[ 'breadcrumb' ][]=  array( 'title'=> $this->data[ 'activity' ]['categorie']['title'], 'url'=>'tt/'.$username.'/categorie/'.$this->data[ 'activity' ]['categorie_ID']);
+            $this->data[ 'breadcrumb' ][]=  array( 'title'=> $this->data[ 'activity' ]['title'], 'url'=>'');
+
+            $this->data[ 'title' ]=$this->data[ 'activity' ][ 'type_of_record' ].': '.$this->data[ 'activity' ]['title'];
+        }
+        else {
+            $this->data[ 'breadcrumb' ][0]= array( 'title'=> $type_of_record, 'url'=>'tt/'.$username.'/'.$type_of_record);
+            $this->data[ 'title' ]=$type_of_record;
+        }
 
         $this->load->library('pagination');
 
@@ -303,7 +307,8 @@ class Timetracker extends CI_Controller {
         $this->pagination->initialize($config);
 
         $this->data[ 'categories' ]         = $this->categories->get_categories( $this->user_id );
-        $this->data[ 'activities' ]         = $this->activities->get_categorie_activities( $this->data[ 'activity' ][ 'categorie_ID' ] );
+        if ( $activity_id != NULL )    $this->data[ 'activities' ] = $this->activities->get_categorie_activities( $this->data[ 'activity' ][ 'categorie_ID' ] );
+            else $this->data[ 'activities' ]       = array();
         $this->data[ 'running_activities' ]        = $this->records->get_records_full($this->user_id, array( 'activity'=>$activity_id, 'type_of_record'=>$type_of_record, 'running'=>1 ) );
         $this->data[ 'last_actions' ]              = $this->records->get_records_full($this->user_id, array( 'activity'=>$activity_id, 'type_of_record'=>$type_of_record, 'running'=>0 ), $offset, $per_page );
         $this->data[ 'pager']               = $this->pagination->create_links();
@@ -386,7 +391,7 @@ class Timetracker extends CI_Controller {
 
     public function values( $username ) {
         $this->_checkUsername( $username );
-        $this->_generic_activity_show( $username, 'values' );
+        $this->_generic_activity_show( $username, 'value' );
         $this->_render();
     }
 
@@ -476,10 +481,12 @@ class Timetracker extends CI_Controller {
         $this->pagination->initialize($config);
 
 
-        $this->data[ 'breadcrumb' ] = array(
-            array( 'title'=> 'categories', 'url'=>'tt/'.$username.'/categories'),
-            array( 'title'=> $this->data[ 'categorie' ]['title'], 'url'=>site_url('tt/'.$username.'/categorie/'.$categorie_id))
-            );
+        $this->data[ 'breadcrumb' ][0]= array( 'title'=> 'categories', 'url'=>'tt/'.$username.'/categories');
+        if ( $this->data[ 'categorie' ]['title']=='')
+            $this->data[ 'breadcrumb' ][]= array( 'title'=> '_root_', 'url'=>site_url('tt/'.$username.'/categorie/'.$categorie_id));
+        else
+            $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'categorie' ]['title'], 'url'=>site_url('tt/'.$username.'/categorie/'.$categorie_id));
+
         $this->data[ 'categories' ]                = $this->categories->get_categories( $this->user_id );
         $this->data[ 'activities' ]                = $this->activities->get_categorie_activities( $categorie_id );
         $this->data[ 'running_activities' ]        = $this->records->get_records_full($this->user_id, array( 'categorie'=>$categorie_id, 'type_of_record'=>'activity', 'running'=>1 ) );
