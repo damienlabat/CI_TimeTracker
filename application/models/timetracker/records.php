@@ -149,7 +149,7 @@ class Records extends CI_Model {
                         OR running=1)
                      AND start_time<\''.$param['datemax'].'\'';
 
-        $req .= ' ORDER BY start_time '.$param['order'];
+        $req .= ' ORDER BY running DESC ,start_time '.$param['order'];
 
         if ( ($offset!==NULL) && ($count!=NULL) ) $req .= ' LIMIT ' . $offset . ',' . $count ;
 

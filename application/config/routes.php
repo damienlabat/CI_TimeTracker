@@ -53,79 +53,46 @@ $route['account'] =     'auth/account';
  */
 
 
-//$1 username
-$route['tt/([^\/]+)/activities'] =                    'timetracker/activities/$1';
-$route['tt/([^\/]+)/activity'] =                      'timetracker/activity/$1';
-$route['tt/([^\/]+)/activity/(:num)'] =               'timetracker/activity/$1/$2';
-$route['tt/([^\/]+)/activity/(:num)/(:num)'] =        'timetracker/activity/$1/$2/$3'; // page
-$route['tt/([^\/]+)/activity/(:num)/edit'] =          'timetracker/activity_edit/$1/$2';
+$route['tt/([^\/]+)/(activity|todo|value)/(:num)/edit'] =       'timetracker/generic_activity_edit/$1/$2/$3';
+$route['tt/([^\/]+)/(activity|todo|value)/(:num)/(:num)'] =     'timetracker/generic_activity_show/$1/$2/$3/$4'; // $4=page
+$route['tt/([^\/]+)/(activity|todo|value)/(:num)'] =            'timetracker/generic_activity_show/$1/$2/$3';
 
-$route['tt/([^\/]+)/thingstodo'] =                    'timetracker/thingstodo/$1';
-$route['tt/([^\/]+)/todo'] =                          'timetracker/todo/$1';
-$route['tt/([^\/]+)/todo/(:num)'] =                   'timetracker/todo/$1/$2';
-$route['tt/([^\/]+)/todo/(:num)/(:num)'] =            'timetracker/todo/$1/$2/$3'; // page
-$route['tt/([^\/]+)/todo/(:num)/edit'] =              'timetracker/todo_edit/$1/$2';
-
-$route['tt/([^\/]+)/values'] =                        'timetracker/values/$1';
-$route['tt/([^\/]+)/value'] =                         'timetracker/value/$1';
-$route['tt/([^\/]+)/value/(:num)'] =                  'timetracker/value/$1/$2';
-$route['tt/([^\/]+)/value/(:num)/(:num)'] =           'timetracker/value/$1/$2/$3'; // page
-$route['tt/([^\/]+)/value/(:num)/edit'] =             'timetracker/value_edit/$1/$2';
-
-$route['tt/([^\/]+)/categories'] =                    'timetracker/categories/$1';
-$route['tt/([^\/]+)/categorie'] =                     'timetracker/categorie/$1';
-$route['tt/([^\/]+)/categorie/(:num)'] =              'timetracker/categorie/$1/$2';
-$route['tt/([^\/]+)/categorie/(:num)/(:num)'] =       'timetracker/categorie/$1/$2/$3'; // page
-$route['tt/([^\/]+)/categorie/(:num)/edit'] =         'timetracker/categorie_edit/$1/$2';
-
-$route['tt/([^\/]+)/tags'] =                          'timetracker/tags/$1';
-$route['tt/([^\/]+)/tag'] =                           'timetracker/tag/$1';
-$route['tt/([^\/]+)/tag/(:num)'] =                    'timetracker/tag/$1/$2';
-$route['tt/([^\/]+)/tag/(:num)/(:num)'] =             'timetracker/tag/$1/$2/$3'; // page
-$route['tt/([^\/]+)/tag/(:num)/edit'] =               'timetracker/tag_edit/$1/$2';
+$route['tt/([^\/]+)/(categories|tags|valuetypes)'] =            'timetracker/$2/$1';
+$route['tt/([^\/]+)/(categorie|tag|valuetype)/(:num)'] =        'timetracker/$2/$1/$3';
+$route['tt/([^\/]+)/(categorie|tag|valuetype)/(:num)/(:num)'] = 'timetracker/$2/$1/$3/$4'; // $4=page
+$route['tt/([^\/]+)/(categorie|tag|valuetype)/(:num)/edit'] =   'timetracker/$2/$1/$3';
 
 
-$route['tt/([^\/]+)/valuetypes'] =                     'timetracker/valuetypes/$1';
-$route['tt/([^\/]+)/valuetype'] =                      'timetracker/valuetype/$1';
-$route['tt/([^\/]+)/valuetype/(:num)'] =               'timetracker/valuetype/$1/$2';
-$route['tt/([^\/]+)/valuetype/(:num)/(:num)'] =        'timetracker/valuetype/$1/$2/$3'; // page
-$route['tt/([^\/]+)/valuetype/(:num)/edit'] =          'timetracker/valuetype_edit/$1/$2';
+
+$route['tt/([^\/]+)/record/(:num)'] =                           'timetracker/record/$1/$2';
+$route['tt/([^\/]+)/record/(:num)/edit'] =                      'timetracker/edit_record/$1/$2';
+$route['tt/([^\/]+)/record/(:num)/delete'] =                    'timetracker/delete_record/$1/$2';
+$route['tt/([^\/]+)/record/(:num)/restart'] =                   'timetracker/restart/$1/$2';
+$route['tt/([^\/]+)/record/(:num)/stop'] =                      'timetracker/stop/$1/$2';
 
 
-$route['tt/([^\/]+)/record/(:num)'] =                   'timetracker/record/$1/$2';
-$route['tt/([^\/]+)/record/(:num)/edit'] =              'timetracker/edit_record/$1/$2';
-$route['tt/([^\/]+)/record/(:num)/delete'] =            'timetracker/delete_record/$1/$2';
-$route['tt/([^\/]+)/record/(:num)/restart'] =           'timetracker/restart/$1/$2';
-$route['tt/([^\/]+)/record/(:num)/stop'] =              'timetracker/stop/$1/$2';
 
 
-$route['tt/([^\/]+)/summary'] =                             'timetracker_viz/summary/$1';
-$route['tt/([^\/]+)/summary/([^\/]+)'] =                    'timetracker_viz/summary/$1/$2';
-$route['tt/([^\/]+)/summary/([^\/]+)/([^\/]+)'] =           'timetracker_viz/summary/$1/$2/$3';
-$route['tt/([^\/]+)/summary/([^\/]+)/([^\/]+)/([^\/]+)'] =  'timetracker_viz/summary/$1/$2/$3/$4';
 
-$route['tt/([^\/]+)/graph'] =                                   'timetracker_viz/graph/$1';
-$route['tt/([^\/]+)/graph/([^\/]+)'] =                          'timetracker_viz/graph/$1/$2';
-$route['tt/([^\/]+)/graph/([^\/]+)/([^\/]+)'] =                 'timetracker_viz/graph/$1/$2/$3';
-$route['tt/([^\/]+)/graph/([^\/]+)/([^\/]+)/([^\/]+)'] =        'timetracker_viz/graph/$1/$2/$3/$4';
-$route['tt/([^\/]+)/graph/([^\/]+)/([^\/]+)/([^\/]+)/([^\/]+)'] = 'timetracker_viz/graph/$1/$2/$3/$4/$5';
+$route['tt/([^\/]+)/(summary|graph|export|log)'] =                              'timetracker_viz/$2/$1';
+$route['tt/([^\/]+)/(summary|graph|export|log)/([^\/]+)'] =                     'timetracker_viz/$2/$1/$3';
+$route['tt/([^\/]+)/(summary|graph|export|log)/([^\/]+)/([^\/]+)'] =            'timetracker_viz/$2/$1/$3/$4';    // $4=id
+$route['tt/([^\/]+)/(summary|graph|export|log)/([^\/]+)/([^\/]+)/([^\/]+)'] =   'timetracker_viz/$2/$1/$3/$4/$5'; // $5=plage_date
 
-$route['tt/([^\/]+)/export'] =                                      'timetracker_viz/export/$1';
-$route['tt/([^\/]+)/export/([^\/]+)'] =                             'timetracker_viz/export/$1/$2';
-$route['tt/([^\/]+)/export/([^\/]+)/([^\/]+)'] =                    'timetracker_viz/export/$1/$2/$3';
-$route['tt/([^\/]+)/export/([^\/]+)/([^\/]+)/([^\/]+)'] =           'timetracker_viz/export/$1/$2/$3/$4';
-$route['tt/([^\/]+)/export/([^\/]+)/([^\/]+)/([^\/]+)/([^\/]+)'] =  'timetracker_viz/export/$1/$2/$3/$4/$5';
+$route['tt/([^\/]+)/graph/([^\/]+)/([^\/]+)/([^\/]+)/([^\/]+)'] =               'timetracker_viz/graph/$1/$2/$3/$4/$5';  //$5=graph_id
+$route['tt/([^\/]+)/export/([^\/]+)/([^\/]+)/([^\/]+)/([^\/]+)'] =              'timetracker_viz/export/$1/$2/$3/$4/$5';  //$5=format
 
-$route['tt/([^\/]+)/log'] =                             'timetracker_viz/log/$1';
-$route['tt/([^\/]+)/log/([^\/]+)'] =                    'timetracker_viz/log/$1/$2';
-$route['tt/([^\/]+)/log/([^\/]+)/([^\/]+)'] =           'timetracker_viz/log/$1/$2/$3';
-$route['tt/([^\/]+)/log/([^\/]+)/([^\/]+)/([^\/]+)'] =  'timetracker_viz/log/$1/$2/$3/$4';
+
+
+
 
 $route['tt/([^\/]+)/params'] =       'timetracker/params/$1';
 
 $route['tt/([^\/]+)'] =              'timetracker/index/$1';
-$route['tt/([^\/]+)/(:num)'] =       'timetracker/index/$1/$2'; // page
+$route['tt/([^\/]+)/(:num)'] =       'timetracker/index/$1/$2'; // $2=page
 $route['tt'] =                       'timetracker/index';
+
+
 
 
 

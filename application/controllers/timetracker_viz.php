@@ -75,7 +75,7 @@ class Timetracker_viz extends CI_Controller {
      * ========================== */
 
 
-    public function summary( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = 'all' ) {
+    public function summary( $username = NULL, $type_cat = 'categorie', $id = NULL, $date_plage = 'all' ) {
 
         //TODO add title and breadcrumb
 
@@ -88,6 +88,56 @@ class Timetracker_viz extends CI_Controller {
             "date_plage" => $date_plage
             );
         $this->data['records']= $this->_getRecords($username, $type_cat, $id, $date_plage);
+
+
+        if ($type_cat=='categorie') {
+
+            $this->data[ 'categorie' ] = $this->categories->get_categorie_by_id( $id );
+
+            $this->data[ 'breadcrumb' ][]= array( 'title'=> 'categories', 'url'=>tt_url($username,'summary','categorie','all',$date_plage) );
+            if ( $this->data[ 'categorie' ]['title']=='')
+                $this->data[ 'breadcrumb' ][]= array( 'title'=> '_root_', 'url'=>tt_url($username,'summary','categorie',$id,  $date_plage) );
+            elseif ( $this->data[ 'categorie' ]['id']!=NULL)
+                $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'categorie' ]['title'], 'url'=>tt_url($username,'summary','categorie',$id,  $date_plage) );
+
+            $this->data[ 'title' ]='summary for categorie: '.$this->data[ 'categorie' ]['title'];
+            if ( $this->data[ 'categorie' ]['title']=='') $this->data[ 'title' ].='_root_';
+
+        }
+
+        elseif ($type_cat=='tag'){
+
+            $this->data[ 'tag' ] = $this->tags->get_tag_by_id( $id );
+
+            $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'tag' ]['tag'], 'url'=>tt_url($username,'summary','tag',$this->data[ 'tag' ]['id'],  $date_plage) );
+
+            $this->data[ 'title' ]='summary for tag : '.$this->data[ 'tag' ]['tag'];
+
+        }
+
+        elseif ($type_cat=='value_type'){
+
+            $this->data[ 'value_type' ] = $this->values->get_valuetype_by_id( $id );
+
+            $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'value_type' ]['title'], 'url'=>tt_url($username,'summary','value_type',$this->data[ 'value_type' ]['id'],  $date_plage) );
+
+            $this->data[ 'title' ]='summary for value type : '.$this->data[ 'value_type' ]['title'];
+
+        }
+
+        else {
+
+            $this->data[ 'activity' ] = $this->activities->get_activity_by_id_full( $id );
+
+            if ( $this->data[ 'activity' ][ 'categorie' ]['title']!='')
+                $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'activity' ][ 'categorie' ]['title'], 'url'=>tt_url($username,'summary','categorie',$this->data[ 'activity' ][ 'categorie' ]['id'],  $date_plage) );
+
+            $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'activity' ]['title'], 'url'=>tt_url($username,'summary',$this->data[ 'activity' ]['type_of_record'],$this->data[ 'activity' ]['id'],  $date_plage) );
+
+            $this->data[ 'title' ]='summary for '.$this->data[ 'activity' ]['type_of_record'].': '.$this->data[ 'activity' ]['title'];
+
+        }
+
 
 
         if ($this->data['records']) {

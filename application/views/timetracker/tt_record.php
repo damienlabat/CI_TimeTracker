@@ -1,18 +1,8 @@
-<?php
-if ( $record ):
-?>
-<!--div id='activity' class="span4"><div class='cadre'-->
-    <?php
-    $this->load->view( 'timetracker/tt_tree' );
-?>
-<!--/div></div-->
+<?php if ( $record ): ?>
 
-<!--div id='record' class="span8"><div class='cadre'-->
-    <h2><?= $record[ 'start_time' ] ?> TODO change title</h2>
-    <ul class='records'>
-    <?= record_div( $record, $user_name ) ?>
-    </ul>
-<!--/div></div-->
-<?php
-endif;
-?>
+<h2><?= $record[ 'start_time' ] ?> <br/>(TODO!!!! change title)</h2>
+<ul class='records'>
+<?= record_div( $record, $user_name ) ?>
+</ul>
+
+<?php endif;

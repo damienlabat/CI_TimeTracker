@@ -253,14 +253,11 @@ if ( ! function_exists('tt_url'))
         $url='tt/'.$username.'/'.$type;
 
         if ($dateuri==NULL) $dateuri='all';
+        if ($id=='NULL') $id='all';
 
         if ($cat!==NULL) $url.='/'.$cat;
-        if ($cat=='categories') $id='all';
-
         if ($id!==NULL) $url.='/'.$id;
-
         if ($dateuri!==NULL) $url.='/'.$dateuri;
-
         if ($graph!==NULL) $url.='/'.$graph;
 
 
@@ -274,6 +271,8 @@ if ( ! function_exists('tt_url'))
         return site_url($url);
     }
 }
+
+
 
 
 
