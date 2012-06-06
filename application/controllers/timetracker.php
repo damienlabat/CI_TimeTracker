@@ -266,17 +266,12 @@ class Timetracker extends CI_Controller {
         $this->data[ 'current' ]['type_cat'] = $type_of_record;
         $this->data[ 'current' ]['id'] = $activity_id;
 
-        if ( $activity_id != NULL ) {
+
             if ($this->data[ 'activity' ]['categorie']['title']!='')
                 $this->data[ 'breadcrumb' ][]=  array( 'title'=> $this->data[ 'activity' ]['categorie']['title'], 'url'=>tt_url($username,'records','categorie',$this->data[ 'activity' ]['categorie_ID']) );
-                $this->data[ 'breadcrumb' ][]=  array( 'title'=> $this->data[ 'activity' ]['title'],              'url'=>tt_url($username,'records', $this->data[ 'activity' ]['type_of_record'],$this->data[ 'activity' ]['id']) );
-
+            $this->data[ 'breadcrumb' ][]=  array( 'title'=> $this->data[ 'activity' ]['title'],              'url'=>tt_url($username,'records', $this->data[ 'activity' ]['type_of_record'],$this->data[ 'activity' ]['id']) );
             $this->data[ 'title' ]=$this->data[ 'activity' ][ 'type_of_record' ].': '.$this->data[ 'activity' ]['title'];
-        }
-        else {
-            $this->data[ 'breadcrumb' ][]= array( 'title'=> $type_of_record, 'url'=>'tt/'.$username.'/'.$type_of_record);
-            $this->data[ 'title' ]=$type_of_record;
-        }
+
 
         $this->load->library('pagination');
 

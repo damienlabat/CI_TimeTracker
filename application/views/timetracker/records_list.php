@@ -1,21 +1,21 @@
-<ul class='records'>
+<table class='records table table-bordered'>
+    <tbody>
 <?php
 if ( isset( $records ) ) {
 
     foreach ( $records as $k => $record ):
 
 ?>
-   <?= record_li( $record, $user_name, array( 'duration' => 'full' ) ) ?>
+   <?= record_tr( $record, $user_name, array( 'duration' => 'full' ) ) ?>
 <?php
 
     endforeach;
 
 }
 ?>
-</ul>
+    <tbody>
+</table>
 
-<div class="pagination pagination-centered"><ul>
-<?php
-    echo $pager;
-?>
-</ul></div>
+
+
+<div class="pagination pagination-centered"><ul><?= $pager ?></ul></div>

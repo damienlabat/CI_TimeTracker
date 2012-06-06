@@ -102,6 +102,32 @@ if ( ! function_exists('record_div'))
 }
 
 
+if ( ! function_exists('record_tr'))
+{
+    function record_tr($record,$username,$param=array() )
+    {
+
+    if (!isset($param['duration'])) $param['duration']='normal'; // normal OR full (hide/show seconds for 1 minute min duration)
+
+
+    $html= "<tr class='record-item activity-".$record['activity']['type_of_record'];
+    if ($record['running']) $html.=" running";
+    $html.= "'>";
+
+    $html.= "<td>".record_time($record,$username)."</td>";
+    $html.= "<td>".activity_path($record['activity'],$username).value($record,$username)."</td>";
+    $html.= "<td>".tag_list($record['tags'],$username)."</td>";
+    $html.= "<td>".record_buttons($record,$username,TRUE)."</td>";
+
+    //if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
+
+
+    echo "</tr>";
+        return $html;
+    }
+}
+
+
 
 if ( ! function_exists('record_time'))
 {
