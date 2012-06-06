@@ -1,24 +1,28 @@
 <?php
 
 //catgeorie
-
+/* sert a rien ?? si pas trie par type of records
 if (isset($stats['categorie'])){
-    echo "<h2>categories</h2>";
+    echo "<h2>categories</h2><div class='row'><div class='span6'>";
 
-    echo "records: <ul>";
+    echo "records:<table class='table'>
+    <thead>
+    <tr><th>categorie</th><th>records count</th><th>total time</th></tr>
+    </thead>
+    <tbody>";
 
     foreach ($stats['categorie'] as $ki => $item) {
         if ($item['title']=='') $item['title']='/root/';
-        echo "<li><a href='".tt_url($user_name,'summary','categorie',$item['id'],$dates['uri'] )."'>".$item['title']."</a> => ".$item['count']." record(s), total time: ".duration2human($item['total'])."</li>";
+        echo "<tr><td><a href='".tt_url($user_name,'summary','categorie',$item['id'],$dates['uri'] )."'>".$item['title']."</a></td><td>".$item['count']."</td><td>".duration2human($item['total'])."</td></tr>";
     }
 
-    echo "</ul><br/>";
+    echo "</tbody></table></div>";
 
 
-    echo "<div class='camembert camembert_categorie'></div>";
+    echo "<div class='camembert camembert_categorie span6'></div></div>";
 }
 
-
+*/
 
 
 
@@ -29,37 +33,45 @@ $rubs=array('activity','todo','value','tag');
 foreach ($rubs as $k => $rub)
 if (isset($stats[$rub])){
 
-    echo "<h2>".$rub."</h2>";
+    echo "<h2>".$rub."</h2><div class='row'><div class='span6'>";
 
 
     if (isset($stats[ $rub.'_count' ])) {
         echo $stats[ $rub.'_count' ]." items<br/>";
-        echo "Total time: ".duration2human($stats[ $rub.'_total' ])."<br/><br/>";
+        echo "Total time: ".duration2human($stats[ $rub.'_total' ])."<br/>";
     }
 
-    echo "records: <ul>";
+    echo "records:<table class='table'>
+    <thead>
+    <tr><th>categorie</th><th>records count</th><th>total time</th></tr>
+    </thead>
+    <tbody>";
 
-    foreach ($stats[$rub] as $ki => $item) {
-        echo "<li><a href='".tt_url($user_name,'summary',$item['type_of_record'],$item['id'],$dates['uri'] )."'>".$item['activity_path']."</a> => ".$item['count']." record(s), total time: ".duration2human($item['total'])."</li>";
-    }
-
-    echo "</ul><br/>";
+    foreach ($stats[$rub] as $ki => $item)
+        echo "<tr><td><a href='".tt_url($user_name,'summary',$item['type_of_record'],$item['id'],$dates['uri'] )."'>".$item['activity_path']."</a></td><td>".$item['count']."</td><td>".duration2human($item['total'])."</td></tr>";
 
 
-    echo "<div class='camembert camembert_".$rub."'></div>";
+    echo "</tbody></table></div>";
+
+
+    echo "<div class='span6 camembert camembert_".$rub."'></div></div>";
 
 
 
     if (isset($stats[$rub.'_tag'])) {
-        echo "tags: <ul>";
+        echo "<div class='row'><div class='span6'>tags:<table class='table'>
+    <thead>
+    <tr><th>categorie</th><th>records count</th><th>total time</th></tr>
+    </thead>
+    <tbody>";
 
         foreach ($stats[$rub.'_tag'] as $kt => $tag) {
-            echo "<li><a href='".tt_url($user_name,'summary','tag',$kt,$dates['uri'] )."'>".$tag['tag']."</a> => ".$tag['count']." record(s), total time: ".duration2human($tag['total'])."</li>";
+            echo "<tr><td><a href='".tt_url($user_name,'summary','tag',$kt,$dates['uri'] )."'>".$tag['tag']."</a></td><td>".$tag['count']."</td><td>".duration2human($tag['total'])."</td></tr>";
         }
 
-        echo "</ul><br/>";
+        echo "</tbody></table></div>";
 
-        echo "<div class='camembert camembert_".$rub."_tag'></div>";
+        echo "<div class='span6 camembert camembert_".$rub."_tag'></div></div>";
     }
 
 
