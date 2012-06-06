@@ -60,7 +60,7 @@ $route['tt/([^\/]+)/(activity|todo|value)/(:num)'] =            'timetracker/gen
 $route['tt/([^\/]+)/(categories|tags|valuetypes)'] =            'timetracker/$2/$1';
 $route['tt/([^\/]+)/(categorie|tag|valuetype)/(:num)'] =        'timetracker/$2/$1/$3';
 $route['tt/([^\/]+)/(categorie|tag|valuetype)/(:num)/(:num)'] = 'timetracker/$2/$1/$3/$4'; // $4=page
-$route['tt/([^\/]+)/(categorie|tag|valuetype)/(:num)/edit'] =   'timetracker/$2/$1/$3';
+$route['tt/([^\/]+)/(categorie|tag|valuetype)/(:num)/edit'] =   'timetracker/$2_edit/$1/$3';
 
 
 

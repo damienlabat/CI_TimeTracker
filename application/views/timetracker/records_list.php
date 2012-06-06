@@ -1,4 +1,4 @@
-<table class='records table table-bordered'>
+<table class='records'>
     <tbody>
 <?php
 if ( isset( $records ) ) {

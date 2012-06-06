@@ -114,10 +114,10 @@ if ( ! function_exists('record_tr'))
     if ($record['running']) $html.=" running";
     $html.= "'>";
 
-    $html.= "<td>".record_time($record,$username)."</td>";
+    $html.= "<td class='td-'>".record_time($record,$username)."</td>";
     $html.= "<td>".activity_path($record['activity'],$username).value($record,$username)."</td>";
     $html.= "<td>".tag_list($record['tags'],$username)."</td>";
-    $html.= "<td>".record_buttons($record,$username,TRUE)."</td>";
+    $html.= "<td>".record_buttons($record,$username,TRUE,TRUE)."</td>";
 
     //if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
 
@@ -189,7 +189,7 @@ if ( ! function_exists('activity_path'))
 
 if ( ! function_exists('record_buttons'))
 {
-    function record_buttons($record,$username,$show_delete=FALSE)
+    function record_buttons($record,$username,$show_delete=FALSE,$icon=FALSE)
     {
 
       $html= '';

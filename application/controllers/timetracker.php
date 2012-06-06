@@ -149,9 +149,9 @@ class Timetracker extends CI_Controller {
 
 
         $this->data[ 'breadcrumb' ]= array(
-            array( 'title'=> 'categorie : '.$this->data[ 'record' ][ 'activity' ]['categorie']['title'],   'url'=>'tt/'.$username.'/categorie/'.$this->data[ 'record' ][ 'activity' ]['categorie_ID']),
-            array( 'title'=> $this->data[ 'record' ][ 'activity' ]['type_of_record'].' : '.$this->data[ 'record' ][ 'activity' ]['title'],                'url'=>'tt/'.$username.'/'.$this->data[ 'record' ][ 'activity' ]['type_of_record'].'/'.$this->data[ 'record' ][ 'activity' ]['id']),
-            array( 'title'=> 'start at : '.$this->data[ 'record' ][ 'start_time' ], 'url'=>'')
+            array( 'title'=> 'categorie : '.$this->data[ 'record' ][ 'activity' ]['categorie']['title'],   'url'=>tt_url($username,'records','categorie',$this->data[ 'record' ][ 'activity' ]['categorie_ID'])),
+            array( 'title'=> $this->data[ 'record' ][ 'activity' ]['type_of_record'].' : '.$this->data[ 'record' ][ 'activity' ]['title'],                'url'=>tt_url($username,'records',$this->data[ 'record' ][ 'activity' ]['type_of_record'],$this->data[ 'record' ][ 'activity' ]['id'])),
+            array( 'title'=> 'start at : '.$this->data[ 'record' ][ 'start_time' ], 'url'=>tt_url($username,'records','record',$this->data[ 'record' ]['id']))
             );
 
         $this->data[ 'current' ]['type_cat'] = 'record';
@@ -169,6 +169,12 @@ class Timetracker extends CI_Controller {
         $this->data[ 'record' ] = $this->records->get_record_by_id_full( $record_id );
         if ( !$this->data[ 'record' ] )
             show_404();
+
+         $this->data[ 'breadcrumb' ]= array(
+            array( 'title'=> 'categorie : '.$this->data[ 'record' ][ 'activity' ]['categorie']['title'],   'url'=>tt_url($username,'records','categorie',$this->data[ 'record' ][ 'activity' ]['categorie_ID'])),
+            array( 'title'=> $this->data[ 'record' ][ 'activity' ]['type_of_record'].' : '.$this->data[ 'record' ][ 'activity' ]['title'],                'url'=>tt_url($username,'records',$this->data[ 'record' ][ 'activity' ]['type_of_record'],$this->data[ 'record' ][ 'activity' ]['id'])),
+            array( 'title'=> 'start at : '.$this->data[ 'record' ][ 'start_time' ], 'url'=>tt_url($username,'records','record',$this->data[ 'record' ]['id']))
+            );
 
         $this->data[ 'current' ]['type_cat'] = 'record';
         $this->data[ 'current' ]['id'] = $record_id;
@@ -299,6 +305,11 @@ class Timetracker extends CI_Controller {
 
         if (( !$this->data[ 'activity' ] ) OR ( $this->data[ 'activity' ][ 'type_of_record']!=$type_of_record ))
             show_404();
+
+        if ($this->data[ 'activity' ]['categorie']['title']!='')
+                $this->data[ 'breadcrumb' ][]=  array( 'title'=> $this->data[ 'activity' ]['categorie']['title'], 'url'=>tt_url($username,'records','categorie',$this->data[ 'activity' ]['categorie_ID']) );
+            $this->data[ 'breadcrumb' ][]=  array( 'title'=> $this->data[ 'activity' ]['title'],              'url'=>tt_url($username,'records', $this->data[ 'activity' ]['type_of_record'],$this->data[ 'activity' ]['id']) );
+            $this->data[ 'title' ]=$this->data[ 'activity' ][ 'type_of_record' ].': '.$this->data[ 'activity' ]['title'];
 
         $this->data[ 'tt_layout' ] = 'tt_activity_edit';
         $this->_render();

@@ -95,10 +95,13 @@ class Timetracker_viz extends CI_Controller {
             $this->data[ 'categorie' ] = $this->categories->get_categorie_by_id( $id );
 
             $this->data[ 'breadcrumb' ][]= array( 'title'=> 'categories', 'url'=>tt_url($username,'summary','categorie','all',$date_plage) );
-            if ( $this->data[ 'categorie' ]['title']=='')
-                $this->data[ 'breadcrumb' ][]= array( 'title'=> '_root_', 'url'=>tt_url($username,'summary','categorie',$id,  $date_plage) );
-            elseif ( $this->data[ 'categorie' ]['id']!=NULL)
-                $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'categorie' ]['title'], 'url'=>tt_url($username,'summary','categorie',$id,  $date_plage) );
+
+            if ( $this->data[ 'categorie' ]['id']!=NULL) {
+                if ( $this->data[ 'categorie' ]['title']=='')
+                    $this->data[ 'breadcrumb' ][]= array( 'title'=> '_root_', 'url'=>tt_url($username,'summary','categorie',$id,  $date_plage) );
+                else
+                    $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'categorie' ]['title'], 'url'=>tt_url($username,'summary','categorie',$id,  $date_plage) );
+            }
 
             $this->data[ 'title' ]='summary for categorie: '.$this->data[ 'categorie' ]['title'];
             if ( $this->data[ 'categorie' ]['title']=='') $this->data[ 'title' ].='_root_';
