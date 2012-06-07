@@ -36,7 +36,7 @@ if (isset($stats['categorie'][$rub])){
     echo "</tbody></table></div>";
 
 
-    echo "<div class='camembert camembert_categorie_".$rub." span6'></div></div>";
+    echo "<div class='span6 camembert' data-camembert-id='categorie ".$rub."'></div></div>";
 }
 
 
@@ -62,7 +62,7 @@ if (isset($stats[$rub])){
     echo "</tbody></table></div>";
 
 
-    echo "<div class='span6 camembert camembert_".$rub."'></div></div>";
+    echo "<div class='span6 camembert' data-camembert-id='".$rub."'></div></div>";
 
 
 
@@ -80,7 +80,7 @@ if (isset($stats[$rub])){
 
         echo "</tbody></table></div>";
 
-        echo "<div class='span6 camembert camembert_".$rub."_tag'></div></div>";
+        echo "<div class='span6 camembert' data-camembert-id='".$rub."_tag'></div></div>";
     }
 
 }
@@ -89,10 +89,9 @@ if (isset($stats[$rub])){
 
 $this->load->view( 'timetracker/tt_buttons' );
 ?>
-<pre> <?php print_r($stats); ?></pre>
+<!--pre> <?php print_r($stats); ?></pre-->
 <script>
     stats=<?=json_encode($stats,JSON_NUMERIC_CHECK)?>;
-    console.log( stats.categorie.todo );
 </script>
 <?php
 

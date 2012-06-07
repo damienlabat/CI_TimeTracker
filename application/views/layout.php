@@ -77,6 +77,8 @@
 
 <!--script src="<?= libs_url('jquery-1.7.2.min.js') ?>"></script-->
 
+<script src="http://d3js.org/d3.v2.js"></script>
+
 <script src="<?= libs_url('bootstrap/bootstrap.min.js') ?>"></script>
 
 
