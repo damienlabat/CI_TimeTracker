@@ -1,20 +1,21 @@
+
 <nav class="btn-toolbar">
 
 <?php if ($current['action']<>'record'): ?>
     <div class="btn-group">
-        <a href='<?php echo tt_url($user_name,'records',$current['type_cat'],$current['id'],$current['date_plage'],$current['tab'] ) ?>' class="btn"> Records</a>
+        <a href='<?php echo tt_url($user_name,'records',$current['type_cat'],$current['id'],$current['date_plage'], element( 'tab', $current ) ) ?>' class="btn"> Records</a>
     </div>
 <?php endif ?>
 
 <?php if ($current['action']<>'summary'): ?>
     <div class="btn-group">
-        <a href='<?php echo tt_url($user_name,'summary',$current['type_cat'],$current['id'],$current['date_plage'],$current['tab'] ) ?>' class="btn"><i class="icon-list-alt"></i> Summary</a>
+        <a href='<?php echo tt_url($user_name,'summary',$current['type_cat'],$current['id'],$current['date_plage'], element( 'tab', $current ) ) ?>' class="btn"><i class="icon-list-alt"></i> Summary</a>
     </div>
 <?php endif ?>
 
 <?php if ($current['action']<>'graph'): ?>
     <div class="btn-group">
-        <a href='<?php echo tt_url($user_name,'graph',$current['type_cat'],$current['id'],$current['date_plage'],$current['tab'] ) ?>' class="btn"><i class="icon-bar-chart"></i> Graph</a>
+        <a href='<?php echo tt_url($user_name,'graph',$current['type_cat'],$current['id'],$current['date_plage'], element( 'tab', $current ) ) ?>' class="btn"><i class="icon-bar-chart"></i> Graph</a>
     </div>
 <?php endif ?>
 

@@ -282,10 +282,10 @@ if ( ! function_exists('tt_url'))
         if ($dateuri==NULL) $dateuri='all';
         if ($id=='NULL') $id='all';
 
-        if ($cat!==NULL) $url.='/'.$cat;
-        if ($id!==NULL) $url.='/'.$id;
-        if ($dateuri!==NULL) $url.='/'.$dateuri;
-        if ($graph!==NULL) $url.='/'.$graph;
+        if ($cat!=NULL) $url.='/'.$cat;
+        if ($id!=NULL) $url.='/'.$id;
+        if ($dateuri!=NULL) $url.='/'.$dateuri;
+        if ($graph!=NULL) $url.='/'.$graph;
 
 
         if ($type=='records') {
@@ -294,7 +294,8 @@ if ( ! function_exists('tt_url'))
              else  $url='tt/'.$username.'/'.$cat.'/'.$id;
             }
 
-        if ($tab!==NULL)   $get_url[]= array('tab',$tab);
+        if ($tab!=NULL)
+            $get_url[]= array('tab',$tab);
 
         if (count($get_url)>0) {
             $posturl='?';
