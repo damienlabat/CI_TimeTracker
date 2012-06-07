@@ -89,10 +89,10 @@ if (isset($stats[$rub])){
 
 $this->load->view( 'timetracker/tt_buttons' );
 ?>
-<pre> stats=<?=json_encode($stats,JSON_NUMERIC_CHECK)?></pre>
+<pre> <?php print_r($stats); ?></pre>
 <script>
     stats=<?=json_encode($stats,JSON_NUMERIC_CHECK)?>;
-    alert( 'count=' + stats.activity_total );
+    console.log( stats.categorie.todo );
 </script>
 <?php
 
