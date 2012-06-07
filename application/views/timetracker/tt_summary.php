@@ -1,17 +1,34 @@
 <?php
-
+$this->load->view( 'timetracker/tab_buttons' );
 //catgeorie
-/* sert a rien ?? si pas trie par type of records
-if (isset($stats['categorie'])){
-    echo "<h2>categories</h2><div class='row'><div class='span6'>";
+$rubs=array('activity','todo','value');
 
-    echo "records:<table class='table'>
+if (!isset($stats)) {
+     echo "<div class='well'><h2>none !</h2></div>";
+    }
+
+foreach ($rubs as $k => $rub) {
+
+if (isset($stats[ $rub.'_count' ])) {
+        echo "<div class='well'>";
+        echo "<h2>".$stats[ $rub.'_count' ]." items</h2>";
+        if ($stats[ $rub.'_total' ]>0) echo "<h4>Total time: ".duration2human($stats[ $rub.'_total' ])."</h4>";
+        echo "</div>";
+    }
+
+
+
+if (isset($stats['categorie'][$rub])){
+    //echo "<h2>categories ".$rub."</h2>";
+    echo "<div class='row'><div class='span6'>";
+
+    echo "<table class='table table-condensed'>
     <thead>
-    <tr><th>categorie</th><th>records count</th><th>total time</th></tr>
+    <tr><th>categorie</th><th>count</th><th>total time</th></tr>
     </thead>
     <tbody>";
 
-    foreach ($stats['categorie'] as $ki => $item) {
+    foreach ($stats['categorie'][$rub] as $ki => $item) {
         if ($item['title']=='') $item['title']='/root/';
         echo "<tr><td><a href='".tt_url($user_name,'summary','categorie',$item['id'],$dates['uri'] )."'>".$item['title']."</a></td><td>".$item['count']."</td><td>".duration2human($item['total'])."</td></tr>";
     }
@@ -19,31 +36,22 @@ if (isset($stats['categorie'])){
     echo "</tbody></table></div>";
 
 
-    echo "<div class='camembert camembert_categorie span6'></div></div>";
+    echo "<div class='camembert camembert_categorie_".$rub." span6'></div></div>";
 }
 
-*/
+
 
 
 
 // activity
-$rubs=array('activity','todo','value','tag');
 
 
-foreach ($rubs as $k => $rub)
 if (isset($stats[$rub])){
 
-    echo "<h2>".$rub."</h2><div class='row'><div class='span6'>";
-
-
-    if (isset($stats[ $rub.'_count' ])) {
-        echo $stats[ $rub.'_count' ]." items<br/>";
-        echo "Total time: ".duration2human($stats[ $rub.'_total' ])."<br/>";
-    }
-
-    echo "records:<table class='table'>
+    echo "<div class='row'><div class='span6'>";
+    echo "<table class='table table-condensed'>
     <thead>
-    <tr><th>categorie</th><th>records count</th><th>total time</th></tr>
+    <tr><th>activity</th><th>count</th><th>total time</th></tr>
     </thead>
     <tbody>";
 
@@ -59,9 +67,10 @@ if (isset($stats[$rub])){
 
 
     if (isset($stats[$rub.'_tag'])) {
-        echo "<div class='row'><div class='span6'>tags:<table class='table'>
+        echo "<div class='row'><div class='span6'>";
+        echo "<table class='table table-condensed'>
     <thead>
-    <tr><th>categorie</th><th>records count</th><th>total time</th></tr>
+    <tr><th>tag</th><th>count</th><th>total time</th></tr>
     </thead>
     <tbody>";
 
@@ -74,12 +83,18 @@ if (isset($stats[$rub])){
         echo "<div class='span6 camembert camembert_".$rub."_tag'></div></div>";
     }
 
-
+}
 
 }
 
 $this->load->view( 'timetracker/tt_buttons' );
-
+?>
+<pre> stats=<?=json_encode($stats,JSON_NUMERIC_CHECK)?></pre>
+<script>
+    stats=<?=json_encode($stats,JSON_NUMERIC_CHECK)?>;
+    alert( 'count=' + stats.activity_total );
+</script>
+<?php
 
 
 

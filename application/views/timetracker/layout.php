@@ -1,4 +1,6 @@
 <?php
+$this->load->view( 'timetracker/form/main_form' );
+
 if ( isset( $title ) ) echo "<h1>".$title."</h1>";
 if ( isset( $tt_layout ) )
     $this->load->view( 'timetracker/' . $tt_layout );

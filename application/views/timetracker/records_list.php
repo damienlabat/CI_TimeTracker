@@ -1,4 +1,8 @@
-<table class='records'>
+<?php
+$this->load->view( 'timetracker/tab_buttons' );
+?>
+
+<table class='records table table-bordered'>
     <tbody>
 <?php
 if ( isset( $records ) ) {

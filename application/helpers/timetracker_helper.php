@@ -274,9 +274,10 @@ if ( ! function_exists('value'))
 
 if ( ! function_exists('tt_url'))
 {
-    function tt_url($username,$type,$cat=NULL,$id=NULL,$dateuri=NULL,$graph=NULL )
+    function tt_url($username,$type,$cat=NULL,$id=NULL,$dateuri=NULL,$tab=NULL,$graph=NULL )
     {
         $url='tt/'.$username.'/'.$type;
+        $get_url=array();
 
         if ($dateuri==NULL) $dateuri='all';
         if ($id=='NULL') $id='all';
@@ -291,13 +292,57 @@ if ( ! function_exists('tt_url'))
              if ($cat==NULL) $url='tt/'.$username;
              elseif ($id=='all') $url='tt/'.$username.'/'.$cat;
              else  $url='tt/'.$username.'/'.$cat.'/'.$id;
-
             }
+
+        if ($tab!==NULL)   $get_url[]= array('tab',$tab);
+
+        if (count($get_url)>0) {
+            $posturl='?';
+            foreach ($get_url as $gu) {
+                if ($posturl!='?') $posturl.='&';
+                $posturl.= $gu[0].'='. $gu[1];
+            }
+            $url.=$posturl;
+        }
+
 
         return site_url($url);
     }
 }
 
+
+
+
+
+if ( ! function_exists('tabs_buttons'))
+{
+    function tabs_buttons($baseurl,$count_array,$current_tab )
+    {
+
+        $tab_titles=array('activity','todo','value');
+
+        foreach ($tab_titles AS $tab_title) {
+
+            $url=$baseurl;
+            if ( $tab_title != $tab_titles[0] ) $url.='?tab='.$tab_title;
+
+            $title = $tab_title;
+
+            if ($count_array!=NULL) {
+                $title .= ' ';
+                if ( $count_array[$tab_title] == 0 ) $title .= '<span class="badge">0</span>';
+                    else $title .= '<span class="badge badge-info">'.$count_array[$tab_title].'</span>';
+            }
+
+            $tabs[$tab_title]   =       array( 'url'=> $url,  'title'=> $title );
+        }
+
+        $tabs[ $current_tab ][ 'active' ] = TRUE;
+
+
+        return $tabs;
+    }
+}
 
 
 

@@ -18,13 +18,13 @@ body {
 table.records {
     width: 100%;
 
-    td { /*min-height: 8px;*/ height: 3em; width:25%; }
+    td { padding: 8px; width:25%; }
 
 
 }
 
 
-
+/*
 tr.activity-activity td         { background-color: lighten(@blue, 45%) }
 tr.activity-activity.running td { background-color: lighten(@blue, 30%) }
 
@@ -32,9 +32,12 @@ tr.activity-todo td             { background-color: lighten(@orange, 45%) }
 tr.activity-todo.running td     { background-color: lighten(@orange, 30%) }
 
 tr.activity-value td            { background-color: lighten(@green, 45%) }
-tr.activity-value.running td    { background-color: lighten(@green, 30%) }
+
+*/
 
 
+tr.activity-activity.running td { background-color: lighten(@blue, 30%) }
+tr.activity-todo.running td     { background-color: lighten(@orange, 30%) }
 
 
 /**** tags ****/

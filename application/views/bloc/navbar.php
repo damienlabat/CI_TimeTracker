@@ -17,8 +17,8 @@
                 <?php   if (isset($user_id)) :?>
 
                 <li><a href='<?=site_url('tt/'.$user_name)?>'>Your TimeTracker</a></li>
-                <li><a href='<?=site_url('tt/'.$user_name.'/summary')?>'>summary</a></li>
-                <li><a href='<?=site_url('tt/'.$user_name.'/graph')?>'>graph</a></li>
+                <!--li><a href='<?=site_url('tt/'.$user_name.'/summary')?>'>summary</a></li>
+                <li><a href='<?=site_url('tt/'.$user_name.'/graph')?>'>graph</a></li-->
 
 
                 <?php else: ?>

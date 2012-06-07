@@ -81,13 +81,25 @@ class Timetracker_viz extends CI_Controller {
 
         $this->_checkUsername( $username );
 
+        $tab = $this->input->get( 'tab', TRUE );
+        if ( !in_array( $type_cat, array('activity','todo','value') ) ) {
+            if ( $tab===FALSE ) $tab='activity';
+
+            $this->data[ 'count' ][ 'activity' ]    = $this->records->get_records_count($this->user_id, $this->_getRecordsParam( $username, $type_cat, $id, 'activity' , $date_plage ) );
+            $this->data[ 'count' ][ 'todo' ]        = $this->records->get_records_count($this->user_id, $this->_getRecordsParam( $username, $type_cat, $id, 'todo' , $date_plage ) );
+            $this->data[ 'count' ][ 'value' ]       = $this->records->get_records_count($this->user_id, $this->_getRecordsParam( $username, $type_cat, $id, 'value' , $date_plage ) );
+            $this->data[ 'tabs' ]               = tabs_buttons ( tt_url($username,'summary',$type_cat,$id, $date_plage), $this->data[ 'count' ], $tab );
+        }
+
+
         $this->data['current']= array(
             "action" => 'summary',
             "type_cat" => $type_cat,
             "id" => $id,
-            "date_plage" => $date_plage
+            "date_plage" => $date_plage,
+            "tab" => $tab
             );
-        $this->data['records']= $this->_getRecords($username, $type_cat, $id, $date_plage);
+        $this->data['records']= $this->_getRecords($username, $type_cat, $id, $tab , $date_plage);
 
 
         if ($type_cat=='categorie') {
@@ -299,10 +311,23 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-    public function _getRecords( $username, $type_cat, $id, $date_plage ) {
+    public function _getRecords( $username, $type_cat, $id, $type_of_record , $date_plage ) {
+
+        $param=$this->_getRecordsParam( $username, $type_cat, $id, $type_of_record , $date_plage );
+
+        $res= $this->records->get_records_full($this->user_id, $param);
+
+        return $res;
+    }
+
+
+
+    public function _getRecordsParam( $username, $type_cat, $id, $type_of_record , $date_plage ) {
         $param=array('order'=>'ASC');
 
         if ($id=='all') $id=NULL;
+
+         $param['type_of_record']=$type_of_record;
 
 
         if ($type_cat=='categorie') $param['categorie']=$id;
@@ -327,9 +352,7 @@ class Timetracker_viz extends CI_Controller {
 
         $param['order']='ASC';
 
-        $res= $this->records->get_records_full($this->user_id, $param);
-
-        return $res;
+        return $param;
     }
 
 
@@ -361,14 +384,14 @@ class Timetracker_viz extends CI_Controller {
             $res[ $record['activity']['type_of_record'].'_count'] ++;
 
             // stat categorie
-             if (!isset( $res[ 'categorie' ][ $record['activity']['categorie']['id'] ] )) {
-                    $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]= $record['activity']['categorie'];
-                    $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]['count'] = 0;
-                    $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]['total'] = 0;
+             if (!isset( $res[ 'categorie' ][ $record['activity']['type_of_record'] ][ $record['activity']['categorie']['id'] ] )) {
+                    $res[ 'categorie' ][ $record['activity']['type_of_record'] ][ $record['activity']['categorie']['id'] ]= $record['activity']['categorie'];
+                    $res[ 'categorie' ][ $record['activity']['type_of_record'] ][ $record['activity']['categorie']['id'] ]['count'] = 0;
+                    $res[ 'categorie' ][ $record['activity']['type_of_record'] ][ $record['activity']['categorie']['id'] ]['total'] = 0;
              }
 
-             $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]['count'] ++;
-             $res[ 'categorie' ][ $record['activity']['categorie']['id'] ]['total'] += $duration;
+             $res[ 'categorie' ][ $record['activity']['type_of_record'] ][ $record['activity']['categorie']['id'] ]['count'] ++;
+             $res[ 'categorie' ][ $record['activity']['type_of_record'] ][ $record['activity']['categorie']['id'] ]['total'] += $duration;
 
             // stat activity
              if (!isset( $res[ $record['activity']['type_of_record'] ][ $record['activity']['id'] ] )) {

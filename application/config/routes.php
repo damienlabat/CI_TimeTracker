@@ -53,7 +53,7 @@ $route['account'] =     'auth/account';
  */
 
 
-$route['tt/([^\/]+)/(activity|todo|value)/(:num)/edit'] =       'timetracker/generic_activity_edit/$1/$2/$3';
+$route['tt/([^\/]+)/(activity|todo|value)/(:num)/edit'] =                       'timetracker/generic_activity_edit/$1/$2/$3';
 $route['tt/([^\/]+)/(activity|todo|value)/(:num)/(:num)'] =     'timetracker/generic_activity_show/$1/$2/$3/$4'; // $4=page
 $route['tt/([^\/]+)/(activity|todo|value)/(:num)'] =            'timetracker/generic_activity_show/$1/$2/$3';
 
