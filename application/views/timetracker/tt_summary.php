@@ -22,21 +22,21 @@ if (isset($stats['categorie'][$rub])){
     //echo "<h2>categories ".$rub."</h2>";
     echo "<div class='row'><div class='span6'>";
 
-    echo "<table id='table_categorie_".$rub."' class='table table-condensed'>
+    echo "<table class='table table-condensed piechart-data'>
     <thead>
-    <tr><th>categorie</th><th>count</th><th>total time</th></tr>
+    <tr><th>categorie</th><th>count</th><th>total time</th><th>%</th></tr>
     </thead>
     <tbody>";
 
     foreach ($stats['categorie'][$rub] as $ki => $item) {
         if ($item['title']=='') $item['title']='/root/';
-        echo "<tr data-slice-id='".$item['id']."' class='trslice".$item['id']."'><td><a href='".tt_url($user_name,'summary','categorie',$item['id'],$dates['uri'] )."'>".$item['title']."</a></td><td>".$item['count']."</td><td>".duration2human($item['total'])."</td></tr>";
+        echo "<tr data-id='".$ki."' data-value='".$item['total']."'><td><a href='".tt_url($user_name,'summary','categorie',$item['id'],$dates['uri'] )."'>".$item['title']."</a></td><td>".$item['count']."</td><td>".duration2human($item['total'])."</td><td>".round($item['total']/$stats[ $rub.'_total' ]*100)." %</td></tr>";
     }
 
     echo "</tbody></table></div>";
 
 
-    echo "<div class='span6 camembert' data-camembert-id='categorie ".$rub."'></div></div>";
+    echo "<div class='span6 piechart-target'></div></div>";
 }
 
 
@@ -49,38 +49,38 @@ if (isset($stats['categorie'][$rub])){
 if (isset($stats[$rub])){
 
     echo "<div class='row'><div class='span6'>";
-    echo "<table id='table_".$rub."' class='table table-condensed'>
+    echo "<table class='table table-condensed piechart-data'>
     <thead>
-    <tr><th>activity</th><th>count</th><th>total time</th></tr>
+    <tr><th>activity</th><th>count</th><th>total time</th><th>%</th></tr>
     </thead>
     <tbody>";
 
     foreach ($stats[$rub] as $ki => $item)
-        echo "<tr data-slice-id='".$item['id']."' class='trslice".$item['id']."'><td><a href='".tt_url($user_name,'summary',$item['type_of_record'],$item['id'],$dates['uri'] )."'>".$item['activity_path']."</a></td><td>".$item['count']."</td><td>".duration2human($item['total'])."</td></tr>";
+        echo "<tr data-id='".$ki."' data-value='".$item['total']."'><td><a href='".tt_url($user_name,'summary',$item['type_of_record'],$item['id'],$dates['uri'] )."'>".$item['activity_path']."</a></td><td>".$item['count']."</td><td>".duration2human($item['total'])."</td><td>".round($item['total']/$stats[ $rub.'_total' ]*100)." %</td></tr>";
 
 
     echo "</tbody></table></div>";
 
 
-    echo "<div class='span6 camembert' data-camembert-id='".$rub."'></div></div>";
+    echo "<div class='span6 piechart-target'></div></div>";
 
 
 
     if (isset($stats[$rub.'_tag'])) {
         echo "<div class='row'><div class='span6'>";
-        echo "<table id='table_".$rub."_tag' class='table table-condensed'>
+        echo "<table class='table table-condensed piechart-data'>
     <thead>
-    <tr><th>tag</th><th>count</th><th>total time</th></tr>
+    <tr><th>tag</th><th>count</th><th>total time</th><th>%</th></tr>
     </thead>
     <tbody>";
 
         foreach ($stats[$rub.'_tag'] as $kt => $tag) {
-            echo "<tr data-slice-id='".$kt."' class='trslice".$kt."'><td><a href='".tt_url($user_name,'summary','tag',$kt,$dates['uri'] )."'>".$tag['tag']."</a></td><td>".$tag['count']."</td><td>".duration2human($tag['total'])."</td></tr>";
+            echo "<tr data-id='".$kt."' data-value='".$tag['total']."'><td><a href='".tt_url($user_name,'summary','tag',$kt,$dates['uri'] )."'>".$tag['tag']."</a></td><td>".$tag['count']."</td><td>".duration2human($tag['total'])."</td><td>".round($tag['total']/$stats[ $rub.'_tag_total' ]*100)." %</td></tr>";
         }
 
         echo "</tbody></table></div>";
 
-        echo "<div class='span6 camembert' data-camembert-id='".$rub."_tag'></div></div>";
+        echo "<div class='span6 piechart-target'></div></div>";
     }
 
 }
@@ -88,12 +88,7 @@ if (isset($stats[$rub])){
 }
 
 $this->load->view( 'timetracker/tt_buttons' );
-?>
-<pre> <?php print_r($stats); ?></pre>
-<script>
-    stats=<?=json_encode($stats,JSON_NUMERIC_CHECK)?>;
-</script>
-<?php
+
 
 
 

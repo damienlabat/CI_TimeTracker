@@ -173,14 +173,22 @@ class Timetracker_viz extends CI_Controller {
 
         $this->_checkUsername( $username );
 
+        $tab = $this->input->get( 'tab', TRUE );
+        if ( !in_array( $type_cat, array('activity','todo','value') ) ) {
+            if ( $tab===FALSE ) $tab='activity';
+
+            // TODO
+        }
+
         $this->data['current']= array(
             "action" => 'graph',
             "type_cat"=>$type_cat,
             "id"=>$id,
             "date_plage"=>$date_plage,
+            "tab" => $tab,
             "type_graph"=>$type_graph
             );
-        $this->data['records']= $this->_getRecords($username, $type_cat, $id, $date_plage);
+        $this->data['records']= $this->_getRecords($username, $type_cat, $id, $tab, $date_plage);
 
         $this->data[ 'tt_layout' ]          = 'tt_graph';
         $this->_render();
@@ -188,7 +196,7 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-    public function export( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = NULL, $format = 'json' ) {
+    public function export( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = 'all', $format = 'json' ) {
 
         $this->load->helper('download');
         $this->_checkUsername( $username );
@@ -200,7 +208,7 @@ class Timetracker_viz extends CI_Controller {
             "date_plage"=>$date_plage
             );
 
-        $records= $this->_getRecords($username, $type_cat, $id, $date_plage);
+        $records= $this->_getRecords($username, $type_cat, $id, NULL, $date_plage);
 
         if ($records) {
             usort($records , array("Timetracker_viz", "_orderByCat"));
