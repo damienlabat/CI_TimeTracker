@@ -3,9 +3,9 @@
 */
 
 $(function() {
-    log('script init');
+    //log('script init');
 
-    $('div.camembert').each(function() { init_camembert( $(this) ); });
+    $('div.camembert').each(function() { piecharts( $(this) ); });
 
 });
 
@@ -29,37 +29,58 @@ window.log = function(){
 
 
 
+
+
+
 /*** d3.js ***/
 
-function init_camembert(obj) {
+function piecharts(obj) {
     var data_id= obj.attr('data-camembert-id').split(' ');
-    var data=[];
-    if (data_id.length==1) new_piechart( obj[0], stats[ data_id[0] ] );
-    if (data_id.length==2) new_piechart( obj[0], stats[ data_id[0] ][ data_id[1] ] );
 
-    }
+    if (data_id.length==1) { data=stats[ data_id[0] ];                  table_id='table_'+data_id[0]; }
+    if (data_id.length==2) { data=stats[ data_id[0] ][ data_id[1] ];    table_id='table_'+data_id[0]+'_'+data_id[1]; }
+
+    var graph=  new_piechart( obj[0], data, table_id );
+
+    $('#'+table_id+' tr').each(function (i) {
+        var id_slice=$(this).attr('data-slice-id');
+
+        if (id_slice)
+             $(this).hover(
+                function () { graph.mouseover('slice'+id_slice) },
+                function () { graph.mouseout('slice'+id_slice) }
+            );
+    });
+}
 
 
- var new_piechart= function( div_target, data ) {
 
-        var data_chart=[];
 
-        for (i in data) {
-            var n_obj={ "label":data[i].title, "value":data[i].total };
+ var new_piechart= function( div_target, data, table_id ) {
+        var self={};
+
+        self.div_target=div_target;
+        self.table_id=table_id;
+        self.data=data;
+        self.data_chart=[];
+
+        for (i in self.data) {
+            var n_obj={ "label":data[i].title, "value":data[i].total, "id":i };
             if (typeof(data[i].activity_path)!=='undefined') n_obj.label=data[i].activity_path;
             if (typeof(data[i].tag)!=='undefined') n_obj.label=data[i].tag;
-            data_chart.push( n_obj );
+            self.data_chart.push( n_obj );
         }
 
-        var w=300, h=w, r=w/2, color = d3.scale.category20c();
+        var w=500, h=300, r=150, color = d3.scale.category20c();
 
-        var vis = d3.select(div_target)
+        var vis = d3.select(self.div_target)
             .append("svg:svg")
-            .data([data_chart])
+            .data([self.data_chart])
                 .attr("width", w)
                 .attr("height", h)
+                .attr("viewBox",0+" "+0+" "+w+" "+h)
             .append("svg:g")
-                .attr("transform", "translate(" + w/2 + "," + h/2 + ")")
+                .attr("transform", "translate(" + w/2 + "," + h/2 + ")");
 
         var arc = d3.svg.arc()
             .innerRadius(1/2*r)
@@ -76,13 +97,12 @@ function init_camembert(obj) {
             .data(pie)
             .enter()
                 .append("svg:g")
+                    .attr("id", function(d) { return 'slice'+d.data.id;  })
                     .on("mouseover", function(){
-                        d3.select(this).selectAll("path").transition().attr("d", arc_hover );
-                        d3.select(this).selectAll("text").transition().style("opacity", "1");
+                        self.mouseover( this.id );
                         })
                     .on("mouseout",  function(){
-                        d3.select(this).selectAll("path").transition().attr("d", arc );
-                        d3.select(this).selectAll("text").transition().style("opacity", "0");
+                        self.mouseout( this.id  );
                         })
                     .attr("class", "slice");
 
@@ -92,8 +112,23 @@ function init_camembert(obj) {
 
             arcs.append("svg:text")
                 .attr("text-anchor", "middle")
-                .text(function(d, i) { return data_chart[i].label; });
+                .text(function(d, i) { return d.data.label; });
 
 
-        return this
+        self.mouseover= function(id) {
+            var gslice=d3.select(self.div_target).select('#'+id);
+            gslice.selectAll("path").transition().attr("d", arc_hover );
+            gslice.selectAll("text").transition().style("opacity", "1");
+            $('#'+self.table_id+' .tr'+id).addClass('hover');
         }
+
+        self.mouseout= function(id) {
+            var gslice=d3.select(self.div_target).select('#'+id);
+            gslice.selectAll("path").transition().attr("d", arc );
+            gslice.selectAll("text").transition().style("opacity", "0");
+            $('#'+self.table_id+' .tr'+id).removeClass('hover');
+        }
+
+        return self
+
+    }
