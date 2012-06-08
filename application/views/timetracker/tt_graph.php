@@ -1,6 +1,10 @@
-<script>data=<?=json_encode($records,JSON_NUMERIC_CHECK)?></script>
-<pre>data=<?=json_encode($records,JSON_NUMERIC_CHECK)?>
-
+<div class='span12 ttgraph' data-graph='<?=json_encode($datagraph,JSON_NUMERIC_CHECK)?>'></div>
+<pre>
+<?php
+print_r($records);
+?>
+</pre>
+<pre>
 <?php
 print_r($current);
 ?>

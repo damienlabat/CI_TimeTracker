@@ -5,12 +5,14 @@
 $(function() {
     //log('script init');
 
-   // $('div.camembert').each(function() { piecharts( $(this) ); });
-
    $('table.piechart-data').each(function() {
        var cpt_line= $(this).find('tbody tr').length;
        if (cpt_line>1) init_piechart( $(this) );
-       });
+    });
+
+     $('div.ttgraph').each(function() {
+        init_graph( $(this) );
+    });
 
 });
 
@@ -38,6 +40,8 @@ window.log = function(){
 
 
 /*** d3.js ***/
+
+/** piechart **/
 
 function init_piechart(obj) {
     var target= obj.parent().parent().find('.piechart-target');
@@ -86,11 +90,9 @@ function init_piechart(obj) {
                 .attr("transform", "translate(" + w/2 + "," + h/2 + ")");
 
         var arc = d3.svg.arc()
-            .innerRadius(0)
             .outerRadius(3/4*r);
 
          var arc_hover = d3.svg.arc()
-            .innerRadius(0)
             .outerRadius(r);
 
         var pie = d3.layout.pie()
@@ -132,3 +134,78 @@ function init_piechart(obj) {
 
     }
 
+/** graph **/
+
+function init_graph(obj) {
+    var self={};
+    self.target=obj;
+    self.json_param=jQuery.parseJSON(self.target.attr( 'data-graph' ));
+    var url= BASE_URL+'tt/'+self.json_param.username+'/export/'+self.json_param.type_cat+'/'+self.json_param.id+'/'+self.json_param.date_plage+'/json';
+    $.getJSON(url, function(data) {  self.data=data; self.buildgraph()   });
+
+    self.buildgraph=function () {
+        if (self.json_param.type_graph== null) self.histograph();
+    }
+
+    /* group order data */
+
+    function group_by_day(data) {
+        log(data);
+        var res={min:null, max:null, days:{}};
+        for (id in data) {
+            var start_time= new Date(data[id].UNIX_start_time*1000);
+            var stop_time= new Date((data[id].UNIX_start_time+data[id].duration)*1000);
+            var day=get_midnight_before(start_time);
+
+            if (day.getTime()/1000<res.min || !res.min) res.min=day.getTime()/1000;
+
+            while (day.getTime() <= get_midnight_before(stop_time).getTime()) {
+
+                if (day.getTime()/1000>res.max) res.max=day.getTime()/1000;
+
+                if (!res.days[day.getTime()/1000]) res.days[day.getTime()/1000]=[];
+
+                var next_day= new Date( day.getTime() + 24*60*60*1000 );
+
+                res.days[day.getTime()/1000].push( trim_duration(data[id] ,day, next_day) ); // todo trim duration
+
+                day= next_day;
+            }
+
+
+        }
+log(data);
+    return res
+    }
+
+    function get_midnight_before(date) {
+        return new Date( date.getFullYear()+' '+(date.getMonth()+1)+' '+date.getDate());
+        }
+
+    function trim_duration(record,datemin,datemax) {
+        var res=jQuery.extend(true, {}, record);
+        var t1=datemin.getTime()/1000;
+        var t2=datemax.getTime()/1000;
+        var start_time= res.UNIX_start_time;
+        var stop_time= start_time+res.duration;
+
+        if (start_time<t1)  { start_time=t1; res.UNIX_start_time=t1; res.start_time='todo'; }
+        if (stop_time>t2)   stop_time=t2;
+
+        res.duration= stop_time-start_time;
+        res.stop_at='todo';
+
+        return res;
+    }
+
+
+    /* histograph */
+    self.histograph=function() {
+
+        var groupdata= group_by_day(self.data);
+        log(groupdata);
+
+    }
+
+    return self
+}

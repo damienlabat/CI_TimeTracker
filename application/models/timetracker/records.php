@@ -112,7 +112,7 @@ class Records extends CI_Model {
         if (!isset( $param['order'] )) $param['order'] = 'DESC';
 
 
-        $req = 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*
+        $req = 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*, UNIX_TIMESTAMP (' . $this->records_table . '.start_time) as UNIX_start_time
              FROM ' . $this->records_table . '
              LEFT JOIN ' . $this->activities_table . '
                 ON ' . $this->records_table . '.activity_ID=' . $this->activities_table . '.id

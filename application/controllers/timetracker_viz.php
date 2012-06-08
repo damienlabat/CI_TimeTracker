@@ -174,11 +174,9 @@ class Timetracker_viz extends CI_Controller {
         $this->_checkUsername( $username );
 
         $tab = $this->input->get( 'tab', TRUE );
-        if ( !in_array( $type_cat, array('activity','todo','value') ) ) {
+        if ( !in_array( $type_cat, array('activity','todo','value') ))
             if ( $tab===FALSE ) $tab='activity';
 
-            // TODO
-        }
 
         $this->data['current']= array(
             "action" => 'graph',
@@ -188,7 +186,12 @@ class Timetracker_viz extends CI_Controller {
             "tab" => $tab,
             "type_graph"=>$type_graph
             );
-        $this->data['records']= $this->_getRecords($username, $type_cat, $id, $tab, $date_plage);
+
+        $this->data['datagraph']= $this->data['current'];
+        unset($this->data['datagraph']["action"]);
+        $this->data['datagraph']['username']=$username;
+
+        $this->data['records']= $this->_getRecords($username, $type_cat, $id, $tab, $date_plage); // todo virer
 
         $this->data[ 'tt_layout' ]          = 'tt_graph';
         $this->_render();
@@ -209,11 +212,6 @@ class Timetracker_viz extends CI_Controller {
             );
 
         $records= $this->_getRecords($username, $type_cat, $id, NULL, $date_plage);
-
-        if ($records) {
-            usort($records , array("Timetracker_viz", "_orderByCat"));
-            $stats= $this->_getStats($records, $type_cat,$this->data['dates']['min'],$this->data['dates']['max']);
-        }
 
         $this->output->enable_profiler( FALSE );
 
@@ -246,6 +244,11 @@ class Timetracker_viz extends CI_Controller {
 
             //STATS
 
+            if ($records) {
+                usort($records , array("Timetracker_viz", "_orderByCat"));
+                $stats= $this->_getStats($records, $type_cat,$this->data['dates']['min'],$this->data['dates']['max']);
+            }
+
             if (isset($stats['categorie']))  $content .=  "\r\n\r\ncategories\r\n".draw_text_table($stats['categorie']);
 
             if (isset($stats['activity']))  $content .=  "\r\n\r\nactivities\r\n".draw_text_table($stats['activity']);
@@ -268,6 +271,7 @@ class Timetracker_viz extends CI_Controller {
 
 
     }
+
 
 
 
