@@ -149,61 +149,131 @@ function init_graph(obj) {
 
     /* group order data */
 
-    function group_by_day(data) {
-        log(data);
-        var res={min:null, max:null, days:{}};
+    function group_by_time(data,timelapse) { // recouper en fonction de la page choisie par utilisateur (GET plage_date)
+
+        var res={'min':null, 'max':null};
+        var times={};
+
+
         for (id in data) {
             var start_time= new Date(data[id].UNIX_start_time*1000);
             var stop_time= new Date((data[id].UNIX_start_time+data[id].duration)*1000);
-            var day=get_midnight_before(start_time);
+            var time=get_time_before(start_time,timelapse);
 
-            if (day.getTime()/1000<res.min || !res.min) res.min=day.getTime()/1000;
+           if (time.getTime()/1000<res.min || !res.min) res.min=time.getTime()/1000;
 
-            while (day.getTime() <= get_midnight_before(stop_time).getTime()) {
+            while (time.getTime() <= get_time_before(stop_time,timelapse).getTime()) {
 
-                if (day.getTime()/1000>res.max) res.max=day.getTime()/1000;
+                var timeUNIX=time.getTime()/1000;
 
-                if (!res.days[day.getTime()/1000]) res.days[day.getTime()/1000]=[];
+                if (timeUNIX>res.max) res.max=timeUNIX;
 
-                var next_day= new Date( day.getTime() + 24*60*60*1000 );
+                if (!times[timeUNIX]) times[timeUNIX]=[];
 
-                res.days[day.getTime()/1000].push( trim_duration(data[id] ,day, next_day) ); // todo trim duration
+                if (!times[timeUNIX][data[id].activity.id]) var obj= { activity: data[id].activity, duration:0, time:timeUNIX  }
+                    else var obj=times[timeUNIX][data[id].activity.id];
 
-                day= next_day;
+                var next_time= new Date( time.getTime() + timelapse*1000 );
+                obj.duration += trim_duration(data[id] ,time, next_time);
+
+                times[timeUNIX][data[id].activity.id]=obj;
+
+                time= next_time;
             }
 
-
         }
-log(data);
+
+        res_times=[];
+        for (d=res.min; d<=res.max; d+=timelapse) {
+            activities=[];
+            if (times[d])
+                for (id in times[d])
+                    activities.push( times[d][id] );
+
+            res_times.push({ 'time':d, 'activities':activities })
+         }
+
+        res.times=res_times;
+
     return res
     }
 
-    function get_midnight_before(date) {
-        return new Date( date.getFullYear()+' '+(date.getMonth()+1)+' '+date.getDate());
+
+    function get_time_before(date,timelapse) {
+        return new Date( Math.floor(date.getTime()/(timelapse*1000)) * (timelapse*1000) );
         }
 
     function trim_duration(record,datemin,datemax) {
-        var res=jQuery.extend(true, {}, record);
         var t1=datemin.getTime()/1000;
         var t2=datemax.getTime()/1000;
-        var start_time= res.UNIX_start_time;
-        var stop_time= start_time+res.duration;
+        var start_time= record.UNIX_start_time;
+        var stop_time= start_time+record.duration;
 
-        if (start_time<t1)  { start_time=t1; res.UNIX_start_time=t1; res.start_time='todo'; }
+        if (start_time<t1)  start_time=t1;
         if (stop_time>t2)   stop_time=t2;
 
-        res.duration= stop_time-start_time;
-        res.stop_at='todo';
+        duration= stop_time-start_time;
 
-        return res;
+        return duration;
     }
+
+
+
 
 
     /* histograph */
     self.histograph=function() {
 
-        var groupdata= group_by_day(self.data);
-        log(groupdata);
+        var timelapse=60*60*1;
+
+        var groupdata= group_by_time(self.data,timelapse);
+
+        var min_date=groupdata.min;
+        var max_date=groupdata.max;
+
+        var nb_bar=(max_date-min_date)/timelapse+1;
+
+        var w=600, h=400, color = d3.scale.category20c();
+
+        var l_bar=w/nb_bar* (4/5);
+        var e_bar=w/nb_bar* (1/5);
+
+
+        var vis = d3.select(self.target[0])
+            .append("svg:svg")
+                .attr("width", w)
+                .attr("height", h)
+                .attr("viewBox",0+" "+0+" "+w+" "+h);
+
+        var posbar = function(d,i) { return "translate(" + (i*(l_bar+e_bar)) + ",0)"; };
+
+        var f_y_bar= function(d,i) {
+            if (i==0) ybar=400;
+            ybar -= h_bar(d,i);
+            return ybar;
+        }
+
+        var h_bar= function(d,i) {
+            return d.duration/50;
+        }
+
+
+
+        var day_g = vis.selectAll("g")
+            .data(groupdata.times)
+            .enter()
+                .append("svg:g")
+                .attr("transform", posbar)
+                .selectAll("rect")
+                .data( function(d) { return d.activities } )
+                .enter()
+                    .append("svg:rect")
+                    .attr('y',      f_y_bar)
+                    .attr('width',  l_bar)
+                    .attr('height', h_bar )
+                    .attr("fill",   function(d) { return color(d.activity.id); } )
+                    .on("mouseover", function(d){ document.title=d.time+' '+d.activity.activity_path + ' ' + Math.round(d.duration/60) +' min'   });
+
 
     }
 
