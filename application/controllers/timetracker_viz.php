@@ -333,20 +333,24 @@ class Timetracker_viz extends CI_Controller {
 
         for ($t=$data['min']; $t<=$data['max']; $t+=$timelapse[0]) {
             $rec=array( 'time'=>$t, 'time_t'=>date( 'c', $t), 'total'=>0, 'activities'=>array() );
+            $activities=array();
 
             // add activities
             foreach ( $records as $k => $record ) {
                $record['trim_duration']= $this->records->trim_duration($record, $t, $t+$timelapse[0] );
               if ($record['trim_duration']>0) {
-                  $rec['activities'][]= array('duration'=>$record['trim_duration'], 'activity_id'=>$record['activity']['id'], 'activity'=>$record['activity']['activity_path'] );
-                  $rec['total']+=$record['trim_duration'];
+                  if (!isset($activities[$record['activity']['id']])) $activities[$record['activity']['id']]= array('duration'=>0, 0, 'activity'=>$record['activity']['activity_path'], 'activity_ID'=>$record['activity']['id'] );
+                 $activities[$record['activity']['id']]['duration']+= $record['trim_duration'];
+                 $rec['total']+=$record['trim_duration'];
               }
             }
+
+            sort($activities);
+            foreach ( $activities as $k => $activity ) $rec['activities'][]=$activity;
 
 
             $data['times'][]=$rec;
         }
-
 
 
 
