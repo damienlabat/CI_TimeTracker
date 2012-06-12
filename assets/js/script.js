@@ -134,88 +134,24 @@ function init_piechart(obj) {
 
     }
 
+
+
+
 /** graph **/
 
 function init_graph(obj) {
     var self={};
     self.target=obj;
     self.json_param=jQuery.parseJSON(self.target.attr( 'data-graph' ));
-    var url= BASE_URL+'tt/'+self.json_param.username+'/export/'+self.json_param.type_cat+'/'+self.json_param.id+'/'+self.json_param.date_plage+'/json';
+    var url= BASE_URL+'tt/'+self.json_param.username+'/histo/'+self.json_param.type_cat+'/'+self.json_param.id+'/'+self.json_param.date_plage+'/'+self.json_param.group_by+'.json';
     $.getJSON(url, function(data) {  self.data=data; self.buildgraph()   });
 
     self.buildgraph=function () {
-        if (self.json_param.type_graph== null) self.histograph();
-    }
-
-    /* group order data */
-
-    function group_by_time(data,timelapse) { // recouper en fonction de la page choisie par utilisateur (GET plage_date)
-
-        var res={'min':null, 'max':null};
-        var times={};
-
-
-        for (id in data) {
-            var start_time= new Date(data[id].UNIX_start_time*1000);
-            var stop_time= new Date((data[id].UNIX_start_time+data[id].duration)*1000);
-            var time=get_time_before(start_time,timelapse);
-
-           if (time.getTime()/1000<res.min || !res.min) res.min=time.getTime()/1000;
-
-            while (time.getTime() <= get_time_before(stop_time,timelapse).getTime()) {
-
-                var timeUNIX=time.getTime()/1000;
-
-                if (timeUNIX>res.max) res.max=timeUNIX;
-
-                if (!times[timeUNIX]) times[timeUNIX]=[];
-
-                if (!times[timeUNIX][data[id].activity.id]) var obj= { activity: data[id].activity, duration:0, time:timeUNIX  }
-                    else var obj=times[timeUNIX][data[id].activity.id];
-
-                var next_time= new Date( time.getTime() + timelapse*1000 );
-                obj.duration += trim_duration(data[id] ,time, next_time);
-
-                times[timeUNIX][data[id].activity.id]=obj;
-
-                time= next_time;
-            }
-
-        }
-
-        res_times=[];
-        for (d=res.min; d<=res.max; d+=timelapse) {
-            activities=[];
-            if (times[d])
-                for (id in times[d])
-                    activities.push( times[d][id] );
-
-            res_times.push({ 'time':d, 'activities':activities })
-         }
-
-        res.times=res_times;
-
-    return res
+        if (self.json_param.type_graph== 'histo') self.histograph();
     }
 
 
-    function get_time_before(date,timelapse) {
-        return new Date( Math.floor(date.getTime()/(timelapse*1000)) * (timelapse*1000) );
-        }
 
-    function trim_duration(record,datemin,datemax) {
-        var t1=datemin.getTime()/1000;
-        var t2=datemax.getTime()/1000;
-        var start_time= record.UNIX_start_time;
-        var stop_time= start_time+record.duration;
-
-        if (start_time<t1)  start_time=t1;
-        if (stop_time>t2)   stop_time=t2;
-
-        duration= stop_time-start_time;
-
-        return duration;
-    }
 
 
 
@@ -224,58 +160,69 @@ function init_graph(obj) {
     /* histograph */
     self.histograph=function() {
 
-        var timelapse=60*60*1;
+        var histograph_obj={};
 
-        var groupdata= group_by_time(self.data,timelapse);
+        var w = 1000, h = 500, color = d3.scale.category20();
 
-        var min_date=groupdata.min;
-        var max_date=groupdata.max;
+        var vis = d3.select(self.target[0]).append("svg:svg")
+            .attr("width", w)
+            .attr("height", h)
+            .attr("viewBox",0+" "+0+" "+w+" "+h);
 
-        var nb_bar=(max_date-min_date)/timelapse+1;
-
-        var w=600, h=400, color = d3.scale.category20c();
-
-        var l_bar=w/nb_bar* (4/5);
-        var e_bar=w/nb_bar* (1/5);
+        var graphgroup= vis.append("svg:g").attr("id", "graph_g");
+        var axisgroup= vis.append("svg:g").attr("id", "axis_g");
 
 
-        var vis = d3.select(self.target[0])
-            .append("svg:svg")
-                .attr("width", w)
-                .attr("height", h)
-                .attr("viewBox",0+" "+0+" "+w+" "+h);
+        histograph_obj.update=function() {
+            var data=self.data;
+            var bar_width= w/2/ self.data.times.length;
 
-        var posbar = function(d,i) { return "translate(" + (i*(l_bar+e_bar)) + ",0)"; };
+            var fx = d3.scale.linear().domain([data.min, data.max]).range([0, w]);
+            var fy = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total } )]).range([h, 0]);
+            var fh = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total } )]).range([0, h]);
 
-        var f_y_bar= function(d,i) {
-            if (i==0) ybar=400;
-            ybar -= h_bar(d,i);
-            return ybar;
+            /*var timerects = vis.select('#graph_g').selectAll('rect.timegroup').data(data.times, function(d) { return d.time;});
+
+            timerects.enter().append('svg:rect')
+                .attr('class', 'timegroup')
+                .attr('width', function() {         return bar_width    })
+                .attr('transform', function(d) {    return 'translate('+fx(d.time)+','+fy(d.total)+')'       })
+                .attr('fill', function(d, i) {      return 'red'  })
+                .attr('height', function(d) {       return fh(d.total)       });*/
+
+            var timegroups = vis.select('#graph_g').selectAll('g.timegroup').data(data.times, function(d) { return d.time;});
+
+            timegroups.enter().append('svg:g')
+                .attr('class', 'timegroup')
+                .attr('transform', function(d) {    return 'translate('+fx(d.time)+',0)'       });
+
+                var activityrects = timegroups.selectAll('rect.activity').data(function(d) {return d.activities}, function(d) { return d.activity_ID });
+                activityrects.enter().append('svg:rect')
+                    .attr('class', 'activity')
+                    .attr('width', function() {         return bar_width    })
+                    .attr('y', fy(0) )
+                    .attr('height', 0)
+                    .attr('fill', function(d, i) {      return color(d.activity_ID)  })
+                    .on('mouseover', function(d) {    log(d); document.title=d.activity+' '+d.duration   });
+
+                activityrects.transition()
+                    .attr('y', function(d,i) {
+                        if (i==0) cumul=0;
+                        var res=fy( cumul + d.duration);
+                        log(i,cumul,d.duration,cumul + d.duration);
+                        cumul+=d.duration;
+                        return res
+                        })
+                    .attr('height', function(d) {   return fh(d.duration)       });
+            }
+
+
+
+            histograph_obj.update();
+            return histograph_obj;
         }
 
-        var h_bar= function(d,i) {
-            return d.duration/50;
-        }
 
-
-
-        var day_g = vis.selectAll("g")
-            .data(groupdata.times)
-            .enter()
-                .append("svg:g")
-                .attr("transform", posbar)
-                .selectAll("rect")
-                .data( function(d) { return d.activities } )
-                .enter()
-                    .append("svg:rect")
-                    .attr('y',      f_y_bar)
-                    .attr('width',  l_bar)
-                    .attr('height', h_bar )
-                    .attr("fill",   function(d) { return color(d.activity.id); } )
-                    .on("mouseover", function(d){ document.title=d.time+' '+d.activity.activity_path + ' ' + Math.round(d.duration/60) +' min'   });
-
-
-    }
 
     return self
 }

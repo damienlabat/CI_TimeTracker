@@ -169,13 +169,16 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-     public function graph( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = 'all', $type_graph = NULL ) {
+     public function graph( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = 'all', $type_graph = 'histo' ) {
 
         $this->_checkUsername( $username );
 
         $tab = $this->input->get( 'tab', TRUE );
         if ( !in_array( $type_cat, array('activity','todo','value') ))
             if ( $tab===FALSE ) $tab='activity';
+
+         $groupby = $this->input->get( 'groupby', TRUE );
+            if ( $groupby===FALSE ) $groupby='day';
 
 
         $this->data['current']= array(
@@ -184,7 +187,8 @@ class Timetracker_viz extends CI_Controller {
             "id"=>$id,
             "date_plage"=>$date_plage,
             "tab" => $tab,
-            "type_graph"=>$type_graph
+            "type_graph"=>$type_graph,
+            "group_by"=>$groupby
             );
 
         $this->data['datagraph']= $this->data['current'];
@@ -283,13 +287,6 @@ class Timetracker_viz extends CI_Controller {
         $this->load->helper('download');
         $this->_checkUsername( $username );
 
-        $this->data['current']= array(
-            "user"=>$username,
-            "type_cat"=>$type_cat,
-            "id"=>$id,
-            "date_plage"=>$date_plage
-            );
-
         $records= $this->_getRecords(   $username, $type_cat, $id, 'activity', $date_plage);
         $param=$this->_getRecordsParam( $username, $type_cat, $id, 'activity' , $date_plage );
 
@@ -297,8 +294,11 @@ class Timetracker_viz extends CI_Controller {
 
         $date_plage_array= $this->_getDatePlage($date_plage);
 
-        if ($date_plage_array['min']==NULL) $date_plage_array['min']=$res= $this->records->get_min_time($this->user_id, $param);
-        if ($date_plage_array['max']==NULL) $date_plage_array['max']=$res= $this->records->get_max_time($this->user_id, $param);
+        if ($date_plage_array['min']==NULL) $date_plage_array['min']= $this->records->get_min_time($this->user_id, $param);
+            else $date_plage_array['min']= strtotime( $date_plage_array['min'] );
+
+        if ($date_plage_array['max']==NULL) $date_plage_array['max']= $this->records->get_max_time($this->user_id, $param);
+            else $date_plage_array['max']= strtotime( $date_plage_array['max'] );
 
         switch ($group_by) {
             case 'minute':
@@ -339,7 +339,7 @@ class Timetracker_viz extends CI_Controller {
             foreach ( $records as $k => $record ) {
                $record['trim_duration']= $this->records->trim_duration($record, $t, $t+$timelapse[0] );
               if ($record['trim_duration']>0) {
-                  if (!isset($activities[$record['activity']['id']])) $activities[$record['activity']['id']]= array('duration'=>0, 0, 'activity'=>$record['activity']['activity_path'], 'activity_ID'=>$record['activity']['id'] );
+                  if (!isset($activities[$record['activity']['id']])) $activities[$record['activity']['id']]= array('duration'=>0, 'activity'=>$record['activity']['activity_path'], 'activity_ID'=>$record['activity']['id'] );
                  $activities[$record['activity']['id']]['duration']+= $record['trim_duration'];
                  $rec['total']+=$record['trim_duration'];
               }
