@@ -103,6 +103,82 @@ class Records extends CI_Model {
 
     function get_records($user_id, $param = array(), $offset= NULL, $count= NULL ) {
 
+
+        $req = 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*, UNIX_TIMESTAMP (' . $this->records_table . '.start_time) as UNIX_start_time
+            '.$this->param2fromwhere($user_id, $param);
+
+
+        $query = $this->db->query( $req );
+
+        if ( $query->num_rows() >= 1 ) {
+            $res=$query->result_array();
+
+            if ((isset( $param['datemin'] ))&&(isset( $param['datemax'] )))
+                foreach ( $res as $k => $item ) $res[$k]['trimmed_duration']= $this->trim_duration($item, strtotime($param['datemin']), strtotime($param['datemax']) );
+
+            return $res;
+        }
+
+        return NULL;
+    }
+
+
+
+
+    function get_records_count($user_id, $param = array() ) {
+
+        $req = 'SELECT  count(' . $this->records_table . '.id) as count
+             '.$this->param2fromwhere($user_id, $param);
+
+        $query = $this->db->query( $req );
+
+        return $query->row()->count;
+    }
+
+
+
+    function get_min_time($user_id, $param = array()) {
+
+        $req = 'SELECT  min(UNIX_TIMESTAMP(' . $this->records_table . '.start_time)) as mintime
+             '.$this->param2fromwhere($user_id, $param);
+
+        $query = $this->db->query( $req );
+
+        return $query->row()->mintime;
+    }
+
+
+    function get_max_time($user_id, $param = array()) {
+
+        $req = 'SELECT  max(UNIX_TIMESTAMP(' . $this->records_table . '.start_time)+' . $this->records_table . '.duration) as maxtime
+             '.$this->param2fromwhere($user_id, $param);
+
+        $query = $this->db->query( $req );
+        $res= $query->row()->maxtime;
+
+        $param['running']=true;
+        $nb_running=$this->get_records_count($user_id, $param);
+        if ($nb_running>0) $res='running';
+
+        return $res;
+    }
+
+    function trim_duration($record,$datemin,$datemax) { //unix time
+        $date_deb =$record['UNIX_start_time'];
+        $date_fin = $date_deb + $record['duration'];
+
+        if ($record['running']==1) $date_fin = time();
+
+        if ($datemin) $date_deb = max( $date_deb , $datemin );
+        if ($datemax) $date_fin = min( $date_fin , $datemax );
+
+        $res= $date_fin-$date_deb;
+        if ($res<0) $res=0;
+        return $res;
+    }
+
+
+    function param2fromwhere($user_id, $param) {
         if (!isset( $param['categorie'] )) $param['categorie'] = NULL;
         if (!isset( $param['activity'] )) $param['activity'] = NULL;
         if (!isset( $param['type_of_record'] )) $param['type_of_record'] = NULL;
@@ -111,20 +187,18 @@ class Records extends CI_Model {
         if (!isset( $param['valuetype'] )) $param['valuetype'] = NULL;
         if (!isset( $param['order'] )) $param['order'] = 'DESC';
 
-
-        $req = 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*, UNIX_TIMESTAMP (' . $this->records_table . '.start_time) as UNIX_start_time
-             FROM ' . $this->records_table . '
+        $req='FROM ' . $this->records_table . '
              LEFT JOIN ' . $this->activities_table . '
                 ON ' . $this->records_table . '.activity_ID=' . $this->activities_table . '.id
              LEFT JOIN ' . $this->categories_table . '
                 ON ' . $this->activities_table . '.categorie_ID=' . $this->categories_table . '.id';
 
 
-         if ($param['valuetype'] !== NULL )
+        if ($param['valuetype'] !== NULL )
             $req .=' LEFT JOIN ' . $this->records_values_table . '
                 ON ' . $this->records_table . '.id=' . $this->records_values_table . '.record_ID';
 
-        foreach ( $param['tags'] as $k => $tag )
+         foreach ( $param['tags'] as $k => $tag )
             $req .=' LEFT JOIN ' . $this->records_tags_table . ' as tag_table_'.$k.'
                 ON ' . $this->records_table . '.id= tag_table_'.$k.'.record_ID';
 
@@ -151,95 +225,8 @@ class Records extends CI_Model {
 
         $req .= ' ORDER BY running DESC ,start_time '.$param['order'];
 
-        if ( ($offset!==NULL) && ($count!=NULL) ) $req .= ' LIMIT ' . $offset . ',' . $count ;
-
-        $query = $this->db->query( $req );
-
-        if ( $query->num_rows() >= 1 ) {
-            $res=$query->result_array();
-
-            if ((isset( $param['datemin'] ))&&(isset( $param['datemax'] )))
-                foreach ( $res as $k => $item ) $res[$k]['trimmed_duration']= $this->trim_duration($item,$param['datemin'],$param['datemax']);
-
-            return $res;
-        }
-
-        return NULL;
+        return $req;
     }
-
-
-    function trim_duration($record,$datemin,$datemax) {
-        $date_deb = strtotime( $record['start_time'] );
-        $date_fin = $date_deb + $record['duration'];
-
-        if ($record['running']==1) $date_fin = time();
-
-        if ($datemin) $date_deb = max( $date_deb , strtotime($datemin) );
-        if ($datemax) $date_fin = min( $date_fin , strtotime($datemax) );
-
-        return $date_fin-$date_deb;
-    }
-
-    function get_records_count($user_id, $param = array() ) {
-
-        if (!isset( $param['categorie'] )) $param['categorie'] = NULL;
-        if (!isset( $param['activity'] )) $param['activity'] = NULL;
-        if (!isset( $param['type_of_record'] )) $param['type_of_record'] = NULL;
-        if (!isset( $param['running'] )) $param['running'] = NULL;
-        if (!isset( $param['tags'] )) $param['tags'] = array();
-        if (!isset( $param['valuetype'] )) $param['valuetype'] = NULL;
-
-
-        $req = 'SELECT  count(' . $this->records_table . '.id) as count
-             FROM ' . $this->records_table . '
-             LEFT JOIN ' . $this->activities_table . '
-                ON ' . $this->records_table . '.activity_ID=' . $this->activities_table . '.id
-             LEFT JOIN ' . $this->categories_table . '
-                ON ' . $this->activities_table . '.categorie_ID=' . $this->categories_table . '.id';
-
-
-         if ($param['valuetype'] !== NULL )
-            $req .=' LEFT JOIN ' . $this->records_values_table . '
-                ON ' . $this->records_table . '.id=' . $this->records_values_table . '.record_ID';
-
-         foreach ( $param['tags'] as $k => $tag )
-            $req .=' LEFT JOIN ' . $this->records_tags_table . ' as tag_table_'.$k.'
-                ON ' . $this->records_table . '.id= tag_table_'.$k.'.record_ID';
-
-
-        $req .= ' WHERE
-                user_ID=' . $user_id ;
-
-
-
-        if ($param['categorie'] !== NULL ) $req .= ' AND ' . $this->activities_table . '.categorie_ID=' . $param['categorie'];
-        if ($param['activity'] !== NULL ) $req .= ' AND ' . $this->records_table . '.activity_ID=' . $param['activity'];
-        if ($param['type_of_record'] !== NULL ) $req .= ' AND type_of_record=\'' . $param['type_of_record'] . '\'';
-
-        if ($param['running'] !== NULL )  $req .= ' AND running=' . $param['running'];
-
-        if ($param['valuetype'] !== NULL ) $req .=  ' AND ' . $this->records_values_table . '.valuetype_ID='.$param['valuetype'];
-
-        foreach ( $param['tags'] as $k => $tag )
-            $req .=' AND tag_table_'.$k.'.tag_ID='.$tag;
-
-        if ((isset( $param['datemin'] ))&&(isset( $param['datemax'] )))
-            $req .=' AND
-                        (UNIX_TIMESTAMP(start_time)+duration >= \''.  strtotime($param['datemin']. " UTC") .'\'
-                        OR running=1)
-                     AND start_time<\''.$param['datemax'].'\'';
-
-
-
-
-        // TODO tags gestion
-
-        $query = $this->db->query( $req );
-
-        return $query->row()->count;
-    }
-
-
 
 
     function get_records_full($user_id, $param = array(), $offset= NULL, $count= NULL ) {

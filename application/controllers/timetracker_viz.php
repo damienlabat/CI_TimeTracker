@@ -274,8 +274,102 @@ class Timetracker_viz extends CI_Controller {
 
 
 
+// JSON Graphs
 
-    public function _getDatePlage($date_plage) {
+ public function histo_json( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = 'all', $group_by='day' ) {
+
+     // basé sur unix time donc ne tiens pas compte des fuseaux :( TODO
+
+        $this->load->helper('download');
+        $this->_checkUsername( $username );
+
+        $this->data['current']= array(
+            "user"=>$username,
+            "type_cat"=>$type_cat,
+            "id"=>$id,
+            "date_plage"=>$date_plage
+            );
+
+        $records= $this->_getRecords(   $username, $type_cat, $id, 'activity', $date_plage);
+        $param=$this->_getRecordsParam( $username, $type_cat, $id, 'activity' , $date_plage );
+
+        $this->output->enable_profiler( FALSE );
+
+        $date_plage_array= $this->_getDatePlage($date_plage);
+
+        if ($date_plage_array['min']==NULL) $date_plage_array['min']=$res= $this->records->get_min_time($this->user_id, $param);
+        if ($date_plage_array['max']==NULL) $date_plage_array['max']=$res= $this->records->get_max_time($this->user_id, $param);
+
+        switch ($group_by) {
+            case 'minute':
+                $timelapse=array( 60 ,$group_by);
+                break;
+            case 'hour':
+                $timelapse=array( 60*60 ,$group_by);
+                break;
+            case 'day':
+                $timelapse=array( 60*60*24 ,$group_by);
+                break;
+            case 'week':
+                $timelapse=array( 60*60*24*7 ,$group_by);
+                break;
+        }
+
+        $data=array(
+            'min'=>$this->_get_time_before($date_plage_array['min'],$timelapse),
+            'times'=> array()
+            );
+
+        if ($date_plage_array['max']==='running') {
+            $data['running']=TRUE;
+            $data['max']=$this->_get_time_before(time(),$timelapse);
+        }
+        else
+        {
+            $data['running']=FALSE;
+            $data['max']=$this->_get_time_before($date_plage_array['max'],$timelapse);
+        }
+
+
+        for ($t=$data['min']; $t<=$data['max']; $t+=$timelapse[0]) {
+            $rec=array( 'time'=>$t, 'time_t'=>date( 'c', $t), 'total'=>0, 'activities'=>array() );
+
+            // add activities
+            foreach ( $records as $k => $record ) {
+               $record['trim_duration']= $this->records->trim_duration($record, $t, $t+$timelapse[0] );
+              if ($record['trim_duration']>0) {
+                  $rec['activities'][]= array('duration'=>$record['trim_duration'], 'activity_id'=>$record['activity']['id'], 'activity'=>$record['activity']['activity_path'] );
+                  $rec['total']+=$record['trim_duration'];
+              }
+            }
+
+
+            $data['times'][]=$rec;
+        }
+
+
+
+
+         $content= json_encode($data,JSON_NUMERIC_CHECK);
+            $this->output
+            ->set_content_type('application/json')
+            ->set_output( $content );
+    }
+
+
+
+// TOOLS
+
+    private function _get_time_before($unixdate,$timelapse) {
+
+       /* if ($timelapse[0]=='week') {
+            TODO gestion semaine avec prise en compte du decalage horaire
+        }*/
+
+        return floor($unixdate/$timelapse[0]) * $timelapse[0];
+        }
+
+    private function _getDatePlage($date_plage) {
 
         $d1=$d2=NULL;
         $type='all';
@@ -323,7 +417,7 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-    public function _getRecords( $username, $type_cat, $id, $type_of_record , $date_plage ) {
+    private function _getRecords( $username, $type_cat, $id, $type_of_record , $date_plage ) {
 
         $param=$this->_getRecordsParam( $username, $type_cat, $id, $type_of_record , $date_plage );
 
@@ -334,7 +428,7 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-    public function _getRecordsParam( $username, $type_cat, $id, $type_of_record , $date_plage ) {
+    private function _getRecordsParam( $username, $type_cat, $id, $type_of_record , $date_plage ) {
         $param=array('order'=>'ASC');
 
         if ($id=='all') $id=NULL;
@@ -369,7 +463,7 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-    public function _orderByCat( $a,$b ) {
+    private function _orderByCat( $a,$b ) {
         return ($a['activity']['categorie']['title'] < $b['activity']['categorie']['title']) ? -1 : 1;
     }
 
@@ -378,7 +472,7 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-    public function _getStats($records, $type_cat, $datemin=NULL, $datemax=NULL) {
+    private function _getStats($records, $type_cat, $datemin=NULL, $datemax=NULL) {
         $res = array( );
 
         //TODO couper les duree en fonction datemin max et pour les runnings

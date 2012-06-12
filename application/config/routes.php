@@ -82,6 +82,9 @@ $route['tt/([^\/]+)/(summary|graph|export|log)/([^\/]+)/([^\/]+)/([^\/]+)'] =   
 $route['tt/([^\/]+)/graph/([^\/]+)/([^\/]+)/([^\/]+)/([^\/]+)'] =               'timetracker_viz/graph/$1/$2/$3/$4/$5';  //$5=graph_id
 $route['tt/([^\/]+)/export/([^\/]+)/([^\/]+)/([^\/]+)/([^\/]+)'] =              'timetracker_viz/export/$1/$2/$3/$4/$5';  //$5=format
 
+$route['tt/([^\/]+)/histo/([^\/]+)/([^\/]+)/([^\/]+)/(minute|hour|day|week).json'] =                   'timetracker_viz/histo_json/$1/$2/$3/$4/$5';
+//ex: http://127.0.0.1/damien/CI_TimeTracker/tt/damien/histo/categorie/all/all/day.json      // user type id plagedat
+
 
 
 
