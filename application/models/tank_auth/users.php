@@ -369,13 +369,31 @@ class Users extends CI_Model
         ));
     }
 
+
+
+
+    /**
+     * Get profile for a user
+     *
+     * @param   int
+     * @return  array
+     */
+    function get_profile($user_id)
+    {
+        $this->db->where('user_id', $user_id);
+        $query=  $this->db->get($this->profile_table_name);
+        if ($query->num_rows() == 1) return $query->row_array();
+        return NULL;
+    }
+
+
     /**
      * Create an empty profile for a new user
      *
      * @param   int
      * @return  bool
      */
-    private function create_profile($user_id)
+    function create_profile($user_id)
     {
         $this->db->set('user_id', $user_id);
         return $this->db->insert($this->profile_table_name);

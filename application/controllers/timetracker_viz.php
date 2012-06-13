@@ -28,6 +28,7 @@ class Timetracker_viz extends CI_Controller {
 
         $this->user_id   = $this->tank_auth->get_user_id();
         $this->user_name = $this->tank_auth->get_username();
+        $this->user_profile = $this->tank_auth->get_profile();
 
         $this->data[ 'alerts' ] = array( );
 
@@ -42,6 +43,7 @@ class Timetracker_viz extends CI_Controller {
         else {
             $this->data[ 'user_name' ] = $this->user_name;
             $this->data[ 'user_id' ]   = $this->user_id;
+            $this->data[ 'user_profile' ]   = $this->user_profile;
         }
 
     }
@@ -223,9 +225,9 @@ class Timetracker_viz extends CI_Controller {
 
 
         if ($format == 'csv') { // use content_output
-            $content = '"id","start_time","diff_greenwich","duration","stop_at","trim_duration","running","title","activity_ID","categorie_ID","type_of_record","tags","value","description"'."\r\n";
+            $content = '"id","start_time","timezone_offset","duration","stop_at","trim_duration","running","title","activity_ID","categorie_ID","type_of_record","tags","value","description"'."\r\n";
             foreach ( $records as $k => $record )
-                $content .= str_replace( array("\r","\n"), " ", $record['id'].',"'.$record['start_time'].'",'.$record['diff_greenwich'].','.$record['duration'].',"'.$record['stop_at'].'",'.@$record['trim_duration'].','.$record['running'].',"'.$record['activity']['activity_path'].'",'.$record['activity_ID'].','.$record['categorie_ID'].',"'.$record['activity']['type_of_record'].'","'.@$record['tags_path'].'","'.@$record['value']['value_path'].'","'.$record['description'].'"')."\r\n";
+                $content .= str_replace( array("\r","\n"), " ", $record['id'].',"'.$record['start_time'].'",'.$record['timezone_offset'].','.$record['duration'].',"'.$record['stop_at'].'",'.@$record['trim_duration'].','.$record['running'].',"'.$record['activity']['activity_path'].'",'.$record['activity_ID'].','.$record['categorie_ID'].',"'.$record['activity']['type_of_record'].'","'.@$record['tags_path'].'","'.@$record['value']['value_path'].'","'.$record['description'].'"')."\r\n";
 
             $this->output
                 ->set_content_type('text/csv');
@@ -345,7 +347,7 @@ class Timetracker_viz extends CI_Controller {
               }
             }
 
-            sort($activities);
+            //sort($activities);
             foreach ( $activities as $k => $activity ) $rec['activities'][]=$activity;
 
 

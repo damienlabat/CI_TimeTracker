@@ -262,7 +262,7 @@ class Records extends CI_Model {
         $record = $this->get_record_by_id( $record_id );
         $param  = array(
              'description' => $record[ 'description' ],
-            'diff_greenwich' => $record[ 'diff_greenwich' ]
+            'timezone_offset' => $record[ 'timezone_offset' ]
         );
 
         if ( ( $record[ 'type_of_record' ] == 'value' ) || ( ( !$record[ 'running' ] ) && ( $record[ 'duration' ] == 0 ) ) )

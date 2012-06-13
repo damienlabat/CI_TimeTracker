@@ -185,7 +185,7 @@ function init_graph(obj) {
 
         var histograph_obj={};
 
-        var w = 1000, h = 500, color = d3.scale.category20();
+        var w = 1170, h = 600, color = d3.scale.category20();
 
         var vis = d3.select(self.target[0]).append("svg:svg")
             .attr("width", w)
@@ -199,7 +199,7 @@ function init_graph(obj) {
 
         histograph_obj.update=function() {
             var data=self.data;
-            var bar_width= w/2/ self.data.times.length;
+            var bar_width= (1/2) * w/self.data.times.length;
 
             var fx = d3.scale.linear().domain([data.min, data.max+self.timelapse]).range([50, w]);
 
@@ -209,12 +209,15 @@ function init_graph(obj) {
             var f_yaxis = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total/(60*60) } )]).range([h, 10]);
             var f_xaxis = d3.scale.linear().domain([data.min/self.timelapse, (data.max+self.timelapse)/self.timelapse]).range([50, w]);
 
+
+
             var format_date= function(axisdata) {
                 var t= new Date(axisdata*self.timelapse*1000);
                 var res=t.getDate()+'/'+t.getMonth()+'/'+t.getFullYear();
                 if (self.timelapse<60*60*24) {
-                    var h=t.toTimeString();
-                    if (h!='0:0') res=h;
+                    var h=t.getHours()+':'+t.getMinutes();
+                    //if (h!='0:0') res=h;
+                    res=res+' '+h;
                     }
                 return res
             }
@@ -236,6 +239,7 @@ function init_graph(obj) {
 
                 return res
             }
+
 
 
             var timegroups = vis.select('#graph_g').selectAll('g.timegroup').data(data.times, function(d) { return d.time;});

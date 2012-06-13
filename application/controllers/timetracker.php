@@ -28,6 +28,7 @@ class Timetracker extends CI_Controller {
 
         $this->user_id   = $this->tank_auth->get_user_id();
         $this->user_name = $this->tank_auth->get_username();
+        $this->user_profile = $this->tank_auth->get_profile();
 
         $this->data[ 'alerts' ] = array( );
 
@@ -42,6 +43,8 @@ class Timetracker extends CI_Controller {
         else {
             $this->data[ 'user_name' ] = $this->user_name;
             $this->data[ 'user_id' ]   = $this->user_id;
+            $this->data[ 'user_profile' ]   = $this->user_profile;
+
             $this->data['current']= array(
                 "action" => 'record',
                 "date_plage" => NULL
@@ -722,8 +725,8 @@ class Timetracker extends CI_Controller {
 
             if ( isset( $post[ 'description' ] ) )
                 $param[ 'description' ] = trim( $post[ 'description' ] );
-            if ( isset( $post[ 'localtime' ] ) )
-                $param[ 'diff_greenwich' ] = $post[ 'localtime' ]; // TODO recup greenwich from time
+            if ( isset( $post[ 'timezone_offset' ] ) )
+                $param[ 'timezone_offset' ] = $post[ 'timezone_offset' ];
 
             $res[ 'activity' ] = $this->_create_record( $title, $categorie, $type_record, $param );
             $res[ 'alerts' ]   = array(
@@ -813,8 +816,8 @@ class Timetracker extends CI_Controller {
 
             if ( isset( $post[ 'description' ] ) )
                 $param[ 'description' ] = trim( $post[ 'description' ] );
-            if ( isset( $post[ 'localtime' ] ) )
-                $param[ 'diff_greenwich' ] = $post[ 'localtime' ]; // TODO recup greenwich from time
+            if ( isset( $post[ 'timezone_offset' ] ) )
+                $param[ 'timezone_offset' ] = $post[ 'timezone_offset' ];
 
 
             $cat = $this->categories->getorcreate_categorie( $this->user_id, $categorie );
@@ -829,7 +832,7 @@ class Timetracker extends CI_Controller {
 
             if ( isset( $post[ 'duration' ] ) ) $update_params['duration'] = $post[ 'duration' ];
             if ( isset( $post[ 'running' ] ) ) $update_params['running'] = $post[ 'running' ];
-            //if ( isset( $post[ 'diff_greenwich' ] ) ) $update_params['diff_greenwich'] = $post[ 'local_time' ];  TODO! gestion localtime
+            if ( isset( $post[ 'timezone_offset' ] ) ) $update_params['timezone_offset'] = $post[ 'timezone_offset' ];
 
             $this->records->update_record( $post[ 'update_record' ], $update_params);
             $res[ 'activity' ][ 'record' ] = $this->records->get_record_by_id( $post[ 'update_record' ] );

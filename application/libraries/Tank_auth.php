@@ -149,6 +149,18 @@ class Tank_auth
         return $this->ci->session->userdata('username');
     }
 
+     /**
+     * Get profile
+     *
+     * @return  object
+     */
+    function get_profile()
+    {
+        $id= $this->get_user_id();
+
+        return $this->ci->users->get_profile($id);
+    }
+
     /**
      * Create new user on the site and return some data about it:
      * user_id, username, password, email, new_email_key (if any).
