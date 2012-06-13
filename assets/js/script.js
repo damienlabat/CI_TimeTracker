@@ -11,7 +11,7 @@ $(function() {
     });
 
      $('div.ttgraph').each(function() {
-        init_graph( $(this) );
+        graph=init_graph( $(this) );
     });
 
 });
@@ -144,24 +144,37 @@ function init_graph(obj) {
     self.target=obj;
     self.json_param=jQuery.parseJSON(self.target.attr( 'data-graph' ));
     self.timelapse=gettimelapse( self.json_param.group_by );
-    var url= BASE_URL+'tt/'+self.json_param.username+'/histo/'+self.json_param.type_cat+'/'+self.json_param.id+'/'+self.json_param.date_plage+'/'+self.json_param.group_by+'.json';
-    $.getJSON(url, function(data) {  self.data=data; self.buildgraph()   });
 
-    self.buildgraph=function () {
-        if (self.json_param.type_graph== 'histo') self.histograph();
+    self.updateJsonParam= function( id, data ) {
+        self.json_param[id]=data;
+        if (self.graph) self.loadJson( function(){ self.graph.update(); });
+        }
+
+    self.loadJson= function( callback ) {
+        var url= BASE_URL+'tt/'+self.json_param.username+'/histo/'+self.json_param.type_cat+'/'+self.json_param.id+'/'+self.json_param.date_plage+'/'+self.json_param.group_by+'.json';
+        $.getJSON(url, function(data) {  self.data=data; callback()   });
+    }
+
+    self.buildGraph=function () {
+        if (self.json_param.type_graph== 'histo') self.graph=self.histograph();
+    }
+
+    //init
+    self.loadJson( function(){ self.buildGraph() } );
+
+
+    function gettimelapse(timelapsename) {
+        var r={
+            second:     1,
+            minute:     60,
+            hour:       60*60,
+            day:        60*60*24,
+            week:       60*60*24*7
+            }
+        return r[timelapsename]
     }
 
 
-function gettimelapse(timelapsename) {
-    var r={
-        second:     1,
-        minute:     60,
-        hour:       60*60,
-        day:        60*60*24,
-        week:       60*60*24*7
-        }
-    return r[timelapsename]
-}
 
 
 
@@ -180,20 +193,21 @@ function gettimelapse(timelapsename) {
             .attr("viewBox",0+" "+0+" "+w+" "+(h+20));
 
         var graphgroup= vis.append("svg:g").attr("id", "graph_g");
-        var axisgroup= vis.append("svg:g").attr("id", "axis_g");
+        vis.append("svg:g").attr("id", "xaxis_g");
+        vis.append("svg:g").attr("id", "yaxis_g");
 
 
         histograph_obj.update=function() {
             var data=self.data;
             var bar_width= w/2/ self.data.times.length;
 
-            var fx = d3.scale.linear().domain([data.min, data.max]).range([50, w]);
+            var fx = d3.scale.linear().domain([data.min, data.max+self.timelapse]).range([50, w]);
 
             var fy = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total } )]).range([h, 10]);
             var fh = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total } )]).range([0, h-10]);
 
             var f_yaxis = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total/(60*60) } )]).range([h, 10]);
-            var f_xaxis = d3.scale.linear().domain([data.min/self.timelapse, data.max/self.timelapse]).range([50, w]);
+            var f_xaxis = d3.scale.linear().domain([data.min/self.timelapse, (data.max+self.timelapse)/self.timelapse]).range([50, w]);
 
             var format_date= function(axisdata) {
                 var t= new Date(axisdata*self.timelapse*1000);
@@ -230,6 +244,12 @@ function gettimelapse(timelapsename) {
                 .attr('class', 'timegroup')
                 .attr('transform', function(d) {    return 'translate('+fx(d.time)+',0)'       });
 
+            timegroups.transition(2000).attr('transform', function(d) {    return 'translate('+fx(d.time)+',0)'       });
+
+            timegroups.exit().remove();
+
+
+
                 var activityrects = timegroups.selectAll('rect.activity').data(function(d) {return d.activities}, function(d) { return d.activity_ID });
                 activityrects.enter().append('svg:rect')
                     .attr('class', 'activity')
@@ -239,7 +259,8 @@ function gettimelapse(timelapsename) {
                     .attr('fill', function(d, i) {      return color(d.activity_ID)  })
                     .on('mouseover', function(d) {    /*log(d);*/ document.title=d.activity+' '+d.duration   });
 
-                activityrects.transition()
+                activityrects.transition(2000)
+                    .attr('width', function() {         return bar_width    })
                     .attr('y', function(d,i) {
                         if (i==0) cumul=0;
                         var res=fy( cumul + d.duration);
@@ -248,17 +269,17 @@ function gettimelapse(timelapsename) {
                         })
                     .attr('height', function(d) {   return fh(d.duration)   });
 
-                var xaxis = vis.select
-                vis.select('#axis_g').append("svg:g")
-                    .attr("class", "xaxis")
-                    .attr("transform", "translate(0," + h + ")")
-                    .call(d3.svg.axis().scale(f_xaxis).ticks(10).tickFormat( function(d) { return format_date(d) } ) );
+                activityrects.exit().remove();
 
-                var yaxis = vis.select
-                vis.select('#axis_g').append("svg:g")
-                    .attr("class", "yaxis")
-                    .attr("transform", "translate(50,0)")
-                    .call( d3.svg.axis().orient('left').scale(f_yaxis).ticks(6).tickFormat( function(d) { return format_duration(d) } ) );
+
+
+                var xaxis = vis.select('#xaxis_g').attr("transform", "translate(0," + h + ")");
+                xaxis.transition(800).call(d3.svg.axis().scale(f_xaxis).ticks(10).tickFormat( function(d) { return format_date(d) } ) );
+
+
+                var yaxis = vis.select('#yaxis_g').attr("transform", "translate(50,0)");
+                 yaxis.transition(800).call( d3.svg.axis().orient('left').scale(f_yaxis).ticks(6).tickFormat( function(d) { return format_duration(d) } ) );
+
             }
 
 
@@ -271,3 +292,9 @@ function gettimelapse(timelapsename) {
 
     return self
 }
+
+test=function() {
+    log(graph);
+    if (graph.json_param.group_by!='hour') graph.updateJsonParam('group_by','hour');
+        else  graph.updateJsonParam('group_by','day');
+    }
