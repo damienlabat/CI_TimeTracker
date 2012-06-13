@@ -143,6 +143,7 @@ function init_graph(obj) {
     var self={};
     self.target=obj;
     self.json_param=jQuery.parseJSON(self.target.attr( 'data-graph' ));
+    self.timelapse=gettimelapse( self.json_param.group_by );
     var url= BASE_URL+'tt/'+self.json_param.username+'/histo/'+self.json_param.type_cat+'/'+self.json_param.id+'/'+self.json_param.date_plage+'/'+self.json_param.group_by+'.json';
     $.getJSON(url, function(data) {  self.data=data; self.buildgraph()   });
 
@@ -151,7 +152,16 @@ function init_graph(obj) {
     }
 
 
-
+function gettimelapse(timelapsename) {
+    var r={
+        second:     1,
+        minute:     60,
+        hour:       60*60,
+        day:        60*60*24,
+        week:       60*60*24*7
+        }
+    return r[timelapsename]
+}
 
 
 
@@ -166,8 +176,8 @@ function init_graph(obj) {
 
         var vis = d3.select(self.target[0]).append("svg:svg")
             .attr("width", w)
-            .attr("height", h)
-            .attr("viewBox",0+" "+0+" "+w+" "+h);
+            .attr("height", h+20)
+            .attr("viewBox",0+" "+0+" "+w+" "+(h+20));
 
         var graphgroup= vis.append("svg:g").attr("id", "graph_g");
         var axisgroup= vis.append("svg:g").attr("id", "axis_g");
@@ -177,18 +187,42 @@ function init_graph(obj) {
             var data=self.data;
             var bar_width= w/2/ self.data.times.length;
 
-            var fx = d3.scale.linear().domain([data.min, data.max]).range([0, w]);
-            var fy = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total } )]).range([h, 0]);
-            var fh = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total } )]).range([0, h]);
+            var fx = d3.scale.linear().domain([data.min, data.max]).range([50, w]);
 
-            /*var timerects = vis.select('#graph_g').selectAll('rect.timegroup').data(data.times, function(d) { return d.time;});
+            var fy = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total } )]).range([h, 10]);
+            var fh = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total } )]).range([0, h-10]);
 
-            timerects.enter().append('svg:rect')
-                .attr('class', 'timegroup')
-                .attr('width', function() {         return bar_width    })
-                .attr('transform', function(d) {    return 'translate('+fx(d.time)+','+fy(d.total)+')'       })
-                .attr('fill', function(d, i) {      return 'red'  })
-                .attr('height', function(d) {       return fh(d.total)       });*/
+            var f_yaxis = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total/(60*60) } )]).range([h, 10]);
+            var f_xaxis = d3.scale.linear().domain([data.min/self.timelapse, data.max/self.timelapse]).range([50, w]);
+
+            var format_date= function(axisdata) {
+                var t= new Date(axisdata*self.timelapse*1000);
+                var res=t.getDate()+'/'+t.getMonth()+'/'+t.getFullYear();
+                if (self.timelapse<60*60*24) {
+                    var h=t.toTimeString();
+                    if (h!='0:0') res=h;
+                    }
+                return res
+            }
+
+
+            var format_duration= function(duration) {
+
+                duration*=60;
+
+                if (duration==0) return '';
+
+                var h= Math.floor(duration/60);
+                var m= duration%60;
+
+                if (m<10) m= '0'+m;
+
+
+                res= h+':'+m;
+
+                return res
+            }
+
 
             var timegroups = vis.select('#graph_g').selectAll('g.timegroup').data(data.times, function(d) { return d.time;});
 
@@ -203,17 +237,28 @@ function init_graph(obj) {
                     .attr('y', fy(0) )
                     .attr('height', 0)
                     .attr('fill', function(d, i) {      return color(d.activity_ID)  })
-                    .on('mouseover', function(d) {    log(d); document.title=d.activity+' '+d.duration   });
+                    .on('mouseover', function(d) {    /*log(d);*/ document.title=d.activity+' '+d.duration   });
 
                 activityrects.transition()
                     .attr('y', function(d,i) {
                         if (i==0) cumul=0;
                         var res=fy( cumul + d.duration);
-                        log(i,cumul,d.duration,cumul + d.duration);
                         cumul+=d.duration;
                         return res
                         })
-                    .attr('height', function(d) {   return fh(d.duration)       });
+                    .attr('height', function(d) {   return fh(d.duration)   });
+
+                var xaxis = vis.select
+                vis.select('#axis_g').append("svg:g")
+                    .attr("class", "xaxis")
+                    .attr("transform", "translate(0," + h + ")")
+                    .call(d3.svg.axis().scale(f_xaxis).ticks(10).tickFormat( function(d) { return format_date(d) } ) );
+
+                var yaxis = vis.select
+                vis.select('#axis_g').append("svg:g")
+                    .attr("class", "yaxis")
+                    .attr("transform", "translate(50,0)")
+                    .call( d3.svg.axis().orient('left').scale(f_yaxis).ticks(6).tickFormat( function(d) { return format_duration(d) } ) );
             }
 
 
