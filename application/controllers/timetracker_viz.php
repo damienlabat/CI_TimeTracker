@@ -231,6 +231,7 @@ class Timetracker_viz extends CI_Controller {
  public function histo_json( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = 'all', $group_by='day' ) {
 
      // basé sur unix time donc ne tiens pas compte des fuseaux :( TODO
+     // change to MySQL date
 
         $this->load->helper('download');
         $this->timetracker_lib->checkUsername( $username );
@@ -242,11 +243,11 @@ class Timetracker_viz extends CI_Controller {
 
         $date_plage_array= $this->_getDatePlage($date_plage);
 
-        if ($date_plage_array['min']==NULL) $date_plage_array['min']= $this->records->get_min_time($this->user_id, $param);
-            else $date_plage_array['min']= strtotime( $date_plage_array['min'] );
 
+        if ($date_plage_array['min']==NULL) $date_plage_array['min']= $this->records->get_min_time($this->user_id, $param);
         if ($date_plage_array['max']==NULL) $date_plage_array['max']= $this->records->get_max_time($this->user_id, $param);
-            else $date_plage_array['max']= strtotime( $date_plage_array['max'] );
+
+
 
         switch ($group_by) {
             case 'minute':
@@ -263,6 +264,8 @@ class Timetracker_viz extends CI_Controller {
                 break;
         }
 
+       // $date_plage_array['max']= date( 'Y-m-d H:i:s', strtotime( $date_plage_array['max'] )+ $timelapse[0] );
+
         $data=array(
             'min'=>$this->_get_time_before($date_plage_array['min'],$timelapse),
             'times'=> array()
@@ -270,7 +273,7 @@ class Timetracker_viz extends CI_Controller {
 
         if ($date_plage_array['max']==='running') {
             $data['running']=TRUE;
-            $data['max']=$this->_get_time_before(time(),$timelapse);
+            $data['max']=$this->_get_time_before($this->server_time,$timelapse);
         }
         else
         {
@@ -279,8 +282,8 @@ class Timetracker_viz extends CI_Controller {
         }
 
 
-        for ($t=$data['min']; $t<=$data['max']; $t+=$timelapse[0]) {
-            $rec=array( 'time'=>$t, 'time_t'=>date( 'c', $t), 'total'=>0, 'activities'=>array() );
+        for ($t=strtotime($data['min']); $t<=strtotime($data['max']); $t+=$timelapse[0]) {
+            $rec=array( 'time'=>date( 'Y-m-d H:i:s', $t), 'total'=>0, 'activities'=>array() );
             $activities=array();
 
             // add activities
@@ -318,7 +321,15 @@ class Timetracker_viz extends CI_Controller {
             TODO gestion semaine avec prise en compte du decalage horaire
         }*/
 
-     //   return floor($unixdate/$timelapse[0]) * $timelapse[0];
+
+        $d= new DateTime($date);
+       /* print_r($date);
+        print_r($d);
+        print_r($d->format('Y-m-d H:i:s'));
+        * TODO
+        */
+
+     return $d->format('Y-m-d H:i:s');
         }
 
     private function _getDatePlage($date_plage) {

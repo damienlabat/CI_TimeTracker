@@ -56,6 +56,11 @@ class Timetracker_lib
         $this->ci->db->query( "SET time_zone= '".$this->ci->user_profile['timezone']."'" );
 
 
+        $query = $this->ci->db->query( "SELECT NOW() as now" );
+        $this->ci->server_time   =$query->row()->now;
+        $this->ci->data[ 'server_time']=$this->ci->server_time;
+
+
     }
 
 

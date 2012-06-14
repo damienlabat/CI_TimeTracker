@@ -155,8 +155,8 @@ class Records extends CI_Model {
 
     function get_max_time($user_id, $param = array()) {
 
-        //a revoir sasn UNIX
-        $req = 'SELECT  max(UNIX_TIMESTAMP(' . $this->records_table . '.start_time)+' . $this->records_table . '.duration) as maxtime
+
+        $req = 'SELECT  max(' . $this->records_table . '.start_time) as maxtime
              '.$this->param2fromwhere($user_id, $param);
 
         $query = $this->db->query( $req );
@@ -171,7 +171,7 @@ class Records extends CI_Model {
 
     function trim_duration($record,$datemin,$datemax) { //unix time
     // A REVOIR SANS UNIX
-        $date_deb =$record['UNIX_start_time'];
+        $date_deb =strtotime($record['start_time']);
         $date_fin = $date_deb + $record['duration'];
 
         if ($record['running']==1) $date_fin = time();

@@ -14,6 +14,11 @@ $(function() {
         graph=init_graph( $(this) );
     });
 
+        /*** TEST ***/
+
+        log(mysql_time);
+        log( mysqlDate2time(mysql_time) );
+
 });
 
 
@@ -31,6 +36,13 @@ window.log = function(){
   }
 };
 
+
+
+mysqlDate2time = function (str) {
+    var t= str.split(/[- :]/);
+    var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+    return d;
+    }
 
 
 
@@ -165,11 +177,11 @@ function init_graph(obj) {
 
     function gettimelapse(timelapsename) {
         var r={
-            second:     1,
-            minute:     60,
-            hour:       60*60,
-            day:        60*60*24,
-            week:       60*60*24*7
+            second:     1 *1000,
+            minute:     60 *1000,
+            hour:       60*60 *1000,
+            day:        60*60*24 *1000,
+            week:       60*60*24*7 *1000
             }
         return r[timelapsename]
     }
@@ -201,24 +213,36 @@ function init_graph(obj) {
             var data=self.data;
             var bar_width= (1/2) * w/self.data.times.length;
 
-            var fx = d3.scale.linear().domain([data.min, data.max+self.timelapse]).range([50, w]);
+            //var fx = d3.time.scale().domain([mysqlDate2time(data.min), new Date( mysqlDate2time(data.max).getTime()+self.timelapse ) ]).range([50, w]);
+            var fx = d3.time.scale().domain([mysqlDate2time(data.min), mysqlDate2time(data.max) ]).range([50, w]);
 
-            var fy = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total } )]).range([h, 10]);
+            var fy = d3.scale.linear().domain([0, d3.max( data.times, function(d){ return d.total } )]).range([h, 10]);
             var fh = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total } )]).range([0, h-10]);
 
             var f_yaxis = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total/(60*60) } )]).range([h, 10]);
-            var f_xaxis = d3.scale.linear().domain([data.min/self.timelapse, (data.max+self.timelapse)/self.timelapse]).range([50, w]);
+            //var f_xaxis = d3.time.scale().domain([mysqlDate2time(data.min), new Date( mysqlDate2time(data.max).getTime()+self.timelapse ) ]).range([50+bar_width/2, w+bar_width/2]);
+            var f_xaxis = d3.time.scale().domain([mysqlDate2time(data.min), mysqlDate2time(data.max) ]).range([50+bar_width/2, w+bar_width/2]);
 
 
 
-            var format_date= function(axisdata) {
-                var t= new Date(axisdata*self.timelapse*1000);
-                var res=t.getDate()+'/'+t.getMonth()+'/'+t.getFullYear();
-                if (self.timelapse<60*60*24) {
+            var format_date= function(t) {
+
+               /* var res=t.getFullYear()+'-'+(t.getMonth()+1)+'-'+t.getDate();
+                if (self.timelapse<60*60*24*10000) {
                     var h=t.getHours()+':'+t.getMinutes();
-                    //if (h!='0:0') res=h;
-                    res=res+' '+h;
+                    if (h!='0:0') res+=' '+h;
                     }
+                return res*/
+
+                var formatD = d3.time.format("%Y-%m-%d");
+                var d=formatD(t);
+
+                var formatT = d3.time.format("%H:%M");
+                var t=formatT(t);
+
+                if (t!='00:00') res=t;
+                    else res=d;
+
                 return res
             }
 
@@ -246,9 +270,9 @@ function init_graph(obj) {
 
             timegroups.enter().append('svg:g')
                 .attr('class', 'timegroup')
-                .attr('transform', function(d) {    return 'translate('+fx(d.time)+',0)'       });
+                .attr('transform', function(d) {  return 'translate('+fx( mysqlDate2time(d.time) )+',0)'       });
 
-            timegroups.transition(2000).attr('transform', function(d) {    return 'translate('+fx(d.time)+',0)'       });
+            timegroups.transition(2000).attr('transform', function(d) {    return 'translate('+fx( mysqlDate2time(d.time) )+',0)'       });
 
             timegroups.exit().remove();
 
@@ -278,7 +302,7 @@ function init_graph(obj) {
 
 
                 var xaxis = vis.select('#xaxis_g').attr("transform", "translate(0," + h + ")");
-                xaxis.transition(800).call(d3.svg.axis().scale(f_xaxis).ticks(10).tickFormat( function(d) { return format_date(d) } ) );
+                xaxis.transition(800).call(d3.svg.axis().scale(f_xaxis).ticks(7).tickFormat( function(d) { return format_date(d) } ) );
 
 
                 var yaxis = vis.select('#yaxis_g').attr("transform", "translate(50,0)");

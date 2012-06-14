@@ -37,7 +37,7 @@ if ( ! function_exists('duration2human'))
 
 if ( ! function_exists('date2human'))
 {
-    function date2human($date,$local_time='normal') // ADD timezone gestion
+    function date2human($date)
     {
         $unix=mysql_to_unix($date);
         $datestring = "%Y/%m/%d %h:%i";
@@ -45,6 +45,8 @@ if ( ! function_exists('date2human'))
         return mdate($datestring, $unix);
     }
 }
+
+
 
 
 //------------------------------------------------
