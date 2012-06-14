@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Serveur: localhost
--- Généré le : Lun 28 Mai 2012 à 14:37
+-- Généré le : Jeu 14 Juin 2012 à 10:09
 -- Version du serveur: 5.1.61
 -- Version de PHP: 5.3.3-7+squeeze9
 
@@ -138,7 +138,6 @@ CREATE TABLE IF NOT EXISTS `records` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `description` text COLLATE utf8_bin NOT NULL,
   `start_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `diff_greenwich` varchar(5) COLLATE utf8_bin NOT NULL,
   `duration` int(11) unsigned NOT NULL,
   `running` int(1) unsigned NOT NULL DEFAULT '1',
   `activity_ID` int(11) unsigned DEFAULT NULL,
@@ -231,22 +230,23 @@ CREATE TABLE IF NOT EXISTS `user_autologin` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `user_params`
+-- Structure de la table `user_profiles`
 --
 
-CREATE TABLE IF NOT EXISTS `user_params` (
-  `user_ID` int(11) unsigned NOT NULL,
-  `params` text NOT NULL,
-  PRIMARY KEY (`user_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+CREATE TABLE IF NOT EXISTS `user_profiles` (
+  `user_id` int(11) unsigned NOT NULL,
+  `timezone` varchar(6) COLLATE utf8_bin NOT NULL DEFAULT '+0:00',
+  `params` text COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `values_types`
+-- Structure de la table `valuetypes`
 --
 
-CREATE TABLE IF NOT EXISTS `values_types` (
+CREATE TABLE IF NOT EXISTS `valuetypes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(100) COLLATE utf8_bin NOT NULL,
   `description` text COLLATE utf8_bin NOT NULL,
