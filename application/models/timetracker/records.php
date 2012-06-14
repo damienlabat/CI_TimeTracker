@@ -18,9 +18,13 @@ class Records extends CI_Model {
      * @return          array
      */
     function get_record_by_id( $record_id ) {
+
+
+        $this->db->select($this->records_table . '.*, UNIX_TIMESTAMP(' . $this->records_table . '.start_time) as UNIXTIME');
+        $this->db->from($this->records_table);
         $this->db->where( 'id', $record_id );
 
-        $query = $this->db->get( $this->records_table );
+        $query = $this->db->get();
 
 
         /*  $this->db->select($this->activities_table.'.title,type_of_record,categorie_ID,'.$this->records_table.'.*');
@@ -103,8 +107,9 @@ class Records extends CI_Model {
 
     function get_records($user_id, $param = array(), $offset= NULL, $count= NULL ) {
 
-
-        $req = 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*, UNIX_TIMESTAMP (' . $this->records_table . '.start_time) as UNIX_start_time
+       /* $req = 'SET time_zone = "+6:00"';
+        $this->db->query( $req );*/
+        $req = 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*,UNIX_TIMESTAMP(' . $this->records_table . '.start_time) as UNIXTIME
             '.$this->param2fromwhere($user_id, $param);
 
 
@@ -139,7 +144,7 @@ class Records extends CI_Model {
 
     function get_min_time($user_id, $param = array()) {
 
-        $req = 'SELECT  min(UNIX_TIMESTAMP(' . $this->records_table . '.start_time)) as mintime
+        $req = 'SELECT  min(' . $this->records_table . '.start_time) as mintime
              '.$this->param2fromwhere($user_id, $param);
 
         $query = $this->db->query( $req );
@@ -150,6 +155,7 @@ class Records extends CI_Model {
 
     function get_max_time($user_id, $param = array()) {
 
+        //a revoir sasn UNIX
         $req = 'SELECT  max(UNIX_TIMESTAMP(' . $this->records_table . '.start_time)+' . $this->records_table . '.duration) as maxtime
              '.$this->param2fromwhere($user_id, $param);
 
@@ -164,6 +170,7 @@ class Records extends CI_Model {
     }
 
     function trim_duration($record,$datemin,$datemax) { //unix time
+    // A REVOIR SANS UNIX
         $date_deb =$record['UNIX_start_time'];
         $date_fin = $date_deb + $record['duration'];
 
@@ -261,8 +268,7 @@ class Records extends CI_Model {
     function restart_record( $record_id ) {
         $record = $this->get_record_by_id( $record_id );
         $param  = array(
-             'description' => $record[ 'description' ],
-            'timezone_offset' => $record[ 'timezone_offset' ]
+             'description' => $record[ 'description' ]
         );
 
         if ( ( $record[ 'type_of_record' ] == 'value' ) || ( ( !$record[ 'running' ] ) && ( $record[ 'duration' ] == 0 ) ) )
@@ -283,6 +289,7 @@ class Records extends CI_Model {
     function stop_record( $id ) {
         $record   = $this->get_record_by_id( $id );
         $duration = $this->calcul_duration( $record );
+        print_r($duration);
         return $this->update_record( $id, array(
              'duration' => $duration,
             'running' => 0
@@ -293,7 +300,7 @@ class Records extends CI_Model {
     function calcul_duration( $record, $endtime = NULL ) {
         if ( $endtime == NULL )
             $endtime = time();
-        $duration = $endtime - strtotime( $record[ 'start_time' ] );
+        $duration = $endtime - $record[ 'UNIXTIME' ];
         return $duration;
     }
 

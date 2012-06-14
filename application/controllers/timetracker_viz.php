@@ -16,7 +16,7 @@ class Timetracker_viz extends CI_Controller {
             'array'
         ) );
 
-        $this->load->library( 'tank_auth' );
+        $this->load->library( array('tank_auth','timetracker_lib') );
 
         $this->load->model( array(
             'timetracker/categories',
@@ -26,25 +26,8 @@ class Timetracker_viz extends CI_Controller {
             'timetracker/records'
         ) );
 
-        $this->user_id   = $this->tank_auth->get_user_id();
-        $this->user_name = $this->tank_auth->get_username();
-        $this->user_profile = $this->tank_auth->get_profile();
-
-        $this->data[ 'alerts' ] = array( );
-
-
-        if ( $this->session->flashdata( 'alerts' ) )
-            $this->data[ 'alerts' ] = $this->session->flashdata( 'alerts' ); //array( array('type'=>'success', 'alert'=>'error 1 .....') );
-
-
-        if ( !$this->tank_auth->is_logged_in() ) {
-            $this->_goLogin();
-        }
-        else {
-            $this->data[ 'user_name' ] = $this->user_name;
-            $this->data[ 'user_id' ]   = $this->user_id;
-            $this->data[ 'user_profile' ]   = $this->user_profile;
-        }
+        $this->timetracker_lib->checkuser();
+        $this->timetracker_lib->get_alerts();
 
     }
 
@@ -60,18 +43,6 @@ class Timetracker_viz extends CI_Controller {
         $this->load->view( 'layout', $this->data );
     }
 
-    public function _goLogin( ) {
-        redirect( 'login', 'location', 301 );
-    }
-
-    public function _checkUsername( $username ) {
-        if ( $username != $this->data[ 'user_name' ] )
-            $this->_goLogin(); //TODO shared folder gestion
-    }
-
-
-
-
     /* ==========================
      *  actions
      * ========================== */
@@ -81,7 +52,7 @@ class Timetracker_viz extends CI_Controller {
 
         //TODO add title and breadcrumb
 
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
 
         $tab = $this->input->get( 'tab', TRUE );
         if ( !in_array( $type_cat, array('activity','todo','value') ) ) {
@@ -173,7 +144,7 @@ class Timetracker_viz extends CI_Controller {
 
      public function graph( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = 'all', $type_graph = 'histo' ) {
 
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
 
         $tab = $this->input->get( 'tab', TRUE );
         if ( !in_array( $type_cat, array('activity','todo','value') ))
@@ -208,7 +179,7 @@ class Timetracker_viz extends CI_Controller {
     public function export( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = 'all', $format = 'json' ) {
 
         $this->load->helper('download');
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
 
         $this->data['current']= array(
             "action" => 'export',
@@ -225,9 +196,9 @@ class Timetracker_viz extends CI_Controller {
 
 
         if ($format == 'csv') { // use content_output
-            $content = '"id","start_time","timezone_offset","duration","stop_at","trim_duration","running","title","activity_ID","categorie_ID","type_of_record","tags","value","description"'."\r\n";
+            $content = '"id","start_time","duration","stop_at","trim_duration","running","title","activity_ID","categorie_ID","type_of_record","tags","value","description"'."\r\n";
             foreach ( $records as $k => $record )
-                $content .= str_replace( array("\r","\n"), " ", $record['id'].',"'.$record['start_time'].'",'.$record['timezone_offset'].','.$record['duration'].',"'.$record['stop_at'].'",'.@$record['trim_duration'].','.$record['running'].',"'.$record['activity']['activity_path'].'",'.$record['activity_ID'].','.$record['categorie_ID'].',"'.$record['activity']['type_of_record'].'","'.@$record['tags_path'].'","'.@$record['value']['value_path'].'","'.$record['description'].'"')."\r\n";
+                $content .= str_replace( array("\r","\n"), " ", $record['id'].',"'.$record['start_time'].'",'.$record['duration'].',"'.$record['stop_at'].'",'.@$record['trim_duration'].','.$record['running'].',"'.$record['activity']['activity_path'].'",'.$record['activity_ID'].','.$record['categorie_ID'].',"'.$record['activity']['type_of_record'].'","'.@$record['tags_path'].'","'.@$record['value']['value_path'].'","'.$record['description'].'"')."\r\n";
 
             $this->output
                 ->set_content_type('text/csv');
@@ -287,7 +258,7 @@ class Timetracker_viz extends CI_Controller {
      // basé sur unix time donc ne tiens pas compte des fuseaux :( TODO
 
         $this->load->helper('download');
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
 
         $records= $this->_getRecords(   $username, $type_cat, $id, 'activity', $date_plage);
         $param=$this->_getRecordsParam( $username, $type_cat, $id, 'activity' , $date_plage );
@@ -366,13 +337,13 @@ class Timetracker_viz extends CI_Controller {
 
 // TOOLS
 
-    private function _get_time_before($unixdate,$timelapse) {
+    private function _get_time_before($date,$timelapse) {
 
        /* if ($timelapse[0]=='week') {
             TODO gestion semaine avec prise en compte du decalage horaire
         }*/
 
-        return floor($unixdate/$timelapse[0]) * $timelapse[0];
+     //   return floor($unixdate/$timelapse[0]) * $timelapse[0];
         }
 
     private function _getDatePlage($date_plage) {

@@ -29,7 +29,6 @@ echo validation_errors();
     <label for="description">description</label>
     <textarea class="" placeholder="description..." name="description" id="description"></textarea><br/>
 
-    <input type="hidden" name="timezone_offset" value="<?=$user_profile['timezone_offset']?>">
     <button type="submit" class="btn btn-large btn-primary">Start</button>
 
 

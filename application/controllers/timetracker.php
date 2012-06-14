@@ -16,7 +16,7 @@ class Timetracker extends CI_Controller {
             'array'
         ) );
 
-        $this->load->library( 'tank_auth' );
+        $this->load->library( array('tank_auth','timetracker_lib') );
 
         $this->load->model( array(
             'timetracker/categories',
@@ -26,31 +26,15 @@ class Timetracker extends CI_Controller {
             'timetracker/records'
         ) );
 
-        $this->user_id   = $this->tank_auth->get_user_id();
-        $this->user_name = $this->tank_auth->get_username();
-        $this->user_profile = $this->tank_auth->get_profile();
 
-        $this->data[ 'alerts' ] = array( );
+        $this->timetracker_lib->checkuser();
+        $this->timetracker_lib->get_alerts();
 
+        $this->data['current']= array(
+            "action" => 'record',
+            "date_plage" => NULL
+            );
 
-        if ( $this->session->flashdata( 'alerts' ) )
-            $this->data[ 'alerts' ] = $this->session->flashdata( 'alerts' ); //array( array('type'=>'success', 'alert'=>'error 1 .....') );
-
-
-        if ( !$this->tank_auth->is_logged_in() ) {
-            $this->_goLogin();
-        }
-        else {
-            $this->data[ 'user_name' ] = $this->user_name;
-            $this->data[ 'user_id' ]   = $this->user_id;
-            $this->data[ 'user_profile' ]   = $this->user_profile;
-
-            $this->data['current']= array(
-                "action" => 'record',
-                "date_plage" => NULL
-                );
-
-        }
 
         if ( $_POST ) {
             $res = $this->_fromPOST( $_POST );
@@ -72,14 +56,6 @@ class Timetracker extends CI_Controller {
         $this->load->view( 'layout', $this->data );
     }
 
-    public function _goLogin( ) {
-        redirect( 'login', 'location', 301 );
-    }
-
-    public function _checkUsername( $username ) {
-        if ( $username != $this->data[ 'user_name' ] )
-            $this->_goLogin(); //TODO shared folder gestion
-    }
 
 
 
@@ -95,7 +71,7 @@ class Timetracker extends CI_Controller {
     public function index( $username = NULL, $page=1 ) {
 
 
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
 
         $this->load->library('pagination');
 
@@ -131,7 +107,7 @@ class Timetracker extends CI_Controller {
      *  stop record
      *  */
     public function stop( $username, $record_id ) {
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
 
         $this->data[ 'record' ] = $this->records->get_record_by_id( $record_id );
         if ( !$this->data[ 'record' ] )
@@ -152,7 +128,7 @@ class Timetracker extends CI_Controller {
      *  show record
      *  */
     public function record( $username, $record_id ) {
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
         $this->data[ 'tt_layout' ] = 'tt_record';
         $this->data[ 'record' ]    = $this->records->get_record_by_id_full( $record_id );
         if ( !$this->data[ 'record' ] )
@@ -176,7 +152,7 @@ class Timetracker extends CI_Controller {
      *  edit record
      *  */
     public function edit_record( $username, $record_id ) {
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
         $this->data[ 'record' ] = $this->records->get_record_by_id_full( $record_id );
         if ( !$this->data[ 'record' ] )
             show_404();
@@ -199,7 +175,7 @@ class Timetracker extends CI_Controller {
      *  delete record
      *  */
     public function delete_record( $username, $record_id ) {
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
         $this->data[ 'tt_layout' ] = 'tt_record';
         $this->data[ 'record' ]    = $this->records->get_record_by_id_full( $record_id );
         if ( !$this->data[ 'record' ] )
@@ -235,7 +211,7 @@ class Timetracker extends CI_Controller {
      *  restart record
      *  */
     public function restart( $username, $record_id ) {
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
 
         $this->data[ 'record' ] = $this->records->get_record_by_id_full( $record_id );
         if ( !$this->data[ 'record' ] )
@@ -273,7 +249,7 @@ class Timetracker extends CI_Controller {
 
     public function generic_activity_show( $username, $type_of_record, $activity_id =NULL, $page =1 ) {
 
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
 
         $this->data[ 'activity' ] = $this->activities->get_activity_by_id_full( $activity_id );
         if (( !$this->data[ 'activity' ] ) OR ( $this->data[ 'activity' ][ 'type_of_record']!=$type_of_record ))
@@ -312,7 +288,7 @@ class Timetracker extends CI_Controller {
 
 
     public function generic_activity_edit( $username, $type_of_record, $activity_id =NULL ) {
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
         $this->data[ 'activity' ] = $this->activities->get_activity_by_id_full( $activity_id );
 
         if (( !$this->data[ 'activity' ] ) OR ( $this->data[ 'activity' ][ 'type_of_record']!=$type_of_record ))
@@ -342,7 +318,7 @@ class Timetracker extends CI_Controller {
      *  */
 
     public function categories( $username ) {
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
         // TODO!
 
         $this->data[ 'current' ]['type_cat'] = 'categorie';
@@ -360,7 +336,7 @@ class Timetracker extends CI_Controller {
 
     public function categorie( $username, $categorie_id = NULL, $page = 1 ) {
 
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
         if ( $categorie_id == NULL )
             redirect( 'tt/' . $username . '/categories', 'location', 301 );
 
@@ -413,7 +389,7 @@ class Timetracker extends CI_Controller {
      *  */
 
     public function categorie_edit( $username, $categorie_id ) {
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
         $this->data[ 'categorie' ] = $this->categories->get_categorie_by_id( $categorie_id );
         if ( !$this->data[ 'categorie' ] )
             show_404();
@@ -444,7 +420,7 @@ class Timetracker extends CI_Controller {
      *  */
 
     public function tags( $username ) {
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
 
         $this->data[ 'current' ]['type_cat'] = 'tag';
         $this->data[ 'current' ]['id'] = NULL;
@@ -460,7 +436,7 @@ class Timetracker extends CI_Controller {
      *  */
 
     public function tag( $username, $tag_id = NULL, $page = 1 ) {
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
         if ( $tag_id == NULL )
             redirect( 'tt/' . $username . '/tags', 'location', 301 );
 
@@ -512,7 +488,7 @@ class Timetracker extends CI_Controller {
      *  */
 
     public function tag_edit( $username, $tag_id ) {
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
         $this->data[ 'tag' ] = $this->tags->get_tag_by_id( $tag_id );
         if ( !$this->data[ 'tag' ] )
             show_404();
@@ -546,7 +522,7 @@ class Timetracker extends CI_Controller {
      *  */
 
     public function valuetypes( $username ) {
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
 
         $this->data[ 'current' ]['type_cat'] = 'valuetype';
         $this->data[ 'current' ]['id'] = NULL;
@@ -562,7 +538,7 @@ class Timetracker extends CI_Controller {
      *  */
 
     public function valuetype( $username, $valuetype_id = NULL, $page = 1 ) {
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
         if ( $valuetype_id == NULL )
             redirect( 'tt/' . $username . '/valuetypes', 'location', 301 );
 
@@ -607,7 +583,7 @@ class Timetracker extends CI_Controller {
      *  */
 
     public function valuetype_edit( $username, $valuetype_id ) {
-        $this->_checkUsername( $username );
+        $this->timetracker_lib->checkUsername( $username );
         $this->data[ 'valuetype' ] = $this->values->get_valuetype_by_id( $valuetype_id );
         if ( !$this->data[ 'valuetype' ] )
             show_404();
@@ -725,8 +701,6 @@ class Timetracker extends CI_Controller {
 
             if ( isset( $post[ 'description' ] ) )
                 $param[ 'description' ] = trim( $post[ 'description' ] );
-            if ( isset( $post[ 'timezone_offset' ] ) )
-                $param[ 'timezone_offset' ] = $post[ 'timezone_offset' ];
 
             $res[ 'activity' ] = $this->_create_record( $title, $categorie, $type_record, $param );
             $res[ 'alerts' ]   = array(
@@ -816,8 +790,6 @@ class Timetracker extends CI_Controller {
 
             if ( isset( $post[ 'description' ] ) )
                 $param[ 'description' ] = trim( $post[ 'description' ] );
-            if ( isset( $post[ 'timezone_offset' ] ) )
-                $param[ 'timezone_offset' ] = $post[ 'timezone_offset' ];
 
 
             $cat = $this->categories->getorcreate_categorie( $this->user_id, $categorie );
@@ -832,7 +804,6 @@ class Timetracker extends CI_Controller {
 
             if ( isset( $post[ 'duration' ] ) ) $update_params['duration'] = $post[ 'duration' ];
             if ( isset( $post[ 'running' ] ) ) $update_params['running'] = $post[ 'running' ];
-            if ( isset( $post[ 'timezone_offset' ] ) ) $update_params['timezone_offset'] = $post[ 'timezone_offset' ];
 
             $this->records->update_record( $post[ 'update_record' ], $update_params);
             $res[ 'activity' ][ 'record' ] = $this->records->get_record_by_id( $post[ 'update_record' ] );
