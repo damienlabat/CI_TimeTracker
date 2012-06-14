@@ -7,24 +7,7 @@ class Timetracker_viz extends CI_Controller {
         parent::__construct();
         $this->output->enable_profiler( TRUE );
 
-        $this->load->helper( array(
-             'url',
-            'assets_helper',
-            'form',
-            'timetracker',
-            'date',
-            'array'
-        ) );
-
-        $this->load->library( array('tank_auth','timetracker_lib') );
-
-        $this->load->model( array(
-            'timetracker/categories',
-            'timetracker/activities',
-            'timetracker/tags',
-            'timetracker/values',
-            'timetracker/records'
-        ) );
+        $this->load->library( 'timetracker_lib' );
 
         $this->timetracker_lib->checkuser();
         $this->timetracker_lib->get_alerts();
@@ -34,14 +17,6 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-    /* ==========================
-     *  rendering & redirection
-     * ========================== */
-
-    public function _render( ) {
-        $this->data[ 'content' ] = $this->load->view( 'timetracker/layout', $this->data, true );
-        $this->load->view( 'layout', $this->data );
-    }
 
     /* ==========================
      *  actions
@@ -137,7 +112,7 @@ class Timetracker_viz extends CI_Controller {
         $this->data[ 'tt_layout' ]          = 'tt_summary';
 
 
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 
@@ -171,7 +146,7 @@ class Timetracker_viz extends CI_Controller {
         $this->data['records']= $this->_getRecords($username, $type_cat, $id, $tab, $date_plage); // todo virer
 
         $this->data[ 'tt_layout' ]          = 'tt_graph';
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 

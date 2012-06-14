@@ -8,6 +8,31 @@ class Timetracker_lib
     {
         $this->ci =& get_instance();
 
+         $this->ci->load->helper( array(
+            'url',
+            'assets_helper',
+            'form',
+            'timetracker',
+            'date',
+            'array'
+        ) );
+
+        $this->ci->load->library( 'tank_auth' );
+
+        $this->ci->load->model( array(
+            'timetracker/categories',
+            'timetracker/activities',
+            'timetracker/tags',
+            'timetracker/values',
+            'timetracker/records'
+        ) );
+
+    }
+
+
+    function render( ) {
+        $this->ci->data[ 'content' ] = $this->ci->load->view( 'timetracker/layout', $this->ci->data, true );
+        $this->ci->load->view( 'layout', $this->ci->data );
     }
 
 

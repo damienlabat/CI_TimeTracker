@@ -7,26 +7,7 @@ class Timetracker extends CI_Controller {
         parent::__construct();
         $this->output->enable_profiler( TRUE );
 
-        $this->load->helper( array(
-            'url',
-            'assets_helper',
-            'form',
-            'timetracker',
-            'date',
-            'array'
-        ) );
-
-        $this->load->library( array('tank_auth','timetracker_lib') );
-
-        $this->load->model( array(
-            'timetracker/categories',
-            'timetracker/activities',
-            'timetracker/tags',
-            'timetracker/values',
-            'timetracker/records'
-        ) );
-
-
+        $this->load->library( 'timetracker_lib' );
         $this->timetracker_lib->checkuser();
         $this->timetracker_lib->get_alerts();
 
@@ -46,15 +27,6 @@ class Timetracker extends CI_Controller {
 
 
 
-
-    /* ==========================
-     *  rendering & redirection
-     * ========================== */
-
-    public function _render( ) {
-        $this->data[ 'content' ] = $this->load->view( 'timetracker/layout', $this->data, true );
-        $this->load->view( 'layout', $this->data );
-    }
 
 
 
@@ -98,7 +70,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'pager']           = $this->pagination->create_links();
         $this->data[ 'tabs' ]           = tabs_buttons ( site_url('tt/'.$username), $this->data[ 'count' ], $tab );
 
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 
@@ -144,7 +116,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'current' ]['type_cat'] = 'record';
         $this->data[ 'current' ]['id'] = $record_id;
 
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 
@@ -167,7 +139,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'current' ]['id'] = $record_id;
 
         $this->data[ 'tt_layout' ] = 'tt_record_edit';
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 
@@ -201,7 +173,7 @@ class Timetracker extends CI_Controller {
             }
         }
 
-        $this->_render();
+        $this->timetracker_lib->render();
 
     }
 
@@ -283,7 +255,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'pager']               = $this->pagination->create_links();
         $this->data[ 'tt_layout' ]          = 'tt_activity';
 
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 
@@ -300,7 +272,7 @@ class Timetracker extends CI_Controller {
             $this->data[ 'title' ]=$this->data[ 'activity' ][ 'type_of_record' ].': '.$this->data[ 'activity' ]['title'];
 
         $this->data[ 'tt_layout' ] = 'tt_activity_edit';
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 
@@ -326,7 +298,7 @@ class Timetracker extends CI_Controller {
 
         $this->data[ 'categories' ] = $this->categories->get_categories( $this->user_id );
         $this->data[ 'TODO' ]     = "list categeories";
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 
@@ -379,7 +351,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'tt_layout' ]                 = 'tt_categorie';
 
         $this->data[ 'TODO' ] = "categorie " . $categorie_id . " page - show shared status total time & activity";
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 
@@ -404,7 +376,7 @@ class Timetracker extends CI_Controller {
             );
         $this->data[ 'tt_layout' ]  = 'tt_categorie_edit';
         $this->data[ 'TODO' ]       = "categorie " . $categorie_id . "  add share function";
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 
@@ -427,7 +399,7 @@ class Timetracker extends CI_Controller {
 
         // TODO!
         $this->data[ 'TODO' ] = "tags page";
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 
@@ -479,7 +451,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'tt_layout' ]                 = 'tt_tag';
 
         $this->data[ 'TODO' ] = "tag " . $tag_id . " page";
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 
@@ -505,7 +477,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'tt_layout' ]                 = 'tt_tag_edit';
 
         $this->data[ 'TODO' ] = "tag " . $tag_id . " page";
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 
@@ -529,7 +501,7 @@ class Timetracker extends CI_Controller {
 
         // TODO!
         $this->data[ 'TODO' ] = "value types page";
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 
@@ -573,7 +545,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'tt_layout' ]                 = 'tt_valuetype';
 
         $this->data[ 'TODO' ] = "value type " . $valuetype_id . " page";
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 
@@ -600,7 +572,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'tt_layout' ]                 = 'tt_valuetype_edit';
 
         $this->data[ 'TODO' ] = "valuetype " . $valuetype_id . " edit page";
-        $this->_render();
+        $this->timetracker_lib->render();
     }
 
 
