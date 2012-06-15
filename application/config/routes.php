@@ -52,15 +52,25 @@ $route['account'] =     'auth/account';
  TODO! user params and shared categories
  */
 
+$regx=array(
+    'date'              =>   '(\d{4}-\d{2}-\d{2}|all)',
+    'date2'             =>   '(\d{4}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2}|all)',
+    'type_of_record'    =>   '(activity|todo|value)',
+    'type_of_obj'       =>   '(categorie|tag|valuetype)',
+    'type_of_button'    =>   '(summary|graph|export|log)',
+    'group_by'          =>   '(minute|hour|day|week)',
+    'export_format'     =>   '(summary|graph|export)' // add log
+    );
 
-$route['tt/([^\/]+)/(activity|todo|value)/(:num)/edit'] =                       'timetracker/generic_activity_edit/$1/$2/$3';
-$route['tt/([^\/]+)/(activity|todo|value)/(:num)/(:num)'] =     'timetracker/generic_activity_show/$1/$2/$3/$4'; // $4=page
-$route['tt/([^\/]+)/(activity|todo|value)/(:num)'] =            'timetracker/generic_activity_show/$1/$2/$3';
 
-$route['tt/([^\/]+)/(categories|tags|valuetypes)'] =            'timetracker/$2/$1';
-$route['tt/([^\/]+)/(categorie|tag|valuetype)/(:num)'] =        'timetracker/$2/$1/$3';
-$route['tt/([^\/]+)/(categorie|tag|valuetype)/(:num)/(:num)'] = 'timetracker/$2/$1/$3/$4'; // $4=page
-$route['tt/([^\/]+)/(categorie|tag|valuetype)/(:num)/edit'] =   'timetracker/$2_edit/$1/$3';
+$route['tt/([^\/]+)/'.$regx['type_of_record'].'/(:num)/edit'] =       'timetracker/generic_activity_edit/$1/$2/$3';
+$route['tt/([^\/]+)/'.$regx['type_of_record'].'/(:num)/(:num)'] =     'timetracker/generic_activity_show/$1/$2/$3/$4'; // $4=page
+$route['tt/([^\/]+)/'.$regx['type_of_record'].'/(:num)'] =            'timetracker/generic_activity_show/$1/$2/$3';
+
+$route['tt/([^\/]+)/'.$regx['type_of_obj']] =                  'timetracker/$2/$1';
+$route['tt/([^\/]+)/'.$regx['type_of_obj'].'/(:num)'] =        'timetracker/$2/$1/$3';
+$route['tt/([^\/]+)/'.$regx['type_of_obj'].'/(:num)/(:num)'] = 'timetracker/$2/$1/$3/$4'; // $4=page
+$route['tt/([^\/]+)/'.$regx['type_of_obj'].'/(:num)/edit'] =   'timetracker/$2_edit/$1/$3';
 
 
 
@@ -74,15 +84,14 @@ $route['tt/([^\/]+)/record/(:num)/stop'] =                      'timetracker/sto
 
 
 
-$route['tt/([^\/]+)/(summary|graph|export|log)'] =                              'timetracker_viz/$2/$1';
-$route['tt/([^\/]+)/(summary|graph|export|log)/([^\/]+)'] =                     'timetracker_viz/$2/$1/$3';
-$route['tt/([^\/]+)/(summary|graph|export|log)/([^\/]+)/([^\/]+)'] =            'timetracker_viz/$2/$1/$3/$4';    // $4=id
-$route['tt/([^\/]+)/(summary|graph|export|log)/([^\/]+)/([^\/]+)/([^\/]+)'] =   'timetracker_viz/$2/$1/$3/$4/$5'; // $5=plage_date
+$route['tt/([^\/]+)/'.$regx['type_of_button']] =                                 'timetracker_viz/$2/$1';
+$route['tt/([^\/]+)/'.$regx['type_of_button'].'/([^\/]+)'] =                     'timetracker_viz/$2/$1/$3';
+$route['tt/([^\/]+)/'.$regx['type_of_button'].'/([^\/]+)/([^\/]+)'] =            'timetracker_viz/$2/$1/$3/$4';    // $4=id
 
-$route['tt/([^\/]+)/graph/([^\/]+)/([^\/]+)/([^\/]+)/([^\/]+)'] =               'timetracker_viz/graph/$1/$2/$3/$4/$5';  //$5=graph_id
-$route['tt/([^\/]+)/export/([^\/]+)/([^\/]+)/([^\/]+)/([^\/]+)'] =              'timetracker_viz/export/$1/$2/$3/$4/$5';  //$5=format
 
-$route['tt/([^\/]+)/histo/([^\/]+)/([^\/]+)/([^\/]+)/(minute|hour|day|week).json'] =                   'timetracker_viz/histo_json/$1/$2/$3/$4/$5';
+$route['tt/([^\/]+)/export/([^\/]+)/([^\/]+)/([^\/]+)/([^\.]+).'.$regx['export_format']] =            'timetracker_viz/export/$1/$2/$3/$4/$5/$6';  //TODO with datefrom and to
+
+$route['tt/([^\/]+)/histo/([^\/]+)/([^\/]+)/'.$regx['date2'].'/'.$regx['group_by'].'.json'] =                   'timetracker_viz/histo_json/$1/$2/$3/$4';
 //ex: http://127.0.0.1/damien/CI_TimeTracker/tt/damien/histo/categorie/all/all/day.json      // user type id plagedat
 
 

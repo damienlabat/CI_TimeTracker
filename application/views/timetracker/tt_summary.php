@@ -30,7 +30,7 @@ if (isset($stats['categorie'][$rub])){
 
     foreach ($stats['categorie'][$rub] as $ki => $item) {
         if ($item['title']=='') $item['title']='/root/';
-        echo "<tr data-id='".$ki."' data-value='".$item['total']."'><td><a href='".tt_url($user_name,'summary','categorie',$item['id'],$dates['uri'] )."'>".$item['title']."</a></td><td>".$item['count']."</td><td>".duration2human($item['total'])."</td><td>".round($item['total']/$stats[ $rub.'_total' ]*100)." %</td></tr>";
+        echo "<tr data-id='".$ki."' data-value='".$item['total']."'><td><a href='".tt_url($user_name,'summary',$current,array('cat'=>'categorie', 'id'=>$item['id']))."'>".$item['title']."</a></td><td>".$item['count']."</td><td>".duration2human($item['total'])."</td><td>".round($item['total']/$stats[ $rub.'_total' ]*100)." %</td></tr>";
     }
 
     echo "</tbody></table></div>";
@@ -56,7 +56,7 @@ if (isset($stats[$rub])){
     <tbody>";
 
     foreach ($stats[$rub] as $ki => $item)
-        echo "<tr data-id='".$ki."' data-value='".$item['total']."'><td><a href='".tt_url($user_name,'summary',$item['type_of_record'],$item['id'],$dates['uri'] )."'>".$item['activity_path']."</a></td><td>".$item['count']."</td><td>".duration2human($item['total'])."</td><td>".round($item['total']/$stats[ $rub.'_total' ]*100)." %</td></tr>";
+        echo "<tr data-id='".$ki."' data-value='".$item['total']."'><td><a href='".tt_url($user_name,'summary',$current,array('cat'=> $item['type_of_record'], 'id'=>$item['id']))."'>".$item['activity_path']."</a></td><td>".$item['count']."</td><td>".duration2human($item['total'])."</td><td>".round($item['total']/$stats[ $rub.'_total' ]*100)." %</td></tr>";
 
 
     echo "</tbody></table></div>";
@@ -75,7 +75,7 @@ if (isset($stats[$rub])){
     <tbody>";
 
         foreach ($stats[$rub.'_tag'] as $kt => $tag) {
-            echo "<tr data-id='".$kt."' data-value='".$tag['total']."'><td><a href='".tt_url($user_name,'summary','tag',$kt,$dates['uri'] )."'>".$tag['tag']."</a></td><td>".$tag['count']."</td><td>".duration2human($tag['total'])."</td><td>".round($tag['total']/$stats[ $rub.'_tag_total' ]*100)." %</td></tr>";
+            echo "<tr data-id='".$kt."' data-value='".$tag['total']."'><td><a href='".tt_url($user_name,'summary',$current,array('cat'=> 'tag', 'id'=>$kt))."'>".$tag['tag']."</a></td><td>".$tag['count']."</td><td>".duration2human($tag['total'])."</td><td>".round($tag['total']/$stats[ $rub.'_tag_total' ]*100)." %</td></tr>";
         }
 
         echo "</tbody></table></div>";

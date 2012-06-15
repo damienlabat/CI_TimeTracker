@@ -276,37 +276,51 @@ if ( ! function_exists('value'))
 
 if ( ! function_exists('tt_url'))
 {
-    function tt_url($username,$type,$cat=NULL,$id=NULL,$dateuri=NULL,$tab=NULL,$graph=NULL )
+    function tt_url($username,$type,$current, $change=array() )
     {
         $url='tt/'.$username.'/'.$type;
-        $get_url=array();
+        $get_part=array();
+        $ext_part="";
+        $posturl="";
 
-        if ($dateuri==NULL) $dateuri='all';
-        if ($id=='NULL') $id='all';
+        foreach ($change as $key => $value) {
+            $current[$key]=$value;
+        }
 
-        if ($cat!=NULL) $url.='/'.$cat;
-        if ($id!=NULL) $url.='/'.$id;
-        if ($dateuri!=NULL) $url.='/'.$dateuri;
-        if ($graph!=NULL) $url.='/'.$graph;
+
+        if ( !isset($current['id']))     $current['id']='all'; //def val
+
+        if (isset($current['cat']))    $url.='/'.$current['cat'];
+        if (isset($current['id']))     $url.='/'.$current['id'];
+
+        if (isset($current['datefrom']))   $get_part[]= array('datefrom',$current['datefrom']);
+        if (isset($current['dateto']))     $get_part[]= array('dateto',$current['dateto']);
+        if (isset($current['graph']))      $get_part[]= array('graph',$current['graph']);
+        if (isset($current['tab']))        $get_part[]= array('tab',$current['tab']);
+
 
 
         if ($type=='records') {
-             if ($cat==NULL) $url='tt/'.$username;
-             elseif ($id=='all') $url='tt/'.$username.'/'.$cat;
-             else  $url='tt/'.$username.'/'.$cat.'/'.$id;
+             if ($current['cat']==NULL) $url='tt/'.$username;
+             elseif ($current['id']=='all') $url='tt/'.$username.'/'.$current['cat'];
+             else  $url='tt/'.$username.'/'.$current['cat'].'/'.$current['id'];
             }
 
-        if ($tab!=NULL)
-            $get_url[]= array('tab',$tab);
+        if ($type=='export') {
+            $ext_part='.'.$current['format'];
+            $get_part=array();
+        }
 
-        if (count($get_url)>0) {
+        if (count($get_part)>0) {
             $posturl='?';
-            foreach ($get_url as $gu) {
+            foreach ($get_part as $gu)
+            if ($gu) {
                 if ($posturl!='?') $posturl.='&';
                 $posturl.= $gu[0].'='. $gu[1];
             }
-            $url.=$posturl;
         }
+
+         $url .= $ext_part . $posturl;
 
 
         return site_url($url);

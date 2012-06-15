@@ -23,44 +23,49 @@ class Timetracker_viz extends CI_Controller {
      * ========================== */
 
 
-    public function summary( $username = NULL, $type_cat = 'categorie', $id = NULL, $date_plage = 'all' ) {
+    public function summary( $username = NULL, $type_cat = 'categorie', $id = NULL ) {
 
         //TODO add title and breadcrumb
 
         $this->timetracker_lib->checkUsername( $username );
 
         $tab = $this->input->get( 'tab', TRUE );
-        if ( !in_array( $type_cat, array('activity','todo','value') ) ) {
-            if ( $tab===FALSE ) $tab='activity';
 
-            $this->data[ 'count' ][ 'activity' ]    = $this->records->get_records_count($this->user_id, $this->_getRecordsParam( $username, $type_cat, $id, 'activity' , $date_plage ) );
-            $this->data[ 'count' ][ 'todo' ]        = $this->records->get_records_count($this->user_id, $this->_getRecordsParam( $username, $type_cat, $id, 'todo' , $date_plage ) );
-            $this->data[ 'count' ][ 'value' ]       = $this->records->get_records_count($this->user_id, $this->_getRecordsParam( $username, $type_cat, $id, 'value' , $date_plage ) );
-            $this->data[ 'tabs' ]               = tabs_buttons ( tt_url($username,'summary',$type_cat,$id, $date_plage), $this->data[ 'count' ], $tab );
-        }
-
+        $datefrom = $this->input->get( 'datefrom', TRUE );
+        $dateto =   $this->input->get( 'dateto', TRUE );
 
         $this->data['current']= array(
             "action" => 'summary',
-            "type_cat" => $type_cat,
-            "id" => $id,
-            "date_plage" => $date_plage,
-            "tab" => $tab
+            "cat" => $type_cat,
+            "id" => $id
             );
-        $this->data['records']= $this->_getRecords($username, $type_cat, $id, $tab , $date_plage);
+        if ($tab) $this->data['current']['tab']=$tab;
+
+        if ( !in_array( $type_cat, array('activity','todo','value') ) ) {
+            if ( $tab===FALSE ) $tab='activity';
+
+            $this->data[ 'count' ][ 'activity' ]    = $this->records->get_records_count($this->user_id, $this->_getRecordsParam( $username, $type_cat, $id, 'activity' , $datefrom,$dateto ) );
+            $this->data[ 'count' ][ 'todo' ]        = $this->records->get_records_count($this->user_id, $this->_getRecordsParam( $username, $type_cat, $id, 'todo' , $datefrom,$dateto ) );
+            $this->data[ 'count' ][ 'value' ]       = $this->records->get_records_count($this->user_id, $this->_getRecordsParam( $username, $type_cat, $id, 'value' , $datefrom,$dateto ) );
+            $this->data[ 'tabs' ]               = tabs_buttons ( tt_url($username,'summary',$this->data['current']), $this->data[ 'count' ], $tab );
+        }
+
+
+
+        $this->data['records']= $this->_getRecords($username, $type_cat, $id, $tab , $datefrom, $dateto);
 
 
         if ($type_cat=='categorie') {
 
             $this->data[ 'categorie' ] = $this->categories->get_categorie_by_id( $id );
 
-            $this->data[ 'breadcrumb' ][]= array( 'title'=> 'categories', 'url'=>tt_url($username,'summary','categorie','all',$date_plage) );
+            $this->data[ 'breadcrumb' ][]= array( 'title'=> 'categories', 'url'=>tt_url($username,'summary',$this->data['current'],array('cat'=>'categorie', 'id'=>NULL )) );
 
             if ( $this->data[ 'categorie' ]['id']!=NULL) {
                 if ( $this->data[ 'categorie' ]['title']=='')
-                    $this->data[ 'breadcrumb' ][]= array( 'title'=> '_root_', 'url'=>tt_url($username,'summary','categorie',$id,  $date_plage) );
+                    $this->data[ 'breadcrumb' ][]= array( 'title'=> '_root_', 'url'=>tt_url($username,'summary',$this->data['current'],array('cat'=>'categorie', 'id'=>$this->data[ 'categorie' ]['id'] )) );
                 else
-                    $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'categorie' ]['title'], 'url'=>tt_url($username,'summary','categorie',$id,  $date_plage) );
+                    $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'categorie' ]['title'], 'url'=>tt_url($username,'summary',$this->data['current'],array('cat'=>'categorie', 'id'=>$this->data[ 'categorie' ]['id'] )) );
             }
 
             $this->data[ 'title' ]='summary for categorie: '.$this->data[ 'categorie' ]['title'];
@@ -72,7 +77,7 @@ class Timetracker_viz extends CI_Controller {
 
             $this->data[ 'tag' ] = $this->tags->get_tag_by_id( $id );
 
-            $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'tag' ]['tag'], 'url'=>tt_url($username,'summary','tag',$this->data[ 'tag' ]['id'],  $date_plage) );
+            $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'tag' ]['tag'], 'url'=>tt_url($username,'summary',$this->data['current'],array('cat'=>'tag','id'=>$this->data[ 'tag' ]['id'])) );
 
             $this->data[ 'title' ]='summary for tag : '.$this->data[ 'tag' ]['tag'];
 
@@ -82,7 +87,7 @@ class Timetracker_viz extends CI_Controller {
 
             $this->data[ 'value_type' ] = $this->values->get_valuetype_by_id( $id );
 
-            $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'value_type' ]['title'], 'url'=>tt_url($username,'summary','value_type',$this->data[ 'value_type' ]['id'],  $date_plage) );
+            $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'value_type' ]['title'], 'url'=>tt_url($username,'summary',$this->data['current'],array('cat'=>'value_type','id'=>$this->data[ 'value_type' ]['id'])) );
 
             $this->data[ 'title' ]='summary for value type : '.$this->data[ 'value_type' ]['title'];
 
@@ -92,10 +97,11 @@ class Timetracker_viz extends CI_Controller {
 
             $this->data[ 'activity' ] = $this->activities->get_activity_by_id_full( $id );
 
+            $this->data[ 'breadcrumb' ][]= array( 'title'=> 'categories', 'url'=>tt_url($username,'summary',$this->data['current'],array('cat'=>'categorie', 'id'=>NULL )) );
             if ( $this->data[ 'activity' ][ 'categorie' ]['title']!='')
-                $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'activity' ][ 'categorie' ]['title'], 'url'=>tt_url($username,'summary','categorie',$this->data[ 'activity' ][ 'categorie' ]['id'],  $date_plage) );
+                $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'activity' ][ 'categorie' ]['title'], 'url'=>tt_url($username,'summary',$this->data['current'],array('cat'=>'categorie','id'=>$this->data[ 'activity' ][ 'categorie' ]['id'])) );
 
-            $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'activity' ]['title'], 'url'=>tt_url($username,'summary',$this->data[ 'activity' ]['type_of_record'],$this->data[ 'activity' ]['id'],  $date_plage) );
+            $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'activity' ]['title'], 'url'=>tt_url($username,'summary',$this->data['current'],array('cat'=>$this->data[ 'activity' ]['type_of_record'],'id'=>$this->data[ 'activity' ]['id'])) );
 
             $this->data[ 'title' ]='summary for '.$this->data[ 'activity' ]['type_of_record'].': '.$this->data[ 'activity' ]['title'];
 
@@ -117,7 +123,7 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-     public function graph( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = 'all', $type_graph = 'histo' ) {
+     public function graph( $username = NULL, $type_cat = 'categories', $id = NULL, $type_graph = 'histo' ) {
 
         $this->timetracker_lib->checkUsername( $username );
 
@@ -128,22 +134,27 @@ class Timetracker_viz extends CI_Controller {
          $groupby = $this->input->get( 'groupby', TRUE );
             if ( $groupby===FALSE ) $groupby='day';
 
+        $datefrom = $this->input->get( 'datefrom', TRUE );
+        $dateto =   $this->input->get( 'dateto', TRUE );
+            if ( $datefrom && $dateto ) $date_plage= $datefrom.'_'.$dateto;
+                else $date_plage='all';
+
 
         $this->data['current']= array(
             "action" => 'graph',
             "type_cat"=>$type_cat,
             "id"=>$id,
             "date_plage"=>$date_plage,
-            "tab" => $tab,
             "type_graph"=>$type_graph,
             "group_by"=>$groupby
             );
+
+        if ($tab) $this->data['current']['tab']=$tab;
 
         $this->data['datagraph']= $this->data['current'];
         unset($this->data['datagraph']["action"]);
         $this->data['datagraph']['username']=$username;
 
-        $this->data['records']= $this->_getRecords($username, $type_cat, $id, $tab, $date_plage); // todo virer
 
         $this->data[ 'tt_layout' ]          = 'tt_graph';
         $this->timetracker_lib->render();
@@ -151,19 +162,20 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-    public function export( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = 'all', $format = 'json' ) {
+    public function export( $username = NULL, $type_cat = 'categories', $id = NULL, $date_from = NULL, $date_to=NULL, $format = 'json' ) {
+        // TODO change to datefrom dateto
 
         $this->load->helper('download');
         $this->timetracker_lib->checkUsername( $username );
 
-        $this->data['current']= array(
+
+        /*$this->data['current']= array(
             "action" => 'export',
             "type_cat"=>$type_cat,
-            "id"=>$id,
-            "date_plage"=>$date_plage
-            );
+            "id"=>$id
+            );*/
 
-        $records= $this->_getRecords($username, $type_cat, $id, NULL, $date_plage);
+        $records= $this->_getRecords($username, $type_cat, $id, NULL, $datefrom, $dateto);
 
         $this->output->enable_profiler( FALSE );
 
@@ -230,22 +242,21 @@ class Timetracker_viz extends CI_Controller {
 
  public function histo_json( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = 'all', $group_by='day' ) {
 
-     // basé sur unix time donc ne tiens pas compte des fuseaux :( TODO
-     // change to MySQL date
-
         $this->load->helper('download');
         $this->timetracker_lib->checkUsername( $username );
+        $datefrom=$dateto=NULL;
+        $sp= preg_split("/_/",$date_plage);
+        if ($sp[0]!='all') $datefrom=$sp[0];
+        if (isset($sp[1])) $dateto=$sp[1];
 
-        $records= $this->_getRecords(   $username, $type_cat, $id, 'activity', $date_plage);
-        $param=$this->_getRecordsParam( $username, $type_cat, $id, 'activity' , $date_plage );
+
+        $records= $this->_getRecords(   $username, $type_cat, $id, 'activity', $datefrom,$dateto);
+        $param=$this->_getRecordsParam( $username, $type_cat, $id, 'activity' , $datefrom,$dateto );
 
         $this->output->enable_profiler( FALSE );
 
-        $date_plage_array= $this->_getDatePlage($date_plage);
-
-
-        if ($date_plage_array['min']==NULL) $date_plage_array['min']= $this->records->get_min_time($this->user_id, $param);
-        if ($date_plage_array['max']==NULL) $date_plage_array['max']= $this->records->get_max_time($this->user_id, $param);
+        if ($datefrom==NULL) $datefrom= $this->records->get_min_time($this->user_id, $param);
+        if (  $dateto==NULL) $dateto  = $this->records->get_max_time($this->user_id, $param);
 
 
 
@@ -264,14 +275,12 @@ class Timetracker_viz extends CI_Controller {
                 break;
         }
 
-       // $date_plage_array['max']= date( 'Y-m-d H:i:s', strtotime( $date_plage_array['max'] )+ $timelapse[0] );
-
         $data=array(
-            'min'=>$date_plage_array['min'],
+            'min'=> $datefrom,
             'times'=> array()
             );
 
-        if ($date_plage_array['max']==='running') {
+        if ($dateto==='running') {
             $data['running']=TRUE;
             $ds=preg_split('/ /', $this->server_time); // just keep date
             $data['max']=$ds[0];
@@ -279,7 +288,7 @@ class Timetracker_viz extends CI_Controller {
         else
         {
             $data['running']=FALSE;
-            $data['max']=$date_plage_array['max'];
+            $data['max']= $dateto;
         }
 
 
@@ -318,57 +327,10 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-    private function _getDatePlage($date_plage) {
 
-        $d1=$d2=NULL;
-        $type='all';
+    private function _getRecords( $username, $type_cat, $id, $type_of_record , $datefrom, $dateto ) {
 
-        $sp= preg_split("/_/",$date_plage);
-
-        if (count($sp)!=2) return  array( 'min'=> NULL, 'max' => NULL, 'type'=> 'all', 'uri' => $date_plage);;
-
-        if ( $sp[1] == 'Y' ) {
-            $d1 =  new DateTime( $sp[0].'-01-01');
-            $d2 =  new DateTime( $sp[0].'-01-01');
-            $d2->add( new DateInterval( 'P1Y' ) );
-            $type='year';
-            }
-
-       elseif ( $sp[1] == 'M' )  {
-            $d1 =  new DateTime( $sp[0].'-01');
-            $d2 =  new DateTime( $sp[0].'-01');
-            $d2->add( new DateInterval( 'P1M' ) );
-            $type='month';
-            }
-
-        elseif ( $sp[1] == 'W' )  {
-            $d1 =  new DateTime( $sp[0]);
-            $d2 =  new DateTime( $sp[0]);
-            $d2->add( new DateInterval( 'P1W' ) );
-            $type='week';
-            }
-
-        elseif ( $sp[1] == 'D' )  {
-            $d1 =  new DateTime( $sp[0]);
-            $d2 =  new DateTime( $sp[0]);
-            $d2->add( new DateInterval( 'P1D' ) );
-            $type='day';
-            }
-
-        else {
-            $d1 =  new DateTime( $sp[0]);
-            $d2 =  new DateTime( $sp[1]);
-            $type='manual';
-            }
-
-        return array( 'min'=> $d1->format('Y-m-d H:i:s'), 'max' => $d2->format('Y-m-d H:i:s'), 'type'=> $type, 'uri' => $date_plage);
-    }
-
-
-
-    private function _getRecords( $username, $type_cat, $id, $type_of_record , $date_plage ) {
-
-        $param=$this->_getRecordsParam( $username, $type_cat, $id, $type_of_record , $date_plage );
+        $param=$this->_getRecordsParam( $username, $type_cat, $id, $type_of_record , $datefrom, $dateto );
 
         $res= $this->records->get_records_full($this->user_id, $param);
 
@@ -377,7 +339,7 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-    private function _getRecordsParam( $username, $type_cat, $id, $type_of_record , $date_plage ) {
+    private function _getRecordsParam( $username, $type_cat, $id, $type_of_record , $datefrom, $dateto ) {
         $param=array('order'=>'ASC');
 
         if ($id=='all') $id=NULL;
@@ -394,17 +356,8 @@ class Timetracker_viz extends CI_Controller {
         if ($type_cat=='tag')       $param['tags']= array( $id );
         if ($type_cat=='valuetype') $param['valuetype']=  $id;
 
-
-
-
-            $date_array=$this->_getDatePlage($date_plage);
-            $this->data['dates']= $date_array;
-            $param['datemin'] = $date_array['min'];
-            $param['datemax'] = $date_array['max'];
-
-
-
-
+        $param['datemin'] = $datefrom;
+        $param['datemax'] = $dateto;
         $param['order']='ASC';
 
         return $param;
