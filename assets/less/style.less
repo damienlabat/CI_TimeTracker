@@ -56,19 +56,38 @@ svg {
     view-port:'0 200 0 200';
     }
 
+svg text {
+    font-family: @sansFontFamily;
+    stroke:none;
+    fill: #000;
+    }
+
 svg .slice text {
             font-size: 14pt;
-            font-family: arial;
-            stroke:none;
             opacity:0;
             dominant-baseline: central;
         }
 
+svg rect.activity {
+    cursor:pointer;
+    stroke: #000;
+    stroke-width: 0.5pt;
+    stroke-opacity:0.2;
+    shape-rendering: crispEdges;
+    }
 svg #xaxis_g line, svg #xaxis_g path,
 svg #yaxis_g line, svg #yaxis_g path
  {
         fill:none;
         stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+svg .tt_background {
+    stroke: #000;
+    stroke-width: 0.5pt;
+    stroke-opacity:0.2;
+    shape-rendering: crispEdges;
     }
 
 

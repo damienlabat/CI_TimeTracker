@@ -144,7 +144,7 @@ class Records extends CI_Model {
 
     function get_min_time($user_id, $param = array()) {
 
-        $req = 'SELECT  min(' . $this->records_table . '.start_time) as mintime
+        $req = 'SELECT  min(DATE(' . $this->records_table . '.start_time)) as mintime
              '.$this->param2fromwhere($user_id, $param);
 
         $query = $this->db->query( $req );
@@ -156,7 +156,9 @@ class Records extends CI_Model {
     function get_max_time($user_id, $param = array()) {
 
 
-        $req = 'SELECT  max(' . $this->records_table . '.start_time) as maxtime
+        /*$req = 'SELECT  ADDDATE(max(DATE(' . $this->records_table . '.start_time)), INTERVAL 1 DAY) as maxtime
+             '.$this->param2fromwhere($user_id, $param);*/
+        $req = 'SELECT  max(DATE(' . $this->records_table . '.start_time)) as maxtime
              '.$this->param2fromwhere($user_id, $param);
 
         $query = $this->db->query( $req );

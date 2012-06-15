@@ -16,8 +16,7 @@ $(function() {
 
         /*** TEST ***/
 
-        log(mysql_time);
-        log( mysqlDate2time(mysql_time) );
+
 
 });
 
@@ -40,7 +39,11 @@ window.log = function(){
 
 mysqlDate2time = function (str) {
     var t= str.split(/[- :]/);
-    var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+    if (t.length>3)
+        var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+    else
+        var d = new Date(t[0], t[1]-1, t[2], 0, 0, 0);
+
     return d;
     }
 
@@ -171,14 +174,18 @@ function init_graph(obj) {
         if (self.json_param.type_graph== 'histo') self.graph=self.histograph();
     }
 
+    $('#groupby_select').change(
+        function(){
+            graph.updateJsonParam('group_by', $(this).val() );
+        }
+    );
+
     //init
     self.loadJson( function(){ self.buildGraph() } );
 
 
     function gettimelapse(timelapsename) {
         var r={
-            second:     1 *1000,
-            minute:     60 *1000,
             hour:       60*60 *1000,
             day:        60*60*24 *1000,
             week:       60*60*24*7 *1000
@@ -192,55 +199,102 @@ function init_graph(obj) {
 
 
 
+
     /* histograph */
     self.histograph=function() {
 
         var histograph_obj={};
 
-        var w = 1170, h = 600, color = d3.scale.category20();
+        var w = 1170, h = 600, color = d3.scale.category20(),
+        bar_width= (1/2) * w/self.data.times.length;
 
         var vis = d3.select(self.target[0]).append("svg:svg")
             .attr("width", w)
             .attr("height", h+20)
             .attr("viewBox",0+" "+0+" "+w+" "+(h+20));
 
-        var graphgroup= vis.append("svg:g").attr("id", "graph_g");
+        var graphgroup= vis.append("svg:g").attr("id", "graph_g")
+            .on('mousemove',function(){ self.mousepos=d3.mouse(this) });
         vis.append("svg:g").attr("id", "xaxis_g");
         vis.append("svg:g").attr("id", "yaxis_g");
+
+        var tooltip=vis.append("svg:g")
+            .attr("id", "tooltip")
+            .style("pointer-events","none")
+            .attr('transform','translate(100,100)');
+        tooltip.append("svg:rect")
+                .attr('class','tt_background')
+                .attr('fill','white')
+                .attr('fill-opacity', 0.8 )
+                .attr('width','100');
+        tooltip.style('opacity',0);
+
+
+
+
+        histograph_obj.showtip=function(textarray) {
+
+            tooltip.selectAll('text').remove();
+
+            for (i in textarray)
+                 tooltip.append('svg:text').text(textarray[i]).attr('y', i*20+20 ).attr('x','10');
+
+            var maxw=50;
+            tooltip.selectAll('text').each( function() { var bb=this.getBBox(); if (bb.width>maxw) maxw=bb.width; } );
+            tooltip.wtt= maxw+20;
+            tooltip.htt= 20*textarray.length +10;
+            tooltip.select('rect.tt_background')
+                .attr('height', tooltip.htt )
+                .attr('width', tooltip.wtt);
+            tooltip.transition().style('opacity',1);
+
+
+        }
+
+        histograph_obj.actutip=function() {
+            x=self.mousepos[0];
+            y=self.mousepos[1];
+
+            var dx = 40;
+            var xb= x + dx;
+            var yb= y + dx; //- tooltip.htt/2;
+
+            if (xb+tooltip.wtt > w)   xb= x - tooltip.wtt -dx;
+
+
+            if (yb+tooltip.htt > h)   yb= h - tooltip.htt;
+
+            tooltip.attr('transform','translate('+xb+','+yb+')');
+
+              }
+
+        histograph_obj.hidetip=function() {      tooltip.transition().style('opacity',0);     }
 
 
         histograph_obj.update=function() {
             var data=self.data;
-            var bar_width= (1/2) * w/self.data.times.length;
+            bar_width= (1/2) * (w-100)/self.data.times.length;
 
-            //var fx = d3.time.scale().domain([mysqlDate2time(data.min), new Date( mysqlDate2time(data.max).getTime()+self.timelapse ) ]).range([50, w]);
-            var fx = d3.time.scale().domain([mysqlDate2time(data.min), mysqlDate2time(data.max) ]).range([50, w]);
+            var fx = d3.time.scale().domain([mysqlDate2time(data.min), mysqlDate2time(data.max) ]).range([100, w]);
 
             var fy = d3.scale.linear().domain([0, d3.max( data.times, function(d){ return d.total } )]).range([h, 10]);
             var fh = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total } )]).range([0, h-10]);
 
             var f_yaxis = d3.scale.linear().domain([0, d3.max(data.times, function(d){ return d.total/(60*60) } )]).range([h, 10]);
-            //var f_xaxis = d3.time.scale().domain([mysqlDate2time(data.min), new Date( mysqlDate2time(data.max).getTime()+self.timelapse ) ]).range([50+bar_width/2, w+bar_width/2]);
-            var f_xaxis = d3.time.scale().domain([mysqlDate2time(data.min), mysqlDate2time(data.max) ]).range([50+bar_width/2, w+bar_width/2]);
+            var f_xaxis = d3.time.scale().domain([mysqlDate2time(data.min), mysqlDate2time(data.max) ]).range([100+bar_width/2, w+bar_width/2]);
 
 
 
-            var format_date= function(t) {
-
-               /* var res=t.getFullYear()+'-'+(t.getMonth()+1)+'-'+t.getDate();
-                if (self.timelapse<60*60*24*10000) {
-                    var h=t.getHours()+':'+t.getMinutes();
-                    if (h!='0:0') res+=' '+h;
-                    }
-                return res*/
-
+            var format_date= function(t, fulldate) {
+                if (fulldate==null)  fulldate=false;
                 var formatD = d3.time.format("%Y-%m-%d");
                 var d=formatD(t);
 
                 var formatT = d3.time.format("%H:%M");
                 var t=formatT(t);
 
-                if (t!='00:00') res=t;
+                if (fulldate) res=d+' '+t;
+                else if (t!='00:00') res=t;
                     else res=d;
 
                 return res
@@ -249,17 +303,26 @@ function init_graph(obj) {
 
             var format_duration= function(duration) {
 
-                duration*=60;
-
                 if (duration==0) return '';
 
-                var h= Math.floor(duration/60);
-                var m= duration%60;
+                var h= Math.floor(duration/60/60);
+                var m= Math.floor(duration/60) % 60;
+                var s= duration%60;
 
                 if (m<10) m= '0'+m;
 
-
-                res= h+':'+m;
+                if (h==0) res= m+' min';//' '+s+'s';
+                    else if (h<24) {
+                            if (m=='00') res= h+' h';
+                                else res= h+' h '+m+' min';
+                        }
+                        else {
+                            var d= Math.floor( h/24);
+                            h= h%24;
+                            if (h==0) res= d+' days';
+                                else if (m=='00') res= d+' days '+h+' h';
+                                    else res= d+' days '+h+' h '+m+' min';
+                            }
 
                 return res
             }
@@ -272,30 +335,45 @@ function init_graph(obj) {
                 .attr('class', 'timegroup')
                 .attr('transform', function(d) {  return 'translate('+fx( mysqlDate2time(d.time) )+',0)'       });
 
-            timegroups.transition(2000).attr('transform', function(d) {    return 'translate('+fx( mysqlDate2time(d.time) )+',0)'       });
+            timegroups.transition().attr('transform', function(d) {    return 'translate('+fx( mysqlDate2time(d.time) )+',0)'       });
 
             timegroups.exit().remove();
 
+            function addparent(d,parent) {
+                for (i in d) d[i].parent= parent;
+                return d
+            }
 
 
-                var activityrects = timegroups.selectAll('rect.activity').data(function(d) {return d.activities}, function(d) { return d.activity_ID });
+
+                var activityrects = timegroups.selectAll('rect.activity').data(function(d) { return addparent(d.activities,d)}, function(d) { return d.activity_ID });
                 activityrects.enter().append('svg:rect')
                     .attr('class', 'activity')
-                    .attr('width', function() {         return bar_width    })
+                    .attr('width', bar_width )
                     .attr('y', fy(0) )
                     .attr('height', 0)
-                    .attr('fill', function(d, i) {      return color(d.activity_ID)  })
-                    .on('mouseover', function(d) {    /*log(d);*/ document.title=d.activity+' '+d.duration   });
+                    .attr('fill', function(d, i) { return color(d.activity_ID)  })
+                    .on('mouseover', function(d) {
+                            var t=[];
+                            t.push( format_date(mysqlDate2time(d.parent.time), true) );
+                            t.push( d.activity);
+                            t.push( format_duration(d.duration) );
+                            histograph_obj.showtip(t)
+                         })
+                    .on('mouseout', function() { histograph_obj.hidetip() } )
+                    .on('mousemove', function() { histograph_obj.actutip() } )
+                    .on('click', function(d) {          alert(d.parent);  });
+
 
                 activityrects.transition(2000)
                     .attr('width', function() {         return bar_width    })
                     .attr('y', function(d,i) {
                         if (i==0) cumul=0;
-                        var res=fy( cumul + d.duration);
+                        var oy=fy( cumul + d.duration);
                         cumul+=d.duration;
-                        return res
+                        return oy
                         })
-                    .attr('height', function(d) {   return fh(d.duration)   });
+                    .attr('height', function(d) {  return fh(d.duration)  });
 
                 activityrects.exit().remove();
 
@@ -305,8 +383,8 @@ function init_graph(obj) {
                 xaxis.transition(800).call(d3.svg.axis().scale(f_xaxis).ticks(7).tickFormat( function(d) { return format_date(d) } ) );
 
 
-                var yaxis = vis.select('#yaxis_g').attr("transform", "translate(50,0)");
-                 yaxis.transition(800).call( d3.svg.axis().orient('left').scale(f_yaxis).ticks(6).tickFormat( function(d) { return format_duration(d) } ) );
+                var yaxis = vis.select('#yaxis_g').attr("transform", "translate(100,0)");
+                 yaxis.transition(800).call( d3.svg.axis().orient('left').scale(f_yaxis).ticks(6).tickFormat( function(d) { return format_duration(d*60*60) } ) );
 
             }
 
