@@ -25,7 +25,8 @@ class Timetracker_viz extends CI_Controller {
 
     public function summary( $username = NULL, $type_cat = 'categorie', $id = NULL ) {
 
-        //TODO add title and breadcrumb
+        // TODO gestion date bugue
+
 
         $this->timetracker_lib->checkUsername( $username );
 
@@ -37,9 +38,17 @@ class Timetracker_viz extends CI_Controller {
         $this->data['current']= array(
             "action" => 'summary',
             "cat" => $type_cat,
-            "id" => $id
+            "id" => $id,
+            "datefrom" => $datefrom,
+            "dateto" => $dateto
             );
         if ($tab) $this->data['current']['tab']=$tab;
+
+        $this->data['datefrom']=    $datefrom;
+        $this->data['dateto']=      $dateto;
+
+
+
 
         if ( !in_array( $type_cat, array('activity','todo','value') ) ) {
             if ( $tab===FALSE ) $tab='activity';
@@ -111,7 +120,7 @@ class Timetracker_viz extends CI_Controller {
 
         if ($this->data['records']) {
             usort( $this->data['records'] , array("Timetracker_viz", "_orderByCat"));
-            $this->data['stats']= $this->_getStats($this->data['records'], $type_cat,$this->data['dates']['min'],$this->data['dates']['max']);
+            $this->data['stats']= $this->_getStats($this->data['records'], $type_cat,$datefrom,$dateto);
         }
 
 
@@ -124,6 +133,8 @@ class Timetracker_viz extends CI_Controller {
 
 
      public function graph( $username = NULL, $type_cat = 'categories', $id = NULL, $type_graph = 'histo' ) {
+
+         // TODO gestion date bugue
 
         $this->timetracker_lib->checkUsername( $username );
 
@@ -146,7 +157,9 @@ class Timetracker_viz extends CI_Controller {
             "id"=>$id,
             "date_plage"=>$date_plage,
             "type_graph"=>$type_graph,
-            "group_by"=>$groupby
+            "group_by"=>$groupby,
+            "datefrom" => $datefrom,
+            "dateto" => $dateto
             );
 
         if ($tab) $this->data['current']['tab']=$tab;
@@ -163,17 +176,11 @@ class Timetracker_viz extends CI_Controller {
 
 
     public function export( $username = NULL, $type_cat = 'categories', $id = NULL, $date_from = NULL, $date_to=NULL, $format = 'json' ) {
-        // TODO change to datefrom dateto
+        // TODO gestion date bugue
 
         $this->load->helper('download');
         $this->timetracker_lib->checkUsername( $username );
 
-
-        /*$this->data['current']= array(
-            "action" => 'export',
-            "type_cat"=>$type_cat,
-            "id"=>$id
-            );*/
 
         $records= $this->_getRecords($username, $type_cat, $id, NULL, $datefrom, $dateto);
 

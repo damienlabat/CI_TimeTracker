@@ -48,6 +48,45 @@ mysqlDate2time = function (str) {
     }
 
 
+/*** datepicker ***/
+
+
+$(function() {
+
+
+            $('#datefrombtn').datepicker()
+                .on('changeDate', function(ev){
+                    if (ev.date.valueOf() > dateto.valueOf()){
+                        $('#alert').show().find('strong').text('The start date can not be greater then the end date');
+                    } else {
+                        $('#alert').hide();
+                        datefrom = new Date(ev.date);
+                        $('#datefrom').val($('#datefrombtn').data('date'));
+                    }
+                    $('#datefrombtn').datepicker('hide');
+                });
+
+            $('#dateto').datepicker();
+            $('.datepicker').datepicker();
+
+
+
+                /*
+
+                 $('#datetobtn').datepicker()
+                .on('changeDate', function(ev){
+                    if (ev.date.valueOf() < datefrom.valueOf()){
+                        $('#alert').show().find('strong').text('The end date can not be less then the start date');
+                    } else {
+                        $('#alert').hide();
+                        dateto = new Date(ev.date);
+                        $('#dateto').val($('#datetobtn').data('date'));
+                    }
+                    $('#datetobtn').datepicker('hide');
+                });
+
+                 */
+});
 
 
 

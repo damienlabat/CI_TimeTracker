@@ -1,4 +1,5 @@
 <?php
+$this->load->view( 'timetracker/form/date_form' );
 $this->load->view( 'timetracker/tab_buttons' );
 //catgeorie
 $rubs=array('activity','todo','value');
