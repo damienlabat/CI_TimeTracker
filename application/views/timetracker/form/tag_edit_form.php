@@ -1,5 +1,5 @@
 <?php echo validation_errors(); ?>
-<?= form_open( 'tt/' . $user_name . '/tag/' . $tag[ 'id' ] . '/edit', array(
+<?= form_open( 'tt/' . $user['name'] . '/tag/' . $tag[ 'id' ] . '/edit', array(
      'id' => 'classicform'
 ) ) ?>
 

@@ -47,8 +47,9 @@ class Tags extends CI_Model {
      * @return          array
      */
     function get_tag_list( $user_id ) {
+        //'SELECT tags . * , count( activity_id ) AS count
         $query = $this->db->query( //TODO
-            'SELECT tags . * , count( activity_id ) AS count
+            'SELECT tags . * , count( 1 ) AS count
             FROM tags
                 LEFT JOIN l_activities_tags ON tags.id = l_activities_tags.tag_ID
             WHERE user_ID="' . $user_id . '"

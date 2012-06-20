@@ -72,7 +72,7 @@ if ( ! function_exists('record_li'))
     if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
 
 
-    echo "</li>";
+    $html.= "</li>";
         return $html;
     }
 }
@@ -98,8 +98,8 @@ if ( ! function_exists('record_div'))
     if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
 
 
-    echo "</div>";
-        return $html;
+    $html.= "</div>";
+    return $html;
     }
 }
 
@@ -124,7 +124,7 @@ if ( ! function_exists('record_tr'))
     //if ($record['description']!='') $html.="  <p>description:<br/>".$record['description']."</p>";
 
 
-    echo "</tr>";
+    $html.= "</tr>";
         return $html;
     }
 }
@@ -200,15 +200,17 @@ if ( ! function_exists('record_buttons'))
       if (isset($record['running'])) {
 
         $html.= ' <span class="buttons btn-group">';
-        $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/edit')."'><i class='icon-pencil'></i> edit</a>";
-        if (!$record['running'])
-            $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/restart')."'><i class='icon-play'></i> restart</a>";
-        if ($show_delete) $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete')."'><i class='icon-trash'></i> delete</a>";
         if ($record['running'])
-              $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/stop')."'><i class='icon-stop'></i> stop</a>";
+              $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/stop')."' title='stop'><i class='icon-stop'></i></a>";
+
+        $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/edit')."' title='edit'><i class='icon-pencil'></i></a>";
+        if (!$record['running'])
+            $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/restart')."' title='restart'><i class='icon-repeat'></i></a>";
+        if ($show_delete) $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete')."' title='delete'><i class='icon-trash'></i></a>";
+
         $html.= '</span>';
 
-          if (element('delete_confirm',$record)==TRUE)    $html.= "<div><a class='btn btn-mini btn-danger' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete?delete=true')."'><i class='icon-trash'></i> delete ! confirmed ?</a></div>";
+          if (element('delete_confirm',$record)==TRUE)    $html.= "<div><a class='btn btn-mini btn-danger' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete?delete=true')."' title='delete'><i class='icon-trash'></i> delete ! confirmed ?</a></div>";
     }
 
 
@@ -300,9 +302,9 @@ if ( ! function_exists('tt_url'))
 
 
 
-        if ($type=='records') {
+        if ($type=='record') {
              if ($current['cat']==NULL) $url='tt/'.$username;
-             elseif ($current['id']=='all') $url='tt/'.$username.'/'.$current['cat'];
+             elseif ($current['id']=='all') $url='tt/'.$username; // no more categories/tags/valuetypes page
              else  $url='tt/'.$username.'/'.$current['cat'].'/'.$current['id'];
             }
 
@@ -333,15 +335,15 @@ if ( ! function_exists('tt_url'))
 
 if ( ! function_exists('tabs_buttons'))
 {
-    function tabs_buttons($baseurl,$count_array,$current_tab )
+    //function tabs_buttons($baseurl,$count_array,$current_tab )
+    function tabs_buttons($username,$current,$count_array )
     {
 
         $tab_titles=array('activity','todo','value');
 
         foreach ($tab_titles AS $tab_title) {
 
-            $url=$baseurl;
-            if ( $tab_title != $tab_titles[0] ) $url.='?tab='.$tab_title;
+            $url= tt_url($username,$current['action'],$current, $change=array('tab'=>$tab_title) );
 
             $title = $tab_title;
 
@@ -354,7 +356,7 @@ if ( ! function_exists('tabs_buttons'))
             $tabs[$tab_title]   =       array( 'url'=> $url,  'title'=> $title );
         }
 
-        $tabs[ $current_tab ][ 'active' ] = TRUE;
+        $tabs[ $current['tab'] ][ 'active' ] = TRUE;
 
 
         return $tabs;

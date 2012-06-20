@@ -1,16 +1,33 @@
-<form method='get'>
+<div class='well clearfix'>
+    <div class='span12'>
+    <form method='get' id='date_form' class='form-inline'>
+        <div class="btn-toolbar">
+            <div class="btn-group">
+                <label for="datefrom">From </label>
+                <input type="date" name="datefrom" id="datefrom" class="span2 dp_input" data-date-format="yyyy-mm-dd" data-date-weekStart="1" value="<?=$current['datefrom']?>" data-date="<?=$current['datefrom']?>">
 
-            <label for="datefrom">Start date</label>
-            <div data-date-format="dd-mm-yyyy" data-date="<?=$current['datefrom']?>" class="input-append date datepicker">
-                <input type="date" class="span2" readonly="" value="<?=$current['datefrom']?>" name="datefrom">
-                <button class="btn datepickertrigger" type="button"><i class="icon-th"></i></button>
+                <label for="dateto"> to </label>
+                <input type="date" name="dateto"   id="dateto"   class="span2 dp_input" data-date-format="yyyy-mm-dd" data-date-weekStart="1" value="<?=$current['dateto']?>"   data-date="<?=$current['dateto']?>">
+                <input type="hidden"  value="<?=$current['tab']?>" name="tab">
+            </div>
+            <div class="btn-group">
+                <a href="#" class="btn dropdown-toggle" data-toggle="dropdown">select <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href='#' onclick='alert("TODO")'>today</a></li>
+                    <li><a href='#' onclick='alert("TODO")'>this week</a></li>
+                    <li><a href='#' onclick='alert("TODO")'>last week</a></li>
+                    <li><a href='#' onclick='alert("TODO")'>this month</a></li>
+                    <li><a href='#' onclick='alert("TODO")'>last month</a></li>
+                </ul>
             </div>
 
-            <label for="dateto">To date</label>
-            <div data-date-format="dd-mm-yyyy" data-date="<?=$current['dateto']?>" class="input-append date datepicker">
-                <input type="date" class="span2" readonly="" value="<?=$current['dateto']?>" name="dateto">
-                <button class="btn datepickertrigger" type="button"><i class="icon-th"></i></button>
+            <div class="btn-group">
+                <button class="btn" type="submit">go</button>
             </div>
+        </div>
+    </form>
+    </div>
+</div>
 
-            <button class="btn btn-primary" type="submit">go</button>
-</form>
+
+

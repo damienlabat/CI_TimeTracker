@@ -1,7 +1,7 @@
 <?php
 
 if (isset($breadcrumb))
-    if (count($breadcrumb)>=1) {  // virer quand 1 seul niveau ?
+    if (count($breadcrumb)>1) {
 
     echo '<ul class="breadcrumb">';
 

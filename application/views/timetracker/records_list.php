@@ -1,8 +1,12 @@
 <?php
 $this->load->view( 'timetracker/tab_buttons' );
+$records=$list[ $current['tab'] .'_records'];
 ?>
 
-<table class='records table table-bordered'>
+<table class='records table'>
+    <thead>
+        <tr><th>Time</th><th>Title</th><th>Tags</th><th>Actions</th></tr>
+    </thead>
     <tbody>
 <?php
 if ( isset( $records ) ) {
@@ -10,7 +14,7 @@ if ( isset( $records ) ) {
     foreach ( $records as $k => $record ):
 
 ?>
-   <?= record_tr( $record, $user_name, array( 'duration' => 'full' ) ) ?>
+   <?= record_tr( $record, $user['name'], array( 'duration' => 'full' ) ) ?>
 <?php
 
     endforeach;

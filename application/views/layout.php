@@ -37,37 +37,23 @@
     <?php $this->load->view('bloc/navbar'); ?>
 
 
-    <div class="container">
+    <div id="main" class="container">
+        <div class="row">
+            <div class="span12">
+                <div id="content" class='clearfix'>
 
-
-
-
-        <?php $this->load->view('bloc/breadcrumb'); ?>
-
-          <?php
-
-    // alerts and error messages
-
-    if ( (isset($alerts)) && ($alerts!=FALSE) ) {
-    foreach ($alerts as $k => $alert): ?>
-        <div class="alert alert-<?=$alert['type']?>">
-        <?=$alert['alert']?>
+                    <?php $this->load->view('bloc/breadcrumb'); ?>
+                    <?php $this->load->view('bloc/alerts'); ?>
+                    <?=@$content?>
+                    <?php $this->load->view('bloc/footer'); ?>
+                </div>
+            </div>
         </div>
-    <?php endforeach;
-    }
-
-    ?>
-
-
-        <?=@$content?>
-
-
-
-      <footer>
-        <?php $this->load->view('bloc/footer'); ?>
-      </footer>
-
     </div> <!-- /container -->
+
+
+
+
 
 
 

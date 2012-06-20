@@ -69,7 +69,8 @@ class Values extends CI_Model {
      * @return          array
      */
     function get_valuetype_list( $user_id ) {
-        $query = $this->db->query( 'SELECT values_types.* , count( record_ID ) AS count
+        //'SELECT values_types.* , count( record_ID ) AS count
+        $query = $this->db->query( 'SELECT values_types.* , count( 1 ) AS count
             FROM values_types
                 LEFT JOIN l_activities_values ON l_activities_values.valuetype_ID  = values_types.id
             WHERE user_ID="' . $user_id . '"

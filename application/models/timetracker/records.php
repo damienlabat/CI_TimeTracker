@@ -105,15 +105,17 @@ class Records extends CI_Model {
      * ===========*/
 
 
-    function get_records($user_id, $param = array(), $offset= NULL, $count= NULL ) {
+    function get_records($user_id, $param = array(), $offset= 0, $count= NULL ) {
 
        /* $req = 'SET time_zone = "+6:00"';
         $this->db->query( $req );*/
         $req = 'SELECT ' . $this->activities_table . '.title,type_of_record,categorie_ID,' . $this->records_table . '.*,UNIX_TIMESTAMP(' . $this->records_table . '.start_time) as UNIXTIME
             '.$this->param2fromwhere($user_id, $param);
 
+        if ( $count!=NULL )
+            $req .=  ' LIMIT '.$offset.','.$count;
 
-        $query = $this->db->query( $req );
+        $query = $this->db->query( $req);
 
         if ( $query->num_rows() >= 1 ) {
             $res=$query->result_array();
@@ -132,7 +134,8 @@ class Records extends CI_Model {
 
     function get_records_count($user_id, $param = array() ) {
 
-        $req = 'SELECT  count(' . $this->records_table . '.id) as count
+        //$req = 'SELECT  count(' . $this->records_table . '.id) as count
+        $req = 'SELECT  count(1) as count
              '.$this->param2fromwhere($user_id, $param);
 
         $query = $this->db->query( $req );
@@ -189,7 +192,9 @@ class Records extends CI_Model {
 
     function param2fromwhere($user_id, $param) {
         if (!isset( $param['categorie'] )) $param['categorie'] = NULL;
+        if ($param['categorie']=='all') $param['categorie'] = NULL;
         if (!isset( $param['activity'] )) $param['activity'] = NULL;
+        if ($param['activity']=='all') $param['activity'] = NULL;
         if (!isset( $param['type_of_record'] )) $param['type_of_record'] = NULL;
         if (!isset( $param['running'] )) $param['running'] = NULL;
         if (!isset( $param['tags'] )) $param['tags'] = array();
@@ -215,6 +220,7 @@ class Records extends CI_Model {
         $req .= ' WHERE
                 user_ID=' . $user_id ;
 
+
         if ($param['categorie'] !== NULL ) $req .= ' AND ' . $this->activities_table . '.categorie_ID=' . $param['categorie'];
         if ($param['activity'] !== NULL ) $req .= ' AND ' . $this->records_table . '.activity_ID=' . $param['activity'];
         if ($param['type_of_record'] !== NULL ) $req .= ' AND type_of_record=\'' . $param['type_of_record'] . '\'';
@@ -224,13 +230,19 @@ class Records extends CI_Model {
         if ($param['valuetype'] !== NULL ) $req .=  ' AND ' . $this->records_values_table . '.valuetype_ID='.$param['valuetype'];
 
         foreach ( $param['tags'] as $k => $tag )
-            $req .=' AND tag_table_'.$k.'.tag_ID='.$tag;
+            $req .= ' AND tag_table_'.$k.'.tag_ID='.$tag;
 
-        if ((isset( $param['datemin'] ))&&(isset( $param['datemax'] )))
-            $req .=' AND
+        if (isset( $param['datefrom'] ))
+            $req .= ' AND  (UNIX_TIMESTAMP(start_time)+duration >= \''.  strtotime($param['datefrom']. " UTC") .'\'  OR running=1)';
+
+         if (isset( $param['dateto'] ))
+            $req .= ' AND DATE(start_time) <= \''.$param['dateto'].'\'';
+
+        /*if ((isset( $param['fromdate'] ))&&(isset( $param['datemax'] )))
+            $req .= ' AND
                         (UNIX_TIMESTAMP(start_time)+duration >= \''.  strtotime($param['datemin']. " UTC") .'\'
                         OR running=1)
-                     AND start_time<\''.$param['datemax'].'\'';
+                     AND start_time<\''.$param['datemax'].'\'';*/
 
         $req .= ' ORDER BY running DESC ,start_time '.$param['order'];
 

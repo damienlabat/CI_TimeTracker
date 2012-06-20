@@ -3,6 +3,7 @@
 body {
   padding-top: 60px;
   padding-bottom: 40px;
+  background-color: @grayLighter;
 }
 
 @import "bootstrap/responsive.less";
@@ -12,6 +13,17 @@ body {
    Author:
    ========================================================================== */
 
+.navbar-fixed-top {
+    margin-bottom: 0;
+}
+
+
+#content {
+    background-color: @white;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+   }
 
 /**** records list table ****/
 
@@ -26,8 +38,8 @@ table.records {
 
 
 
-tr.activity-activity.running td { background-color: lighten(@blue, 30%) }
-tr.activity-todo.running td     { background-color: lighten(@orange, 30%) }
+tr.activity-activity.running td,
+tr.activity-todo.running td     { font-weight:bold; }
 
 /**** summary ****/
 
@@ -70,10 +82,10 @@ svg .slice text {
 
 svg rect.activity {
     cursor:pointer;
-    stroke: #000;
+    /*stroke: #000;
     stroke-width: 0.5pt;
     stroke-opacity:0.2;
-    shape-rendering: crispEdges;
+    shape-rendering: crispEdges;*/
     }
 svg #xaxis_g line, svg #xaxis_g path,
 svg #yaxis_g line, svg #yaxis_g path
@@ -87,7 +99,7 @@ svg .tt_background {
     stroke: #000;
     stroke-width: 0.5pt;
     stroke-opacity:0.2;
-    shape-rendering: crispEdges;
+   /* shape-rendering: crispEdges;*/
     }
 
 

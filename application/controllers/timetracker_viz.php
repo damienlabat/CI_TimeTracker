@@ -5,7 +5,6 @@ if ( !defined( 'BASEPATH' ) )
 class Timetracker_viz extends CI_Controller {
     function __construct( ) {
         parent::__construct();
-        $this->output->enable_profiler( TRUE );
 
         $this->load->library( 'timetracker_lib' );
 
@@ -27,42 +26,27 @@ class Timetracker_viz extends CI_Controller {
 
         // TODO gestion date bugue
 
-
         $this->timetracker_lib->checkUsername( $username );
 
-        $tab = $this->input->get( 'tab', TRUE );
 
-        $datefrom = $this->input->get( 'datefrom', TRUE );
-        $dateto =   $this->input->get( 'dateto', TRUE );
+        $this->data['current']['action']=       'summary';
+        $this->data['current']['cat']=          $type_cat;
+        $this->data['current']['id']=           $id;
+        $this->timetracker_lib->getCurrentObj();
 
-        $this->data['current']= array(
-            "action" => 'summary',
-            "cat" => $type_cat,
-            "id" => $id,
-            "datefrom" => $datefrom,
-            "dateto" => $dateto
-            );
-        if ($tab) $this->data['current']['tab']=$tab;
-
-        $this->data['datefrom']=    $datefrom;
-        $this->data['dateto']=      $dateto;
-
-
-
+        $list=array();
 
         if ( !in_array( $type_cat, array('activity','todo','value') ) ) {
-            if ( $tab===FALSE ) $tab='activity';
+            $list[ 'count' ][ 'activity' ]    = $this->records->get_records_count($this->user_id, array( 'categorie'=>$id, 'type_of_record' => 'activity',    'datefrom' => $this->data[ 'current' ]['datefrom'], 'dateto' => $this->data[ 'current' ]['dateto'] ) );
+            $list[ 'count' ][ 'todo' ]        = $this->records->get_records_count($this->user_id, array( 'categorie'=>$id, 'type_of_record' => 'todo',        'datefrom' => $this->data[ 'current' ]['datefrom'], 'dateto' => $this->data[ 'current' ]['dateto'] ) );
+            $list[ 'count' ][ 'value' ]       = $this->records->get_records_count($this->user_id, array( 'categorie'=>$id, 'type_of_record' => 'value',       'datefrom' => $this->data[ 'current' ]['datefrom'], 'dateto' => $this->data[ 'current' ]['dateto'] ) );
 
-            $this->data[ 'count' ][ 'activity' ]    = $this->records->get_records_count($this->user_id, $this->_getRecordsParam( $username, $type_cat, $id, 'activity' , $datefrom,$dateto ) );
-            $this->data[ 'count' ][ 'todo' ]        = $this->records->get_records_count($this->user_id, $this->_getRecordsParam( $username, $type_cat, $id, 'todo' , $datefrom,$dateto ) );
-            $this->data[ 'count' ][ 'value' ]       = $this->records->get_records_count($this->user_id, $this->_getRecordsParam( $username, $type_cat, $id, 'value' , $datefrom,$dateto ) );
-            $this->data[ 'tabs' ]               = tabs_buttons ( tt_url($username,'summary',$this->data['current']), $this->data[ 'count' ], $tab );
+            $this->data[ 'tabs' ] = tabs_buttons ( $username, $this->data['current'], $list[ 'count' ] );
+            $this->data['activity']= $this->activities->get_activity_by_id_full( $id );
         }
 
 
-
-        $this->data['records']= $this->_getRecords($username, $type_cat, $id, $tab , $datefrom, $dateto);
-
+        $this->data['records']= $this->_getRecords($username, $type_cat, $id, $this->data[ 'current' ]['tab'] , $this->data[ 'current' ]['datefrom'],  $this->data[ 'current' ]['dateto']);
 
         if ($type_cat=='categorie') {
 
@@ -120,7 +104,7 @@ class Timetracker_viz extends CI_Controller {
 
         if ($this->data['records']) {
             usort( $this->data['records'] , array("Timetracker_viz", "_orderByCat"));
-            $this->data['stats']= $this->_getStats($this->data['records'], $type_cat,$datefrom,$dateto);
+            $this->data['stats']= $this->_getStats($this->data['records'], $type_cat, $this->data[ 'current' ]['datefrom'], $this->data[ 'current' ]['dateto']);
         }
 
 
@@ -138,31 +122,27 @@ class Timetracker_viz extends CI_Controller {
 
         $this->timetracker_lib->checkUsername( $username );
 
-        $tab = $this->input->get( 'tab', TRUE );
-        if ( !in_array( $type_cat, array('activity','todo','value') ))
-            if ( $tab===FALSE ) $tab='activity';
-
-         $groupby = $this->input->get( 'groupby', TRUE );
+        $groupby = $this->input->get( 'groupby', TRUE );
             if ( $groupby===FALSE ) $groupby='day';
 
-        $datefrom = $this->input->get( 'datefrom', TRUE );
-        $dateto =   $this->input->get( 'dateto', TRUE );
-            if ( $datefrom && $dateto ) $date_plage= $datefrom.'_'.$dateto;
-                else $date_plage='all';
 
+        $this->data['current']['action']=       'graph';
+        $this->data['current']['cat']=          $type_cat;
+        $this->data['current']['id']=           $id;
+        $this->data['current']['type_graph']=   $type_graph;
+        $this->data['current']['groupby']=      $groupby;
+        $this->timetracker_lib->getCurrentObj();
 
-        $this->data['current']= array(
-            "action" => 'graph',
-            "type_cat"=>$type_cat,
-            "id"=>$id,
-            "date_plage"=>$date_plage,
-            "type_graph"=>$type_graph,
-            "group_by"=>$groupby,
-            "datefrom" => $datefrom,
-            "dateto" => $dateto
-            );
+        $list=array();
 
-        if ($tab) $this->data['current']['tab']=$tab;
+        if ( !in_array( $type_cat, array('activity','todo','value') ) ) {
+            $list[ 'count' ][ 'activity' ]    = $this->records->get_records_count($this->user_id, array( 'categorie'=>$id, 'type_of_record' => 'activity',    'datefrom' => $this->data[ 'current' ]['datefrom'], 'dateto' => $this->data[ 'current' ]['dateto'] ) );
+            $list[ 'count' ][ 'todo' ]        = $this->records->get_records_count($this->user_id, array( 'categorie'=>$id, 'type_of_record' => 'todo',        'datefrom' => $this->data[ 'current' ]['datefrom'], 'dateto' => $this->data[ 'current' ]['dateto'] ) );
+            $list[ 'count' ][ 'value' ]       = $this->records->get_records_count($this->user_id, array( 'categorie'=>$id, 'type_of_record' => 'value',       'datefrom' => $this->data[ 'current' ]['datefrom'], 'dateto' => $this->data[ 'current' ]['dateto'] ) );
+
+            $this->data[ 'tabs' ] = tabs_buttons ( $username, $this->data['current'], $list[ 'count' ] );
+        }
+
 
         $this->data['datagraph']= $this->data['current'];
         unset($this->data['datagraph']["action"]);
@@ -247,25 +227,15 @@ class Timetracker_viz extends CI_Controller {
 
 // JSON Graphs
 
- public function histo_json( $username = NULL, $type_cat = 'categories', $id = NULL, $date_plage = 'all', $group_by='day' ) {
+ public function histo_json( $username, $type_cat, $id, $datefrom, $dateto, $group_by ) {
 
         $this->load->helper('download');
         $this->timetracker_lib->checkUsername( $username );
-        $datefrom=$dateto=NULL;
-        $sp= preg_split("/_/",$date_plage);
-        if ($sp[0]!='all') $datefrom=$sp[0];
-        if (isset($sp[1])) $dateto=$sp[1];
-
 
         $records= $this->_getRecords(   $username, $type_cat, $id, 'activity', $datefrom,$dateto);
         $param=$this->_getRecordsParam( $username, $type_cat, $id, 'activity' , $datefrom,$dateto );
 
         $this->output->enable_profiler( FALSE );
-
-        if ($datefrom==NULL) $datefrom= $this->records->get_min_time($this->user_id, $param);
-        if (  $dateto==NULL) $dateto  = $this->records->get_max_time($this->user_id, $param);
-
-
 
         switch ($group_by) {
             case 'minute':
@@ -282,24 +252,10 @@ class Timetracker_viz extends CI_Controller {
                 break;
         }
 
-        $data=array(
-            'min'=> $datefrom,
-            'times'=> array()
-            );
+        $data['min'] = $datefrom;
+        $data['max'] = date( 'Y-m-d', strtotime($dateto)+(24*60*60) );
 
-        if ($dateto==='running') {
-            $data['running']=TRUE;
-            $ds=preg_split('/ /', $this->server_time); // just keep date
-            $data['max']=$ds[0];
-        }
-        else
-        {
-            $data['running']=FALSE;
-            $data['max']= $dateto;
-        }
-
-
-        for ($t=strtotime($data['min']); $t<strtotime($data['max']); $t+=$timelapse[0]) {
+        for ($t=strtotime($datefrom); $t<strtotime($data['max']); $t+=$timelapse[0]) {
             $rec=array( 'time'=>date( 'Y-m-d H:i:s', $t), 'total'=>0, 'activities'=>array() );
             $activities=array();
 
@@ -363,8 +319,8 @@ class Timetracker_viz extends CI_Controller {
         if ($type_cat=='tag')       $param['tags']= array( $id );
         if ($type_cat=='valuetype') $param['valuetype']=  $id;
 
-        $param['datemin'] = $datefrom;
-        $param['datemax'] = $dateto;
+        $param['datefrom'] = $datefrom;
+        $param['dateto'] = $dateto;
         $param['order']='ASC';
 
         return $param;

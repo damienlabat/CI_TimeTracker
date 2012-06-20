@@ -52,40 +52,7 @@ mysqlDate2time = function (str) {
 
 
 $(function() {
-
-
-            $('#datefrombtn').datepicker()
-                .on('changeDate', function(ev){
-                    if (ev.date.valueOf() > dateto.valueOf()){
-                        $('#alert').show().find('strong').text('The start date can not be greater then the end date');
-                    } else {
-                        $('#alert').hide();
-                        datefrom = new Date(ev.date);
-                        $('#datefrom').val($('#datefrombtn').data('date'));
-                    }
-                    $('#datefrombtn').datepicker('hide');
-                });
-
-            $('#dateto').datepicker();
-            $('.datepicker').datepicker();
-
-
-
-                /*
-
-                 $('#datetobtn').datepicker()
-                .on('changeDate', function(ev){
-                    if (ev.date.valueOf() < datefrom.valueOf()){
-                        $('#alert').show().find('strong').text('The end date can not be less then the start date');
-                    } else {
-                        $('#alert').hide();
-                        dateto = new Date(ev.date);
-                        $('#dateto').val($('#datetobtn').data('date'));
-                    }
-                    $('#datetobtn').datepicker('hide');
-                });
-
-                 */
+    $('.dp_input').datepicker();
 });
 
 
@@ -201,11 +168,15 @@ function init_graph(obj) {
 
     self.updateJsonParam= function( id, data ) {
         self.json_param[id]=data;
-        if (self.graph) self.loadJson( function(){ self.graph.update(); });
+       // if (self.graph) self.loadJson( function(){ self.graph.update(); });
         }
 
+    self.update= function(){
+        if (self.graph) self.loadJson( function(){ self.graph.update(); });
+    }
+
     self.loadJson= function( callback ) {
-        var url= BASE_URL+'tt/'+self.json_param.username+'/histo/'+self.json_param.type_cat+'/'+self.json_param.id+'/'+self.json_param.date_plage+'/'+self.json_param.group_by+'.json';
+        var url= BASE_URL+'tt/'+self.json_param.username+'/histo/'+self.json_param.cat+'/'+self.json_param.id+'/'+self.json_param.datefrom+'_'+self.json_param.dateto+'/'+self.json_param.groupby+'.json';
         $.getJSON(url, function(data) {  self.data=data; callback()   });
     }
 
@@ -215,7 +186,17 @@ function init_graph(obj) {
 
     $('#groupby_select').change(
         function(){
-            graph.updateJsonParam('group_by', $(this).val() );
+            graph.updateJsonParam('groupby', $(this).val() );
+            graph.update();
+        }
+    );
+
+    $('#date_form').submit(
+        function(){
+            graph.updateJsonParam('datefrom', $(this).find('#datefrom').val() );
+            graph.updateJsonParam('dateto',   $(this).find('#dateto').val() );
+            graph.update();
+            return false
         }
     );
 
@@ -243,6 +224,7 @@ function init_graph(obj) {
     self.histograph=function() {
 
         var histograph_obj={};
+        self.mousepos=[0,0];
 
         var w = 1170, h = 600, color = d3.scale.category20(),
         bar_width= (1/2) * w/self.data.times.length;
@@ -437,9 +419,3 @@ function init_graph(obj) {
 
     return self
 }
-
-test=function() {
-    log(graph);
-    if (graph.json_param.group_by!='hour') graph.updateJsonParam('group_by','hour');
-        else  graph.updateJsonParam('group_by','day');
-    }

@@ -54,7 +54,6 @@ $route['account'] =     'auth/account';
 
 $regx=array(
     'date'              =>   '(\d{4}-\d{2}-\d{2}|all)',
-    'date2'             =>   '(\d{4}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2}|all)',
     'type_of_record'    =>   '(activity|todo|value)',
     'type_of_obj'       =>   '(categorie|tag|valuetype)',
     'type_of_button'    =>   '(summary|graph|export|log)',
@@ -89,16 +88,16 @@ $route['tt/([^\/]+)/'.$regx['type_of_button'].'/([^\/]+)'] =                    
 $route['tt/([^\/]+)/'.$regx['type_of_button'].'/([^\/]+)/([^\/]+)'] =            'timetracker_viz/$2/$1/$3/$4';    // $4=id
 
 
-$route['tt/([^\/]+)/export/([^\/]+)/([^\/]+)/([^\/]+)/([^\.]+).'.$regx['export_format']] =            'timetracker_viz/export/$1/$2/$3/$4/$5/$6';  //TODO with datefrom and to
+$route['tt/([^\/]+)/export/([^\/]+)/([^\/]+)/([^\/]+)/([^\.]+).'.$regx['export_format']] =                      'timetracker_viz/export/$1/$2/$3/$4/$5/$6';  //TODO with datefrom and to
 
-$route['tt/([^\/]+)/histo/([^\/]+)/([^\/]+)/'.$regx['date2'].'/'.$regx['group_by'].'.json'] =                   'timetracker_viz/histo_json/$1/$2/$3/$4';
+$route['tt/([^\/]+)/histo/([^\/]+)/([^\/]+)/'.$regx['date'].'_'.$regx['date'].'/'.$regx['group_by'].'.json'] =  'timetracker_viz/histo_json/$1/$2/$3/$4/$5/$6';
 //ex: http://127.0.0.1/damien/CI_TimeTracker/tt/damien/histo/categorie/all/all/day.json      // user type id plagedat
 
 
 
 
 
-$route['tt/([^\/]+)/params'] =       'timetracker/params/$1';
+$route['tt/([^\/]+)/settings'] =     'timetracker/settings/$1';
 
 $route['tt/([^\/]+)'] =              'timetracker/index/$1';
 $route['tt/([^\/]+)/(:num)'] =       'timetracker/index/$1/$2'; // $2=page

@@ -1,6 +1,6 @@
 <?php echo validation_errors();
 ?>
-<?= form_open( 'tt/' . $user_name . '/record/'.$record[ 'id' ].'/edit', array(
+<?= form_open( 'tt/' . $user['name'] . '/record/'.$record[ 'id' ].'/edit', array(
      'id' => 'classicform'
 ) ) ?>
 
