@@ -48,6 +48,46 @@ if ( ! function_exists('date2human'))
 
 
 
+if ( ! function_exists('getWeek'))
+{
+    function getWeek($date,$rec=0)
+    {
+        $date= new DateTime($date);
+        $param_firstdayweek=1; //1:monday 0:sunday TODO get it from user param
+
+        $w= $date->format('w');
+
+        $d0= clone $date;
+        $d0->modify( (-($w-$param_firstdayweek)%7 + 7*$rec) .' days'  );
+
+        $d1= clone $d0;
+        $d1->modify( '+6 days'  );
+
+        return array( $d0->format('Y-m-d') , $d1->format('Y-m-d') );
+    }
+}
+
+
+
+if ( ! function_exists('getMonth'))
+{
+    function getMonth($date,$rec=0)
+    {
+        $date= new DateTime($date);
+
+        $j= $date->format('j');
+
+        $d0= clone $date;
+        $d0->modify( (-$j+1) .' days '.$rec .' month' );
+
+        $d1= clone $d0;
+        $d1->modify( '+1 month -1day'  );
+
+        return array( $d0->format('Y-m-d') , $d1->format('Y-m-d') );
+    }
+}
+
+
 
 //------------------------------------------------
 

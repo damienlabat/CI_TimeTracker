@@ -11,19 +11,25 @@
                 <input type="hidden"  value="<?=$current['tab']?>" name="tab">
             </div>
             <div class="btn-group">
+                <button class="btn" type="submit">go</button>
+            </div>
+            <div class="btn-group">
                 <a href="#" class="btn dropdown-toggle" data-toggle="dropdown">select <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                    <li><a href='#' onclick='alert("TODO")'>today</a></li>
-                    <li><a href='#' onclick='alert("TODO")'>this week</a></li>
-                    <li><a href='#' onclick='alert("TODO")'>last week</a></li>
-                    <li><a href='#' onclick='alert("TODO")'>this month</a></li>
-                    <li><a href='#' onclick='alert("TODO")'>last month</a></li>
+                <ul class="dropdown-menu" id='datepicker_select'>
+                    <li><a href='#' data-fromdate='<?=$server_date?>'  data-todate='<?=$server_date?>'>today</a></li>
+                    <?php  $d=getWeek($server_date,0);  ?>
+                    <li><a href='#' data-fromdate='<?=$d[0]?>'  data-todate='<?=$d[1]?>'>this week</a></li>
+                    <?php  $d=getWeek($server_date,-1);  ?>
+                    <li><a href='#' data-fromdate='<?=$d[0]?>'  data-todate='<?=$d[1]?>'>last week</a></li>
+                    <?php  $d=getMonth($server_date,0);  ?>
+                    <li><a href='#' data-fromdate='<?=$d[0]?>'  data-todate='<?=$d[1]?>'>this month</a></li>
+                    <?php  $d=getMonth($server_date,-1);  ?>
+                    <li><a href='#' data-fromdate='<?=$d[0]?>'  data-todate='<?=$d[1]?>'>last month</a></li>
+                    <li><a href='#' data-fromdate='<?=$firstdata_date?>'  data-todate='<?=$server_date?>'>all</a></li>
                 </ul>
             </div>
 
-            <div class="btn-group">
-                <button class="btn" type="submit">go</button>
-            </div>
+
         </div>
     </form>
     </div>

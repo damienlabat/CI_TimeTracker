@@ -52,7 +52,22 @@ mysqlDate2time = function (str) {
 
 
 $(function() {
-    $('.dp_input').datepicker();
+    var DP1= $('#datefrom').datepicker();
+    var DP2= $('#dateto').datepicker();
+    log(DP1);
+
+
+    $('#datepicker_select a').click( function(){
+
+        $('#datefrom').val( $(this).data("fromdate") );
+        $('#datefrom').data( 'date', $(this).data("fromdate") );
+
+        $('#dateto').val( $(this).data("todate") );
+        $('#dateto').data( 'date', $(this).data("todate") );
+
+        $('#date_form').submit();
+        return false;
+    });
 });
 
 

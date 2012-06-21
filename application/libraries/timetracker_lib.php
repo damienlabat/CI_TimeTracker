@@ -86,6 +86,10 @@ class Timetracker_lib
         return $res;
     }
 
+
+
+
+
     function checkuser()
     {
 
@@ -112,6 +116,9 @@ class Timetracker_lib
         $this->ci->server_date   = preg_split('/ /', $this->ci->server_time);
         $this->ci->data[ 'server_date' ]=  $this->ci->server_date= $this->ci->server_date[0];
 
+        $this->ci->firstdata_date   = $this->ci->records->get_min_time($this->ci->user_id);
+        $this->ci->data[ 'firstdata_date' ]=  $this->ci->firstdata_date;
+
          /** get data **/
 
         $tab = $this->ci->input->get( 'tab', TRUE );
@@ -120,7 +127,7 @@ class Timetracker_lib
 
         $datefrom = $this->ci->input->get( 'datefrom', TRUE );
         $dateto =   $this->ci->input->get( 'dateto', TRUE );
-        if (!$datefrom) $datefrom = $this->ci->records->get_min_time($this->ci->user_id);
+        if (!$datefrom) $datefrom = $this->ci->firstdata_date;
         if (!$dateto)   $dateto = $this->ci->server_date;
         $this->ci->data[ 'current' ]['datefrom'] = $datefrom;
         $this->ci->data[ 'current' ]['dateto'] = $dateto;
