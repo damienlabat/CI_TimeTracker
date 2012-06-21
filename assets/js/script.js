@@ -52,10 +52,7 @@ mysqlDate2time = function (str) {
 
 
 $(function() {
-    var DP1= $('#datefrom').datepicker();
-    var DP2= $('#dateto').datepicker();
-    log(DP1);
-
+    $('.dp_input').datepicker();
 
     $('#datepicker_select a').click( function(){
 
@@ -64,6 +61,8 @@ $(function() {
 
         $('#dateto').val( $(this).data("todate") );
         $('#dateto').data( 'date', $(this).data("todate") );
+
+        $('#date_form').submit();
 
         return false;
     });
@@ -175,10 +174,15 @@ function init_piechart(obj) {
 /** graph **/
 
 function init_graph(obj) {
+
     var self={};
+
+    $('#prevbtn').click(function() { return self.movetime(-1) });
+    $('#nextbtn').click(function() { return self.movetime(+1) });
+
     self.target=obj;
     self.json_param=jQuery.parseJSON(self.target.attr( 'data-graph' ));
-    self.timelapse=gettimelapse( self.json_param.group_by );
+    self.timelapse=gettimelapse( self.json_param.groupby );
 
     self.updateJsonParam= function( id, data ) {
         self.json_param[id]=data;
@@ -186,6 +190,7 @@ function init_graph(obj) {
         }
 
     self.update= function(){
+        self.timelapse=gettimelapse( self.json_param.groupby );
         if (self.graph) self.loadJson( function(){ self.graph.update(); });
     }
 
@@ -196,6 +201,22 @@ function init_graph(obj) {
 
     self.buildGraph=function () {
         if (self.json_param.type_graph== 'histo') self.graph=self.histograph();
+    }
+
+    self.movetime= function (i){
+        var datefrom= mysqlDate2time( $('#datefrom').val() ),
+            dateto=   mysqlDate2time( $('#dateto').val() );
+
+        datefrom    = new Date( datefrom.getTime()  + self.timelapse*i );
+        dateto      = new Date( dateto.getTime()    + self.timelapse*i );
+
+        var formatD = d3.time.format("%Y-%m-%d");
+
+        $('#datefrom').val( formatD(datefrom) );
+        $('#dateto').val( formatD(dateto) );
+
+        $('#date_form').submit();
+        return false
     }
 
     $('#groupby_select').change(
@@ -240,7 +261,7 @@ function init_graph(obj) {
         var histograph_obj={};
         self.mousepos=[0,0];
 
-        var w = 1170, h = 600, color = d3.scale.category20(),
+        var w = 1200, h = 400, color = d3.scale.category20(),
         bar_width= (1/2) * w/self.data.times.length;
 
         var vis = d3.select(self.target[0]).append("svg:svg")
