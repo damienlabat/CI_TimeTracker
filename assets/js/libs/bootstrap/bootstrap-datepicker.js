@@ -35,7 +35,7 @@
 
         if (this.isInput) {
             this.element.on({
-                focus: $.proxy(this.show, this),
+                focus: $.proxy(this.update_then_show, this), // modif
                 blur: $.proxy(this.hide, this),
                 keyup: $.proxy(this.update, this)
             });
@@ -58,6 +58,11 @@
 
     Datepicker.prototype = {
         constructor: Datepicker,
+
+        update_then_show: function(e) { // modif
+            this.update();
+            this.show(e);
+        },
 
         show: function(e) {
             this.picker.show();

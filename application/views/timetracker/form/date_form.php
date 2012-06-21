@@ -11,9 +11,6 @@
                 <input type="hidden"  value="<?=$current['tab']?>" name="tab">
             </div>
             <div class="btn-group">
-                <button class="btn" type="submit">go</button>
-            </div>
-            <div class="btn-group">
                 <a href="#" class="btn dropdown-toggle" data-toggle="dropdown">select <b class="caret"></b></a>
                 <ul class="dropdown-menu" id='datepicker_select'>
                     <li><a href='#' data-fromdate='<?=$server_date?>'  data-todate='<?=$server_date?>'>today</a></li>
@@ -29,7 +26,9 @@
                 </ul>
             </div>
 
-
+            <div class="btn-group">
+                <button class="btn" type="submit">go</button>
+            </div>
         </div>
     </form>
     </div>

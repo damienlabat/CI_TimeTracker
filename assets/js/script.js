@@ -65,7 +65,6 @@ $(function() {
         $('#dateto').val( $(this).data("todate") );
         $('#dateto').data( 'date', $(this).data("todate") );
 
-        $('#date_form').submit();
         return false;
     });
 });
