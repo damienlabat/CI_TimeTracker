@@ -14,6 +14,9 @@ $(function() {
         graph=init_graph( $(this) );
     });
 
+    setInterval( updateTimerunning , 250);
+
+
         /*** TEST ***/
 
 
@@ -47,6 +50,45 @@ mysqlDate2time = function (str) {
     return d;
     }
 
+
+/*** time running ***/
+function updateTimerunning() {
+    $('.running_time').each(function(){
+
+        var starttime=$(this).data('start-time');
+        var now= new Date();
+        var duration= now - mysqlDate2time(starttime);
+        $(this).html( format_duration(duration/1000) );
+
+        });
+}
+
+
+format_duration= function(duration) {
+
+    if (duration==0) return '';
+
+    var h= Math.floor(duration/60/60);
+    var m= Math.floor(duration/60) % 60;
+    var s= Math.floor(duration%60);
+
+    if (m<10) m= '0'+m;
+
+    if (h==0) res= m+' min '+s+'s';
+        else if (h<24) {
+                if (m=='00') res= h+' h';
+                    else res= h+' h '+m+' min';
+            }
+            else {
+                var d= Math.floor( h/24);
+                h= h%24;
+                if (h==0) res= d+' days';
+                    else if (m=='00') res= d+' days '+h+' h';
+                        else res= d+' days '+h+' h '+m+' min';
+                }
+
+    return res
+}
 
 /*** datepicker ***/
 
@@ -357,31 +399,7 @@ function init_graph(obj) {
             }
 
 
-            var format_duration= function(duration) {
 
-                if (duration==0) return '';
-
-                var h= Math.floor(duration/60/60);
-                var m= Math.floor(duration/60) % 60;
-                var s= duration%60;
-
-                if (m<10) m= '0'+m;
-
-                if (h==0) res= m+' min';//' '+s+'s';
-                    else if (h<24) {
-                            if (m=='00') res= h+' h';
-                                else res= h+' h '+m+' min';
-                        }
-                        else {
-                            var d= Math.floor( h/24);
-                            h= h%24;
-                            if (h==0) res= d+' days';
-                                else if (m=='00') res= d+' days '+h+' h';
-                                    else res= d+' days '+h+' h '+m+' min';
-                            }
-
-                return res
-            }
 
 
 
