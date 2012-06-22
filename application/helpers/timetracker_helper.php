@@ -184,7 +184,7 @@ if ( ! function_exists('record_time'))
 
       $html.= ' <span class="record-duration">';
 
-      if (($record['duration']>0)OR($record['running']==1)) $html.= duration2human($record['duration']);
+      if (($record['duration']>0)OR($record['running']==1)) $html.= running_time($record);
         else if (($record['activity']['type_of_record']!='value')&&(!$record['running'])) $html.=" <span class='label label-info'>PING!</span>";
          else if ($record['activity']['type_of_record']=='value') $html.=" <span class='label label-info'>Value</span>";
 
@@ -205,7 +205,14 @@ if ( ! function_exists('record_time'))
 }
 
 
-
+if ( ! function_exists('running_time'))
+{
+    function running_time($record)
+    {
+        $html= '<span class="running_time" data-start-time="'.$record['start_time'].'">'.duration2human($record['duration']).'</span>';
+        return $html;
+    }
+}
 
 
 if ( ! function_exists('activity_path'))

@@ -1,4 +1,6 @@
 <?php
+$this->load->view( 'timetracker/tt_runnings' );
+
     if ( !isset($hidemenu) == TRUE ):
 ?>
 <div class="row-fluid"><?php
