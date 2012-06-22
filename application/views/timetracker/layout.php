@@ -1,5 +1,5 @@
 <?php
-    if ( !isset($current['edit']) ):
+    if ( !isset($hidemenu) == TRUE ):
 ?>
 <div class="row-fluid"><?php
 //$this->load->view( 'timetracker/form/main_form' );

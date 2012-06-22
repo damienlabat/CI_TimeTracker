@@ -189,7 +189,7 @@ if ( ! function_exists('record_time'))
          else if ($record['activity']['type_of_record']=='value') $html.=" <span class='label label-info'>Value</span>";
 
       if ($record['activity']['type_of_record']=='activity')
-            if ($record['running'])  $html.=" <span class='label label-info'>running</span>";
+            if ($record['running'])  $html.=" <span class='label label-success'>running</span>";
 
       if ($record['activity']['type_of_record']=='todo') {
             if ($record['running'])  $html.=" <span class='label label-warning'>TODO!</span>";
