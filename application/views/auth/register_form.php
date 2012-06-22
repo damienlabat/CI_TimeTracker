@@ -1,4 +1,4 @@
-<div class="span6"><div class='cadre'>
+
 <?php
 if ($use_username) {
     $username = array(
@@ -101,4 +101,3 @@ $captcha = array(
 <?php echo form_close(); ?>
 
 TODO! rebuilt auth template without tables and using Bootstrap style !
-</div></div>

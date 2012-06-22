@@ -725,7 +725,10 @@ class Timetracker extends CI_Controller {
         if ( $this->form_validation->run() === TRUE ) {
 
             $param  = array( );
-            $type_record = 'activity';
+            if (isset($post[ 'type_of_record' ]))
+                $type_record = $post[ 'type_of_record' ];
+            else
+                $type_record = 'activity';
 
             if ( $post[ 'activity' ][ 0 ] == '!' )
                 $type_record = 'todo';

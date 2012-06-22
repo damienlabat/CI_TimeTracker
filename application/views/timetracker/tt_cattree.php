@@ -9,6 +9,7 @@
         // todo undone icon-exclamation-sign
     );
 
+    if ($cattree!=NULL)
     foreach( $cattree as $categorie)
     if ($categorie['nb_activities']>0) {
 
@@ -22,8 +23,6 @@
         if (isset($categorie['activities'])) {
             echo '<ul class="nav nav-list">';
             foreach( $categorie['activities'] as $activity) {
-
-                if ($activity['type_of_record']=='todo') $activity['title']='!'.$activity['title'];
 
                 if (isset($activity['active']))
                     echo '<li class="active"><a href="#"><i class="icon-white ' . $icons[$activity['type_of_record']] . '"></i> ' . $activity['title'] . '</a></li>';

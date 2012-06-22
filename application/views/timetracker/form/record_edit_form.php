@@ -47,7 +47,7 @@ if ( $record[ 'running' ] )
 
 <?php endif; ?>
 
-        <input type="hidden" name="localtime" value="TODO!">
+        <input type="hidden" name="type_of_record"  value="<?=$record['activity']['type_of_record']?>">
         <input type="hidden" name="update_record" value="<?= $record[ 'id' ] ?>">
 
     <button type="submit" class="btn btn-large btn-primary">Change</button>

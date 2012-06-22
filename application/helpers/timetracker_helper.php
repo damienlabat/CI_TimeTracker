@@ -224,8 +224,6 @@ if ( ! function_exists('activity_path'))
       $html= ' <span class="activity-path">';
       $html.= '<span class="activity-item">';
 
-      if ($activity['type_of_record']=='todo') $html.= '!';
-
       $html.= "<a href='".site_url('tt/'.$username.'/'.$activity['type_of_record'].'/'.$activity['id'])."'>".$activity['title']."</a>";
      // if (isset($activity['value']))  $html.=value($record['value'],$username);
       $html.= "</span>";

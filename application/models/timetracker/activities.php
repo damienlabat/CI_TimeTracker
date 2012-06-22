@@ -157,9 +157,6 @@ class Activities extends CI_Model {
         else
             $activity[ 'activity_path' ] = $activity[ 'title' ];
 
-        if ( $activity[ 'type_of_record' ] == 'todo' )
-            $activity[ 'activity_path' ] = '!' . $activity[ 'activity_path' ];
-
         return $activity;
     }
 
