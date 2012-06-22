@@ -193,7 +193,7 @@ if ( ! function_exists('record_time'))
 
       if ($record['activity']['type_of_record']=='todo') {
             if ($record['running'])  $html.=" <span class='label label-warning'>TODO!</span>";
-                else  $html.=" <span class='label '>done</span>";
+              //  else  $html.=" <span class='label '>done</span>";
         }
 
       $html.= '</span>';

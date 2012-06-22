@@ -6,6 +6,7 @@
         'activity'=>'icon-flag',
         'todo'=>'icon-check',
         'value'=>'icon-star'
+        // todo undone icon-exclamation-sign
     );
 
     foreach( $cattree as $categorie)

@@ -121,6 +121,8 @@ class Timetracker_lib
 
          /** get data **/
 
+         $this->getRunnings();
+
         $tab = $this->ci->input->get( 'tab', TRUE );
         if ( $tab===FALSE ) $tab='activity';
         $this->ci->data[ 'current' ]['tab'] = $tab;
@@ -159,6 +161,13 @@ class Timetracker_lib
             if ( !$res )  show_404();
 
         }
+    }
+
+
+    function getRunnings(){
+        $this->ci->data[ 'running' ][ 'activities' ]    = $this->ci->records->get_records_full($this->ci->user_id, array( 'type_of_record' => 'activity',  'running' => TRUE ) );
+        $this->ci->data[ 'running' ][ 'todos' ]         = $this->ci->records->get_records_full($this->ci->user_id, array( 'type_of_record' => 'todo',      'running' => TRUE ) );
+
     }
 
 
