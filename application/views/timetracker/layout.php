@@ -3,14 +3,12 @@
 ?>
 <div class="row-fluid"><?php
 //$this->load->view( 'timetracker/form/main_form' );
-
-$this->load->view( 'timetracker/tt_cattree' );
 $this->load->view( 'timetracker/tt_menu' );
+$this->load->view( 'timetracker/tt_cattree' );
+
 ?>
 </div>
 <?php
-$this->load->view( 'timetracker/form/date_form' );
-
 endif;
 ?>
 <div class="page-header">

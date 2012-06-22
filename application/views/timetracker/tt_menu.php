@@ -29,6 +29,11 @@
         </li>
 
 
+<?php
+        $this->load->view( 'timetracker/form/date_form' );
+?>
+
+
         <li class="divider"></li>
         <li><a href="<?=site_url($user['name'].'/settings#'.$current['action'])?>"><i class="icon-cog"></i> Settings</a></li>
         <li><a href="<?=site_url('help#'.$current['action'])?>"><i class="icon-flag"></i> Help</a></li>

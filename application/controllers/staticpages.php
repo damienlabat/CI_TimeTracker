@@ -17,8 +17,10 @@ class Staticpages extends CI_Controller {
         $this->data = array( );
 
         if ( $this->tank_auth->is_logged_in() ) {
-            $this->data[ 'user_name' ] = $this->tank_auth->get_username();
-            $this->data[ 'user_id' ]   = $this->tank_auth->get_user_id();
+
+            $this->load->library( 'timetracker_lib' );
+            $this->timetracker_lib->checkuser();
+            $this->timetracker_lib->get_alerts();
         }
     }
 
