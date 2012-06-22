@@ -25,7 +25,7 @@
     <ul class="dropdown-menu">
     <?php
         foreach($running['activities'] as $activity)
-            echo "<li><a href='".site_url('tt/'.$user['name'].'/record/'.$activity['id'])."'><i class='icon-flag'></i> ".$activity['activity']['activity_path']."</a></li>";
+            echo "<li><a href='".site_url('tt/'.$user['name'].'/record/'.$activity['id'])."'><i class='icon-flag'></i> ".$activity['activity']['activity_path']." ".running_time($activity)."</a></li>";
         ?>
         <li class="divider"></li>
         <li><a href='#TODO'>stop all</a></li>

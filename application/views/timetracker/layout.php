@@ -1,8 +1,8 @@
 <?php
-$this->load->view( 'timetracker/tt_runnings' );
-
     if ( !isset($hidemenu) == TRUE ):
+    $this->load->view( 'timetracker/tt_runnings' );
 ?>
+
 <div class="row-fluid"><?php
 //$this->load->view( 'timetracker/form/main_form' );
 $this->load->view( 'timetracker/tt_menu' );

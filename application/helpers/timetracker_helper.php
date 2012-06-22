@@ -341,10 +341,12 @@ if ( ! function_exists('tt_url'))
         }
 
 
-        if ( !isset($current['id']))     $current['id']='all'; //def val
+       // if ( !isset($current['id']))     $current['id']='all'; //def val
 
-        if (isset($current['cat']))    $url.='/'.$current['cat'];
-        if (isset($current['id']))     $url.='/'.$current['id'];
+        if ( ($current['cat']!='categorie') OR (isset($current['id'])) ) {
+            if (isset($current['cat']))    $url.='/'.$current['cat'];
+            if (isset($current['id']))     $url.='/'.$current['id'];
+        }
 
         if (isset($current['datefrom']))   $get_part[]= array('datefrom',$current['datefrom']);
         if (isset($current['dateto']))     $get_part[]= array('dateto',$current['dateto']);
