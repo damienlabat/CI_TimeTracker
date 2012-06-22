@@ -259,6 +259,34 @@ class Timetracker extends CI_Controller {
     }
 
 
+    public function generic_activity_new( $username, $type_of_record, $stopall=FALSE ) {
+        $this->timetracker_lib->checkUsername( $username );
+        $this->data[ 'current' ]['cat'] = $type_of_record;
+        $this->data['hidemenu'] = TRUE;
+        $this->data[ 'tt_layout' ] = 'tt_new';
+
+        if ($stopall) $this->stop_all( $username, $type_of_record, FALSE );
+        $this->timetracker_lib->render();
+
+    }
+
+    public function stop_all( $username, $type_of_record, $redirect=TRUE ) {
+        $this->timetracker_lib->checkUsername( $username );
+
+        $runnings= $this->records->get_records_full($this->user_id, array( 'type_of_record' => $type_of_record,      'running' => TRUE ) );
+
+        if (isset($runnings))
+        foreach($runnings as $running) {
+            $stopped = $this->records->stop_record( $running['id'] );
+            // TODO add alerts message
+        }
+
+        if ($redirect)
+            redirect( 'tt/' . $username, 'location' );
+
+
+    }
+
     public function generic_activity_edit( $username, $type_of_record, $activity_id =NULL ) {
         $this->timetracker_lib->checkUsername( $username );
 
@@ -601,7 +629,11 @@ class Timetracker extends CI_Controller {
         if ( $this->form_validation->run() === TRUE ) {
 
             $param  = array( );
-            $type_record = 'activity';
+
+            if (isset($post[ 'type_of_record' ]))
+                $type_record = $post[ 'type_of_record' ];
+            else
+                $type_record = 'activity';
 
             if ( $post[ 'start' ][ 0 ] == '!' )
                 $type_record = 'todo';
@@ -661,6 +693,9 @@ class Timetracker extends CI_Controller {
 
             if ( element( 'value_name', $post ) )
                 $this->values->add_value_record( $this->user_id, $res[ 'activity' ][ 'record' ][ 'id' ], trim( $post[ 'value_name' ] ), trim( $post[ 'value' ] ) ); // add value
+
+            $this->session->set_flashdata( 'alerts', $res[ 'alerts' ] );
+            redirect( 'tt/' . $this->user_name , 'location' );
         }
         else {
             $res[ 'alerts' ]   = array(

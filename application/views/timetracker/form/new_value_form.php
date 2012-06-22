@@ -1,5 +1,5 @@
 <?php echo validation_errors(); ?>
-<?= form_open( 'tt/' . $user['name'], array(
+<?= form_open( 'tt/' . $user['name'] . '/' . $current['cat'] . '/new', array(
      'id' => 'classicform'
 ) ) ?>
 
@@ -29,7 +29,9 @@ echo validation_errors();
     <label for="description">description</label>
     <textarea class="" placeholder="description..." name="description" id="description"></textarea><br/>
 
-    <button type="submit" class="btn btn-large btn-primary">Start</button>
+    <input type="hidden" name="type_of_record"  value="<?=$current['cat']?>">
+
+    <button type="submit" class="btn btn-large btn-primary">Save</button>
 
 
 </form>

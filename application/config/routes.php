@@ -65,6 +65,9 @@ $regx=array(
 $route['tt/([^\/]+)/'.$regx['type_of_record'].'/(:num)/edit'] =       'timetracker/generic_activity_edit/$1/$2/$3';
 $route['tt/([^\/]+)/'.$regx['type_of_record'].'/(:num)/(:num)'] =     'timetracker/generic_activity_show/$1/$2/$3/$4'; // $4=page
 $route['tt/([^\/]+)/'.$regx['type_of_record'].'/(:num)'] =            'timetracker/generic_activity_show/$1/$2/$3';
+$route['tt/([^\/]+)/'.$regx['type_of_record'].'/new'] =               'timetracker/generic_activity_new/$1/$2';
+$route['tt/([^\/]+)/'.$regx['type_of_record'].'/stopandnew'] =        'timetracker/generic_activity_new/$1/$2/1';
+$route['tt/([^\/]+)/'.$regx['type_of_record'].'/stopall'] =           'timetracker/stop_all/$1/$2';
 
 $route['tt/([^\/]+)/'.$regx['type_of_obj']] =                  'timetracker/$2/$1';
 $route['tt/([^\/]+)/'.$regx['type_of_obj'].'/(:num)'] =        'timetracker/$2/$1/$3';
@@ -78,6 +81,7 @@ $route['tt/([^\/]+)/record/(:num)/edit'] =                      'timetracker/edi
 $route['tt/([^\/]+)/record/(:num)/delete'] =                    'timetracker/delete_record/$1/$2';
 $route['tt/([^\/]+)/record/(:num)/restart'] =                   'timetracker/restart/$1/$2';
 $route['tt/([^\/]+)/record/(:num)/stop'] =                      'timetracker/stop/$1/$2';
+
 
 
 

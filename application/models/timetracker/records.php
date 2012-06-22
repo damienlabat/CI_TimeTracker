@@ -303,7 +303,6 @@ class Records extends CI_Model {
     function stop_record( $id ) {
         $record   = $this->get_record_by_id( $id );
         $duration = $this->calcul_duration( $record );
-        print_r($duration);
         return $this->update_record( $id, array(
              'duration' => $duration,
             'running' => 0

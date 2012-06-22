@@ -1,7 +1,7 @@
 <?php   /* RUNNING ACTIVITIES */   ?>
 <?php   if (count($running['activities'])==0): ?>
 <li>
-    <a href="#TODO">start new activity</a>
+    <a href="<?=site_url('tt/'.$user['name'].'/activity/new')?>">start new activity</a>
 </li>
 <?php   elseif (count($running['activities'])==1): ?>
 
@@ -12,9 +12,9 @@
         <li class="divider"></li>
         <li><a href='<?=site_url('tt/'.$user['name'].'/record/'.$running['activities'][0]['id'])?>/edit'>edit</a></li>
         <li><a href='<?=site_url('tt/'.$user['name'].'/record/'.$running['activities'][0]['id'])?>/stop'>stop</a></li>
-        <li><a href='#TODO'>stop &amp; start new</a></li>
+        <li><a href='<?=site_url('tt/'.$user['name'].'/activity/stopandnew')?>'>stop &amp; start new</a></li>
         <li class="divider"></li>
-        <li><a href='#TODO'>start new</a></li>
+        <li><a href='<?=site_url('tt/'.$user['name'].'/activity/new')?>'>start new</a></li>
     </ul>
 </li>
 
@@ -28,9 +28,10 @@
             echo "<li><a href='".site_url('tt/'.$user['name'].'/record/'.$activity['id'])."'><i class='icon-flag'></i> ".$activity['activity']['activity_path']." ".running_time($activity)."</a></li>";
         ?>
         <li class="divider"></li>
-        <li><a href='#TODO'>stop all</a></li>
+        <li><a href='<?=site_url('tt/'.$user['name'].'/activity/stopall')?>'>stop all</a></li>
+        <li><a href='<?=site_url('tt/'.$user['name'].'/activity/stopandnew')?>'>stop all &amp; start new</a></li>
         <li class="divider"></li>
-        <li><a href='#TODO'>start new</a></li>
+        <li><a href='<?=site_url('tt/'.$user['name'].'/activity/new')?>'>start new</a></li>
     </ul>
 </li>
 
@@ -44,7 +45,7 @@
 <?php   /* RUNNING TODO */   ?>
 <?php   if (count($running['todos'])==0): ?>
 <li>
-    <a href="#TODO">add new todo</a>
+    <a href="<?=site_url('tt/'.$user['name'].'/todo/new')?>">add new todo</a>
 </li>
 <?php   elseif (count($running['todos'])==1): ?>
 
@@ -56,7 +57,7 @@
         <li><a href='<?=site_url('tt/'.$user['name'].'/record/'.$running['todos'][0]['id'])?>/edit'>edit</a></li>
         <li><a href='<?=site_url('tt/'.$user['name'].'/record/'.$running['todos'][0]['id'])?>/stop'>mark it done</a></li>
         <li class="divider"></li>
-        <li><a href='#TODO'>add new</a></li>
+        <li><a href='<?=site_url('tt/'.$user['name'].'/todo/new')?>'>add new</a></li>
     </ul>
 </li>
 
@@ -70,9 +71,9 @@
             echo "<li><a href='".site_url('tt/'.$user['name'].'/record/'.$todo['id'])."'><i class='icon-exclamation-sign'></i> ".$todo['activity']['activity_path']."</a></li>";
         ?>
         <li class="divider"></li>
-        <li><a href='#TODO'>mark all done</a></li>
+        <li><a href='<?=site_url('tt/'.$user['name'].'/todo/stopall')?>'>mark all done</a></li>
         <li class="divider"></li>
-        <li><a href='#TODO'>add new</a></li>
+        <li><a href='<?=site_url('tt/'.$user['name'].'/todo/new')?>'>add new</a></li>
     </ul>
 </li>
 
@@ -81,5 +82,5 @@
 
 
 <li>
-    <a href="#TODO">add new record</a>
+    <a href="<?=site_url('tt/'.$user['name'].'/value/new')?>">add new record</a>
 </li>

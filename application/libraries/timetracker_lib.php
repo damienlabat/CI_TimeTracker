@@ -58,9 +58,10 @@ class Timetracker_lib
 
         if ( ( $current['cat'] == 'categorie' ) && ( $current['id'] != NULL ) )  $current_cat = $cat_id = $current['id'];
 
-        if ( in_array( $current['cat'], array('activity','todo','value') ) ) {
-            $cat_id = $this->ci->data['activity']['categorie_ID'];
-            $current_activity = $this->ci->data['activity']['id'];
+        if ( in_array( $current['cat'], array('activity','todo','value') ) )
+            if (isset($this->ci->data['activity'])){
+                $cat_id = $this->ci->data['activity']['categorie_ID'];
+                $current_activity = $this->ci->data['activity']['id'];
         }
 
         if ( $current['cat'] == 'record' ) {

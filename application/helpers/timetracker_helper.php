@@ -156,7 +156,7 @@ if ( ! function_exists('record_tr'))
     if ($record['running']) $html.=" running";
     $html.= "'>";
 
-    $html.= "<td class='td-'>".record_time($record,$username)."</td>";
+    $html.= "<td>".record_time($record,$username)."</td>";
     $html.= "<td>".activity_path($record['activity'],$username).value($record,$username)."</td>";
     $html.= "<td>".tag_list($record['tags'],$username)."</td>";
     $html.= "<td>".record_buttons($record,$username,TRUE,TRUE)."</td>";
@@ -184,9 +184,10 @@ if ( ! function_exists('record_time'))
 
       $html.= ' <span class="record-duration">';
 
-      if (($record['duration']>0)OR($record['running']==1)) $html.= running_time($record);
-        else if (($record['activity']['type_of_record']!='value')&&(!$record['running'])) $html.=" <span class='label label-info'>PING!</span>";
-         else if ($record['activity']['type_of_record']=='value') $html.=" <span class='label label-info'>Value</span>";
+      if ($record['running']==1) $html.= running_time($record);
+        else if ($record['duration']>0) $html.= duration2human($record['duration']);
+            else if (($record['activity']['type_of_record']!='value')&&(!$record['running'])) $html.=" <span class='label label-info'>PING!</span>";
+                else if ($record['activity']['type_of_record']=='value') $html.=" <span class='label label-info'>Value</span>";
 
       if ($record['activity']['type_of_record']=='activity')
             if ($record['running'])  $html.=" <span class='label label-success'>running</span>";
@@ -341,12 +342,9 @@ if ( ! function_exists('tt_url'))
         }
 
 
-       // if ( !isset($current['id']))     $current['id']='all'; //def val
+        if ( !isset($current['id']))     $current['id']=NULL;
 
-        if ( ($current['cat']!='categorie') OR (isset($current['id'])) ) {
-            if (isset($current['cat']))    $url.='/'.$current['cat'];
-            if (isset($current['id']))     $url.='/'.$current['id'];
-        }
+
 
         if (isset($current['datefrom']))   $get_part[]= array('datefrom',$current['datefrom']);
         if (isset($current['dateto']))     $get_part[]= array('dateto',$current['dateto']);
@@ -355,11 +353,20 @@ if ( ! function_exists('tt_url'))
 
 
 
+        /* if ( ($current['cat']!='categorie') OR (isset($current['id'])) ) {
+            if (isset($current['cat']))    $url.='/'.$current['cat'];
+            if (isset($current['id']))     $url.='/'.$current['id'];
+        }*/
+
         if ($type=='record') {
              if ($current['cat']==NULL) $url='tt/'.$username;
-             elseif ($current['id']=='all') $url='tt/'.$username; // no more categories/tags/valuetypes page
-             else  $url='tt/'.$username.'/'.$current['cat'].'/'.$current['id'];
-            }
+                elseif ($current['id']==NULL) $url='tt/'.$username;
+                    else  $url='tt/'.$username.'/'.$current['cat'].'/'.$current['id'];
+        }
+        else
+            if ( ($current['cat']!=NULL) && ($current['id']!=NULL) )
+                $url.='/'.$current['cat'].'/'.$current['id'];
+
 
         if ($type=='export') {
             $ext_part='.'.$current['format'];

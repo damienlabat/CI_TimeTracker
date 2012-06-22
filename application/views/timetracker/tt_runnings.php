@@ -2,13 +2,14 @@
     <div class='well running clearfix'>
 
     <div class='span6 '>
+        <h3>Running activities</h3>
     <?php
 
     if ( count($running['activities'])>0 ):
 
     ?>
 
-        <h3>Running activities</h3>
+
         <table class='table'>
         <?php
 
@@ -31,7 +32,7 @@
 
 
     <?php endif; ?>
-    <a href='#TODO' class='btn btn-success'>Add new activity</a>
+    <a href='<?=site_url('tt/'.$user['name'].'/activity/new')?>' class='btn btn-success'>Add new activity</a>
     </div>
 
 
@@ -58,7 +59,7 @@
     ?>
     </table>
     <?php endif; ?>
-    <a href='#TODO' class='btn'>Add new things Todo</a>
+    <a href='<?=site_url('tt/'.$user['name'].'/todo/new')?>' class='btn'>Add new things Todo</a>
 
 
     </div>
