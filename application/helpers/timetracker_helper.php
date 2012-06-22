@@ -188,9 +188,12 @@ if ( ! function_exists('record_time'))
         else if (($record['activity']['type_of_record']!='value')&&(!$record['running'])) $html.=" <span class='label label-info'>PING!</span>";
          else if ($record['activity']['type_of_record']=='value') $html.=" <span class='label label-info'>Value</span>";
 
+      if ($record['activity']['type_of_record']=='activity')
+            if ($record['running'])  $html.=" <span class='label label-info'>running</span>";
+
       if ($record['activity']['type_of_record']=='todo') {
             if ($record['running'])  $html.=" <span class='label label-warning'>TODO!</span>";
-                else  $html.=" <span class='label label-success'>DONE!</span>";
+                else  $html.=" <span class='label '>done</span>";
         }
 
       $html.= '</span>';
@@ -222,6 +225,7 @@ if ( ! function_exists('activity_path'))
       $html.= categorie_a($activity['categorie'],$username);
 
       $html.= '</span>';
+
       return $html;
     }
 }

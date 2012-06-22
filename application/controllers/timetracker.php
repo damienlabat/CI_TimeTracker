@@ -135,6 +135,7 @@ class Timetracker extends CI_Controller {
 
         $this->data[ 'current' ]['cat'] = 'record';
         $this->data[ 'current' ]['id'] = $record_id;
+        $this->data[ 'current' ]['edit'] = TRUE;
         $this->timetracker_lib->getCurrentObj();
 
         $this->data[ 'breadcrumb' ]= array(
@@ -157,6 +158,7 @@ class Timetracker extends CI_Controller {
 
         $this->data[ 'current' ]['cat'] = 'record';
         $this->data[ 'current' ]['id'] = $record_id;
+        $this->data[ 'current' ]['edit'] = TRUE;
         $this->timetracker_lib->getCurrentObj();
 
         $this->data[ 'record' ][ 'delete_confirm' ] = TRUE;
@@ -261,6 +263,7 @@ class Timetracker extends CI_Controller {
 
         $this->data[ 'current' ]['cat'] = $type_of_record;
         $this->data[ 'current' ]['id'] = $activity_id;
+        $this->data[ 'current' ]['edit'] = TRUE;
         $this->timetracker_lib->getCurrentObj();
 
         $this->data[ 'breadcrumb' ][]=  array( 'title'=> 'home', 'url'=>tt_url($username,'record',$this->data[ 'current' ], array('id'=>NULL)) );
@@ -352,6 +355,7 @@ class Timetracker extends CI_Controller {
 
         $this->data[ 'current' ]['cat'] = 'categorie';
         $this->data[ 'current' ]['id'] = $categorie_id;
+        $this->data[ 'current' ]['edit'] = TRUE;
         $this->timetracker_lib->getCurrentObj();
 
         $this->data[ 'breadcrumb' ] = array(
@@ -440,6 +444,7 @@ class Timetracker extends CI_Controller {
 
         $this->data[ 'current' ]['cat'] = 'tag';
         $this->data[ 'current' ]['id'] = $tag_id;
+        $this->data[ 'current' ]['edit'] = TRUE;
         $this->timetracker_lib->getCurrentObj();
 
         $this->data[ 'breadcrumb' ] = array(
@@ -527,6 +532,7 @@ class Timetracker extends CI_Controller {
 
         $this->data[ 'current' ]['cat'] = 'valuetype';
         $this->data[ 'current' ]['id'] = $valuetype_id;
+        $this->data[ 'current' ]['edit'] = TRUE;
         $this->timetracker_lib->getCurrentObj();
 
         $this->data[ 'breadcrumb' ] = array(
