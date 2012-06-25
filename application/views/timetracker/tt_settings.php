@@ -45,6 +45,7 @@
 	<fieldset>
 
 	  <div class="control-group">
+	  	<a name='timezone'></a>
 	    <label for="timezone" class="control-label">timezone</label>
 	    <div class="controls">
 	      <select id="timezone" name='timezone'>
@@ -67,12 +68,13 @@
                 $c = new DateTime(null, $z);
 
 	      ?>
-	      current: <?=$user['timezone']?> <?=timezone2UTCdiff($user['timezone'])?>GMT (<?=$c->format('H:i')?>) 
+	      current: <?=$user['timezone']?> <?=timezone2UTCdiff($user['timezone'])?>GMT (<span class='current_time'><?=$c->format('H:i')?></span>) 
 	    </div>
 	  </div>
 
 
 	  <div class="control-group">
+	  	<a name='language'></a>
 	    <label for="language" class="control-label">language</label>
 	    <div class="controls">
 	      <select id="language" name='param_language'>

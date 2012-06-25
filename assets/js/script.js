@@ -3,22 +3,26 @@
 */
 
 $(function() {
-    //log('script init');
 
-   $('table.piechart-data').each(function() {
-       var cpt_line= $(this).find('tbody tr').length;
-       if (cpt_line>1) init_piechart( $(this) );
-    });
+    user_logged = ( username!='' ) ? true : false;
 
-     $('div.ttgraph').each(function() {
-        graph=init_graph( $(this) );
-    });
+    if (user_logged) {
+        checktimezone();
+        setInterval( updateTimerunning , 250);
 
-    setInterval( updateTimerunning , 250);
+        $('table.piechart-data').each(function() {
+           var cpt_line= $(this).find('tbody tr').length;
+           if (cpt_line>1) init_piechart( $(this) );
+        });
+
+         $('div.ttgraph').each(function() {
+            graph=init_graph( $(this) );
+        });
+    }
 
 
         /*** TEST ***/
-
+    
 
 
 });
@@ -40,6 +44,14 @@ window.log = function(){
 
 
 
+// check timezone with js browser date
+checktimezone = function() {
+    var diff = loading_time - mysqlDate2time(mysql_time);
+    if ( Math.abs(diff) > 1000*60) // if > 1 minute diff
+        showalert('Are you shure this time is correct <span class="current_time"></span> ? Please check your <a href="'+BASE_URL+'tt/'+username+'/settings#timezone">timezone setting</a>','warning');
+}
+
+
 mysqlDate2time = function (str) {
     var t= str.split(/[- :]/);
     if (t.length>3)
@@ -50,6 +62,12 @@ mysqlDate2time = function (str) {
     return d;
     }
 
+showalert = function (str,tclass) {
+    var html ='<div class="alert alert-'+tclass+'">'+str+'<a class="close" data-dismiss="alert" href="#">&times;</a></div>';
+    $('#alertzone').append(html);
+
+}
+
 
 /*** time running ***/
 function updateTimerunning() {
@@ -59,6 +77,15 @@ function updateTimerunning() {
         var now= new Date();
         var duration= now - mysqlDate2time(starttime) + ( mysqlDate2time(mysql_time) - loading_time );
         $(this).html( format_duration(duration/1000) );
+
+        });
+
+    $('.current_time').each(function(){
+
+        var now= new Date();
+        var duration= now*1 + ( mysqlDate2time(mysql_time) - loading_time );
+        var time= new Date(duration);
+        $(this).html( format_time(time) );
 
         });
 }
@@ -89,6 +116,26 @@ format_duration= function(duration) {
 
     return res
 }
+
+
+format_time= function(d) {
+
+    var curr_hour = d.getHours();
+    var curr_min = d.getMinutes();
+    var curr_sec = d.getSeconds();
+
+    if (curr_min < 10)
+       curr_min = "0" + curr_min;
+
+    if (curr_sec < 10)
+       curr_sec = "0" + curr_sec;
+
+
+
+    return curr_hour + ':' + curr_min + ':' + curr_sec;
+}
+
+
 
 /*** datepicker ***/
 
