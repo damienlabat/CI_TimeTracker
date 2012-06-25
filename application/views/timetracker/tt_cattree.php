@@ -1,5 +1,11 @@
 <div class='well span6 pull-right hidden-phone'>
-    <ul class="nav nav-list">
+        <ul class="nav nav-list">
+<?php    
+        echo "<li";
+        if ( $current['id']==NULL ) echo "  class='active'";
+        echo "><a href='".tt_url($user['name'],$current['action'],$current, array( 'cat'=>NULL, 'id'=>NULL ) )."'>Home</a></li>";
+?>
+
         <li class="nav-header">Categories</li>
 <?php
     $icons=array(
@@ -13,7 +19,7 @@
     foreach( $cattree as $categorie)
     if ($categorie['nb_activities']>0) {
 
-        if ($categorie['title']=='') $categorie['title']='_none_';
+        if ($categorie['title']=='') $categorie['title']='(no categorie)';
 
         if (isset($categorie['active']))
             echo '<li class="active"><a href="#">'.$categorie['title'].'</a></li>';

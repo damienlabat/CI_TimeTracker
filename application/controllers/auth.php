@@ -6,6 +6,7 @@ class Auth extends CI_Controller
     {
         parent::__construct();
 
+
         $this->load->helper( array('form', 'url', 'assets_helper') );
         $this->load->library( array('form_validation','security','tank_auth') );
         $this->lang->load('tank_auth');

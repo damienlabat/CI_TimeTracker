@@ -9,7 +9,6 @@ class Timetracker extends CI_Controller {
         $this->load->library( 'timetracker_lib' );
         $this->timetracker_lib->checkuser();
         $this->timetracker_lib->get_alerts();
-
         $this->data['current']['action']= 'record';
 
         if ( $_POST ) {
@@ -346,7 +345,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'breadcrumb' ][]=  array( 'title'=> 'home','url'=>tt_url($username,'record',$this->data[ 'current' ], array('id'=>NULL )) );
 
         if ( $this->data[ 'categorie' ]['title']=='')
-            $this->data[ 'breadcrumb' ][]= array( 'title'=> '_root_', 'url'=>tt_url($username,'record',$this->data[ 'current' ]) );
+            $this->data[ 'breadcrumb' ][]= array( 'title'=> '(no categorie)', 'url'=>tt_url($username,'record',$this->data[ 'current' ]) );
         elseif ( $this->data[ 'categorie' ]['id']!=NULL)
             $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'categorie' ]['title'], 'url'=>tt_url($username,'record',$this->data[ 'current' ]));
 

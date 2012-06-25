@@ -29,7 +29,7 @@ if (isset($stats['categorie'][$rub])){
     <tbody>";
 
     foreach ($stats['categorie'][$rub] as $ki => $item) {
-        if ($item['title']=='') $item['title']='/root/';
+        if ($item['title']=='') $item['title']='(no categorie)';
             if ($stats[ $rub.'_total' ]>0) echo "<tr data-id='".$ki."' data-value='".$item['total']."'><td><a href='".tt_url($user['name'],'summary',$current,array('cat'=>'categorie', 'id'=>$item['id']))."'>".$item['title']."</a></td><td>".$item['count']."</td><td>".duration2human($item['total'])."</td><td>".round($item['total']/$stats[ $rub.'_total' ]*100)." %</td></tr>";
                 else echo "<tr data-id='".$ki."' data-value='".$item['total']."'><td><a href='".tt_url($user['name'],'summary',$current,array('cat'=>'categorie', 'id'=>$item['id']))."'>".$item['title']."</a></td><td>".$item['count']."</td><td>".duration2human($item['total'])."</td><td>-</td></tr>";
     }

@@ -61,7 +61,6 @@
     var BASE_URL='<?=site_url()?>';
     var mysql_time='<?=@$server_time?>';
     var loading_time=new Date();
-    console.log(loading_time,mysql_time);
 </script>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>

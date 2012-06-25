@@ -56,13 +56,13 @@ class Timetracker_viz extends CI_Controller {
 
             if ( $this->data[ 'categorie' ]['id']!=NULL) {
                 if ( $this->data[ 'categorie' ]['title']=='')
-                    $this->data[ 'breadcrumb' ][]= array( 'title'=> '_root_', 'url'=>tt_url($username,'summary',$this->data['current'],array('cat'=>'categorie', 'id'=>$this->data[ 'categorie' ]['id'] )) );
+                    $this->data[ 'breadcrumb' ][]= array( 'title'=> '(no categorie)', 'url'=>tt_url($username,'summary',$this->data['current'],array('cat'=>'categorie', 'id'=>$this->data[ 'categorie' ]['id'] )) );
                 else
                     $this->data[ 'breadcrumb' ][]= array( 'title'=> $this->data[ 'categorie' ]['title'], 'url'=>tt_url($username,'summary',$this->data['current'],array('cat'=>'categorie', 'id'=>$this->data[ 'categorie' ]['id'] )) );
             }
 
             $this->data[ 'title' ]='summary for categorie: '.$this->data[ 'categorie' ]['title'];
-            if ( $this->data[ 'categorie' ]['title']=='') $this->data[ 'title' ].='_root_';
+            if ( $this->data[ 'categorie' ]['title']=='') $this->data[ 'title' ].='(no categorie)';
 
         }
 
@@ -260,6 +260,7 @@ class Timetracker_viz extends CI_Controller {
             $activities=array();
 
             // add activities
+            if ($records!=NULL)
             foreach ( $records as $k => $record ) {
                $record['trim_duration']= $this->records->trim_duration($record, $t, $t+$timelapse[0] );
               if ($record['trim_duration']>0) {

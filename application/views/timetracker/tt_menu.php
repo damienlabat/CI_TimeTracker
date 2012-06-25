@@ -22,9 +22,9 @@
         <li class="dropdown">
             <a href="#" data-toggle="dropdown" class="dropdown-toggle"><i class="icon-download-alt"></i> Download <b class="caret"></b></a>
             <ul class="dropdown-menu" id="menu1">
-                <li><a href="<?php echo tt_url($user['name'],'export',$current, array('format'=>'json') ) ?>">csv</a></li>
-                <li><a href="<?php echo tt_url($user['name'],'export',$current, array('format'=>'json') ) ?>">txt</a></li>
-                <li><a href="<?php echo tt_url($user['name'],'export',$current, array('format'=>'json') ) ?>" target='_blank'>json</a></li>
+                <li><a href="TODO!<?php echo tt_url($user['name'],'export',$current, array('format'=>'csv') ) ?>">csv</a></li>
+                <li><a href="TODO!<?php echo tt_url($user['name'],'export',$current, array('format'=>'txt') ) ?>">txt</a></li>
+                <li><a href="TODO!<?php echo tt_url($user['name'],'export',$current, array('format'=>'json') ) ?>" target='_blank'>json</a></li>
              </ul>
         </li>
 
