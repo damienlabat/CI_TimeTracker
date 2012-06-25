@@ -105,9 +105,10 @@ class Timetracker_lib
         $this->ci->data[ 'user' ][ 'name' ] =        $this->ci->user_name;
         $this->ci->data[ 'user' ][ 'id' ]   =        $this->ci->user_id;
         $this->ci->data[ 'user' ][ 'params' ]   =    $this->ci->user_params;
+        $this->ci->data[ 'user' ][ 'timezone' ]   =  $this->ci->user_profile['timezone'];
 
-        // SET MySQL timezone to user timezone;
-        $this->ci->db->query( "SET time_zone= '".$this->ci->user_profile['timezone']."'" );
+        
+        $this->ci->db->query( "SET time_zone= '". timezone2UTCdiff( $this->ci->user_profile['timezone'] ) ."'" );
 
 
         $query = $this->ci->db->query( "SELECT NOW() as now" );
@@ -137,6 +138,11 @@ class Timetracker_lib
 
 
     }
+
+
+
+
+    
 
 
     function getCurrentObj(){

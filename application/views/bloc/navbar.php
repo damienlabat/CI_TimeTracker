@@ -27,7 +27,7 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?=$user['name']?> <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li><a href='<?=site_url('account')?>'>account</a></li>
-                            <li><a href='<?=site_url('tt/'.$user['name'].'/params')?>'>settings</a></li>
+                            <li><a href='<?=site_url('tt/'.$user['name'].'/settings')?>'>settings</a></li>
                         </ul>
                         </li>
                     </ul>

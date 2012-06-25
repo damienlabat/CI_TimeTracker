@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Serveur: localhost
--- Généré le : Jeu 14 Juin 2012 à 10:09
--- Version du serveur: 5.1.61
--- Version de PHP: 5.3.3-7+squeeze9
+-- Généré le : Lun 25 Juin 2012 à 15:38
+-- Version du serveur: 5.1.63
+-- Version de PHP: 5.3.3-7+squeeze13
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -235,7 +235,7 @@ CREATE TABLE IF NOT EXISTS `user_autologin` (
 
 CREATE TABLE IF NOT EXISTS `user_profiles` (
   `user_id` int(11) unsigned NOT NULL,
-  `timezone` varchar(6) COLLATE utf8_bin NOT NULL DEFAULT '+0:00',
+  `timezone` varchar(255) COLLATE utf8_bin NOT NULL DEFAULT 'Europe/Paris',
   `params` text COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

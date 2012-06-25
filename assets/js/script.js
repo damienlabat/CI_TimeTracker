@@ -57,7 +57,7 @@ function updateTimerunning() {
 
         var starttime=$(this).data('start-time');
         var now= new Date();
-        var duration= now - mysqlDate2time(starttime);
+        var duration= now - mysqlDate2time(starttime) + ( mysqlDate2time(mysql_time) - loading_time );
         $(this).html( format_duration(duration/1000) );
 
         });

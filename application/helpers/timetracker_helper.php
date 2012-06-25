@@ -389,6 +389,21 @@ if ( ! function_exists('tt_url'))
 
 
 
+if ( ! function_exists('timezone2UTCdiff'))
+{
+    function timezone2UTCdiff($tz) {
+        $user_tz =  new DateTimeZone($tz);
+        $user_time = new DateTime("now", $user_tz);        
+
+        $offset_min= floor($user_tz->getOffset($user_time)/60);
+            $sgn = ($offset_min < 0 ? '-' : '+');  
+            $mins = abs($offset_min%60);  
+            if ($mins<10) $mins='0'.$mins;
+            $hrs = floor(abs($offset_min) / 60);  
+
+        return $sgn.$hrs.':'.$mins;
+    }
+}
 
 
 if ( ! function_exists('tabs_buttons'))

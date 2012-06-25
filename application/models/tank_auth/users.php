@@ -410,6 +410,42 @@ class Users extends CI_Model
         $this->db->where('user_id', $user_id);
         $this->db->delete($this->profile_table_name);
     }
+
+
+
+
+    /**
+    * Timezone and params gestion
+    *   added by damien
+    */
+
+    /**
+     * update user timezone
+     *
+     * @user_id   int
+     * @timezone  string
+     * @return    void
+     */
+    function update_timezone($user_id, $timezone)
+    {
+        $this->db->set('timezone', $timezone);
+        $this->db->where('user_id', $user_id);
+        return $this->db->update($this->profile_table_name);
+    }
+
+    /**
+     * update user params
+     *
+     * @user_id   int
+     * @timezone  string
+     * @return    void
+     */ 
+    function update_params($user_id, $params)
+    {
+        $this->db->set('params', $params);
+        $this->db->where('user_id', $user_id);
+        return $this->db->update($this->profile_table_name);
+    }
 }
 
 /* End of file users.php */

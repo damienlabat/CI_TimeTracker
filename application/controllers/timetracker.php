@@ -6,6 +6,8 @@ class Timetracker extends CI_Controller {
     function __construct( ) {
         parent::__construct();
 
+        $this->output->enable_profiler(TRUE);
+
         $this->load->library( 'timetracker_lib' );
         $this->timetracker_lib->checkuser();
         $this->timetracker_lib->get_alerts();
@@ -576,9 +578,31 @@ class Timetracker extends CI_Controller {
     }
 
 
+    /************
+     * SETTINGS
+     * *************/    
 
 
+    /*****
+     *  settings page
+     *  */
 
+    public function settings( $username ) {
+        $this->timetracker_lib->checkUsername( $username );
+        $this->data[ 'current' ]['cat'] = NULL;
+        $this->data[ 'current' ]['id']  = NULL;
+        $this->data['hidemenu'] = TRUE;
+
+        $this->data[ 'breadcrumb' ] = array(
+            array( 'title'=> 'home',        'url'=>tt_url($username,'record',$this->data[ 'current' ], array('id'=>NULL)) ),
+            array( 'title'=> 'settings',    'url'=>'tt/'.$username.'/settings' )
+            );
+
+        $this->data[ 'tt_layout' ]                 = 'tt_settings';
+
+        $this->data[ 'TODO' ] = "add time gestion, language, hidden cat-tags...";
+        $this->timetracker_lib->render();
+    }
 
 
 
@@ -614,6 +638,9 @@ class Timetracker extends CI_Controller {
 
         if ( element( 'update_valuetype', $post ) )
             $res = $this->_update_valuetype( $post );
+
+        if ( element( 'timezone', $post ) )
+            $res = $this->_update_params( $post );
 
         return $res;
     }
@@ -1107,11 +1134,34 @@ class Timetracker extends CI_Controller {
 
 
 
+    function _update_params( $post ) {
+
+        //$this->load->model( 'tank_auth/users' );
+
+        $this->users->update_timezone($this->user_id, $post['timezone']); 
+
+        //$params=array();
+        foreach( $post as $pst_key => $post_val )
+             if ( preg_match( '/^(param_)/', $pst_key ))                
+                $params[ trim( $pst_key , 'param_') ] = $post_val;
+                
+        $this->users->update_params( $this->user_id, json_encode($params) ); 
 
 
-    /* =================
-     * TOOLS
-     * ================= */
+        $res[ 'alerts' ]   = array(
+            array(
+                'type' => 'success',
+                'alert' => 'user params updated'
+            )
+        );
+
+        $this->session->set_flashdata( 'alerts', $res[ 'alerts' ] );
+        redirect( 'tt/' . $this->user_name , 'location' );
+    }
+
+
+
+
 
 
 }
