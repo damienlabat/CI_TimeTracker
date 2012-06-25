@@ -1,7 +1,7 @@
 <?php
 $this->load->view( 'timetracker/tab_buttons' );
 ?>
-<div class='ttgraph' data-graph='<?=json_encode($datagraph,JSON_NUMERIC_CHECK)?>'></div>
+<div class='ttgraph' data-graph='<?=json_encode($datagraph)?>'></div>
 
 
 <label for="groupby_select">Group by</label>

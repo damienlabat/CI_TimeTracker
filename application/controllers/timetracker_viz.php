@@ -181,7 +181,8 @@ class Timetracker_viz extends CI_Controller {
         }
 
         if ($format == 'json') {
-            $content= json_encode($records,JSON_NUMERIC_CHECK);
+            //$content= json_encode($records,JSON_NUMERIC_CHECK);
+            $content= json_encode($records);
             $this->output
             ->set_content_type('application/json')
             ->set_output( $content );
@@ -279,7 +280,8 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-         $content= json_encode($data,JSON_NUMERIC_CHECK);
+         //$content= json_encode($data,JSON_NUMERIC_CHECK);
+         $content= json_encode($data);
             $this->output
             ->set_content_type('application/json')
             ->set_output( $content );
