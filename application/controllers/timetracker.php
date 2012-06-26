@@ -6,7 +6,7 @@ class Timetracker extends CI_Controller {
     function __construct( ) {
         parent::__construct();
 
-        $this->output->enable_profiler(TRUE);
+        //$this->output->enable_profiler(TRUE);
 
         $this->load->library( 'timetracker_lib' );
         $this->timetracker_lib->checkuser();
@@ -580,7 +580,7 @@ class Timetracker extends CI_Controller {
 
     /************
      * SETTINGS
-     * *************/    
+     * *************/
 
 
     /*****
@@ -1138,14 +1138,14 @@ class Timetracker extends CI_Controller {
 
         //$this->load->model( 'tank_auth/users' );
 
-        $this->users->update_timezone($this->user_id, $post['timezone']); 
+        $this->users->update_timezone($this->user_id, $post['timezone']);
 
         //$params=array();
         foreach( $post as $pst_key => $post_val )
-             if ( preg_match( '/^(param_)/', $pst_key ))                
+             if ( preg_match( '/^(param_)/', $pst_key ))
                 $params[ trim( $pst_key , 'param_') ] = $post_val;
-                
-        $this->users->update_params( $this->user_id, json_encode($params) ); 
+
+        $this->users->update_params( $this->user_id, json_encode($params) );
 
 
         $res[ 'alerts' ]   = array(
