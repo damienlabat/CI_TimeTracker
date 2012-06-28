@@ -92,7 +92,7 @@ $route['tt/([^\/]+)/'.$regx['type_of_button'].'/([^\/]+)'] =                    
 $route['tt/([^\/]+)/'.$regx['type_of_button'].'/([^\/]+)/([^\/]+)'] =            'timetracker_viz/$2/$1/$3/$4';    // $4=id
 
 
-$route['tt/([^\/]+)/export/([^\/]+)/([^\/]+)/([^\/]+)/([^\.]+).'.$regx['export_format']] =                      'timetracker_viz/export/$1/$2/$3/$4/$5/$6'; 
+$route['tt/([^\/]+)/export/([^\/]+)/([^\/]+)/([^\/]+)/([^\.]+).'.$regx['export_format']] =                      'timetracker_viz/export/$1/$2/$3/$4/$5/$6';
 
 $route['tt/([^\/]+)/histo/([^\/]+)/([^\/]+)/'.$regx['date'].'_'.$regx['date'].'/'.$regx['group_by'].'.json'] =  'timetracker_viz/histo_json/$1/$2/$3/$4/$5/$6';
 //ex: http://127.0.0.1/damien/CI_TimeTracker/tt/damien/histo/categorie/all/all/day.json      // user type id plagedat

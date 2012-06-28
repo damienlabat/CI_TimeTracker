@@ -107,7 +107,7 @@ class Timetracker_lib
         $this->ci->data[ 'user' ][ 'params' ]   =    $this->ci->user_params;
         $this->ci->data[ 'user' ][ 'timezone' ]   =  $this->ci->user_profile['timezone'];
 
-        
+
         $this->ci->db->query( "SET time_zone= '". timezone2UTCdiff( $this->ci->user_profile['timezone'] ) ."'" );
 
 
@@ -142,7 +142,7 @@ class Timetracker_lib
 
 
 
-    
+
 
 
     function getCurrentObj(){

@@ -1,4 +1,5 @@
 */config/development
+*/config/alwaysdata
 */logs/log-*.php
 */logs/!index.html
 */cache/*
