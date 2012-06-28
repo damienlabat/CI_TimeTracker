@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Serveur: localhost
--- Généré le : Lun 25 Juin 2012 à 15:38
+-- Généré le : Jeu 28 Juin 2012 à 16:20
 -- Version du serveur: 5.1.63
 -- Version de PHP: 5.3.3-7+squeeze13
 
@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `activities` (
   `title` varchar(100) COLLATE utf8_bin NOT NULL,
   `description` text COLLATE utf8_bin NOT NULL,
   `type_of_record` varchar(10) COLLATE utf8_bin NOT NULL,
+  `isshown` int(1) unsigned NOT NULL DEFAULT '1',
   `categorie_ID` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -44,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(100) COLLATE utf8_bin NOT NULL,
   `description` text COLLATE utf8_bin NOT NULL,
-  `isshow` int(1) unsigned NOT NULL DEFAULT '1',
+  `isshown` int(1) unsigned NOT NULL DEFAULT '1',
   `user_ID` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -182,10 +183,22 @@ CREATE TABLE IF NOT EXISTS `share_request` (
 CREATE TABLE IF NOT EXISTS `tags` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `tag` varchar(100) COLLATE utf8_bin NOT NULL,
-  `isshow` int(1) unsigned NOT NULL DEFAULT '1',
+  `isshown` int(1) unsigned NOT NULL DEFAULT '1',
   `user_ID` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `todo_class`
+--
+
+CREATE TABLE IF NOT EXISTS `todo_class` (
+  `activity_ID` int(11) unsigned NOT NULL,
+  `class` varchar(250) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`activity_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
