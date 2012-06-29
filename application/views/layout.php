@@ -11,8 +11,8 @@
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width">
 
-    <!--link rel="stylesheet/less" href="<?= less_url('style.less') ?>">
-    <script src="<?= libs_url('less-1.3.0.min.js') ?>"></script-->
+    <link rel="stylesheet/less" href="<?= less_url('style.less') ?>">
+    <script src="<?= libs_url('less-1.3.0.min.js') ?>"></script>
 
     <!-- Use SimpLESS (Win/Linux/Mac) or LESS.app (Mac) to compile your .less files
     to style.css,
@@ -21,7 +21,7 @@
      and replace the 2 lines above by this one:-->
 
     <!--link rel="stylesheet" href="<?= less_url('style.css') ?>"-->
-    <link rel="stylesheet" href="<?= less_url('style.yui.css') ?>">
+    <!--link rel="stylesheet" href="<?= less_url('style.yui.css') ?>"-->
 
      <!---->
 

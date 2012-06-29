@@ -57,7 +57,7 @@ $regx=array(
     );
 
 //---
-$route['tt/'.$regx['username']]                 =     'timetracker/$1';
+$route['tt/'.$regx['username']]                 =     'timetracker/home/$1';
 
 $route['tt/'.$regx['username'].'/settings']     =     'timetracker/settings/$1';
 
@@ -91,6 +91,7 @@ $route['tt/'.$regx['username'].'/'.$regx['objfile'].'_(:num)/delete']   =       
 $route['tt/'.$regx['username'].'/record_(:num)/stop']                   =       'timetracker/record_stop/$1/$2';
 $route['tt/'.$regx['username'].'/todo_(:num)/done']                     =       'timetracker/todo_done/$1/$2';
 
+$route['tt/'.$regx['username'].'/record_(:num)/restart']                =       'timetracker/record_restart/$1/$2';
 $route['tt/'.$regx['username'].'/records/stopall']                      =       'timetracker/records_stopall/$1';
 
 //---

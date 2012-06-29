@@ -11,7 +11,6 @@ class Timetracker extends CI_Controller {
         $this->load->library( 'timetracker_lib' );
         $this->timetracker_lib->checkuser();
         $this->timetracker_lib->get_alerts();
-        $this->data['current']['action']= 'record';
 
         if ( $_POST ) {
             $res = $this->_fromPOST( $_POST );
@@ -33,15 +32,21 @@ class Timetracker extends CI_Controller {
 
 
     /******
-     * tt board
+     * tt home
      * */
 
-    public function index( $username = NULL, $page=1 ) {
+    public function home( $username = NULL ) {
 
 
         $this->timetracker_lib->checkUsername( $username );
 
-        $this->load->library('pagination');
+        $this->data[ 'tt_layout' ] = 'tt_home';
+
+        $count = $this->config->item('headerbloc_perpage');
+        $this->data[ 'last_activities' ] =  $this->records->get_records_full($this->user_id, array( 'type_of_record' => 'activity', 'running' => 0 ) ,0 , $count );
+        $this->data[ 'last_values' ] =      $this->records->get_records_full($this->user_id, array( 'type_of_record' => 'value' ) ,0 , $count );
+
+      /*  $this->load->library('pagination');
 
         $list=array();
         $list[ 'count' ][ 'activity' ]    = $this->records->get_records_count($this->user_id, array( 'type_of_record' => 'activity',    'datefrom' => $this->data[ 'current' ]['datefrom'], 'dateto' => $this->data[ 'current' ]['dateto'] ) );
@@ -78,7 +83,7 @@ class Timetracker extends CI_Controller {
         $this->data['list']= $list;
 
         $this->data[ 'pager']           = $this->pagination->create_links();
-        $this->data[ 'tabs' ]           = tabs_buttons ( $username, $this->data['current'], $list[ 'count' ] );
+        $this->data[ 'tabs' ]           = tabs_buttons ( $username, $this->data['current'], $list[ 'count' ] );*/
 
         $this->timetracker_lib->render();
     }

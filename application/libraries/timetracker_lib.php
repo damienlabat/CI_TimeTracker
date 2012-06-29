@@ -8,7 +8,9 @@ class Timetracker_lib
     {
         $this->ci =& get_instance();
 
-         $this->ci->load->helper( array(
+        $this->ci->config->load('timetracker');
+
+        $this->ci->load->helper( array(
             'url',
             'assets_helper',
             'form',
@@ -29,13 +31,16 @@ class Timetracker_lib
 
         //$this->ci->output->enable_profiler( TRUE );
 
+        $this->ci->data['title'] = '';
+        $this->ci->data['subtitle'] = '';
+
 
     }
 
 
     function render( ) {
 
-        $this->ci->data['cattree'] = $this->getCattree();
+       // $this->ci->data['cattree'] = $this->getCattree();
 
         $this->ci->data[ 'content' ] = $this->ci->load->view( 'timetracker/layout', $this->ci->data, true );
         $this->ci->load->view( 'layout', $this->ci->data );
@@ -124,19 +129,6 @@ class Timetracker_lib
          /** get data **/
 
          $this->getRunnings();
-
-        $tab = $this->ci->input->get( 'tab', TRUE );
-        if ( $tab===FALSE ) $tab='activity';
-        $this->ci->data[ 'current' ]['tab'] = $tab;
-
-        $datefrom = $this->ci->input->get( 'datefrom', TRUE );
-        $dateto =   $this->ci->input->get( 'dateto', TRUE );
-        if (!$datefrom) $datefrom = $this->ci->firstdata_date;
-        if (!$dateto)   $dateto = $this->ci->server_date;
-        $this->ci->data[ 'current' ]['datefrom'] = $datefrom;
-        $this->ci->data[ 'current' ]['dateto'] = $dateto;
-
-
     }
 
 
@@ -162,8 +154,6 @@ class Timetracker_lib
             if ($current['cat']=='tag')
                  $this->ci->data[ 'tag' ]           = $res = $this->ci->tags->get_tag_by_id($current['id'] );
 
-            if ($current['cat']=='valuetype')
-                $this->ci->data[ 'valuetype' ]      = $res = $this->ci->values->get_valuetype_by_id( $valuetype_id );
 
             if ( !$res )  show_404();
 

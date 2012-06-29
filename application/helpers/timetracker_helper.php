@@ -314,10 +314,15 @@ if ( ! function_exists('tag'))
 
 if ( ! function_exists('value'))
 {
-    function value($record,$username) {
+    function value($value) {
         $html='';
-        if (isset($record['value']))
-            $html= "<div class='value'><a href='".site_url('tt/'.$username.'/valuetype/'.$record['value']['valuetype_ID'])."'>#".$record['value']['title']."</a> = <a href='".site_url('tt/'.$username.'/record/'.$record['id'])."'>".$record['value']['value']."</a></div>";
+
+        foreach ( $value as $value_item )
+        {
+            if ($html!='') $html.=', ';
+            $html.='<span class="value">'.$value_item.'</span>';
+
+        }
 
         return $html;
     }
@@ -393,13 +398,13 @@ if ( ! function_exists('timezone2UTCdiff'))
 {
     function timezone2UTCdiff($tz) {
         $user_tz =  new DateTimeZone($tz);
-        $user_time = new DateTime("now", $user_tz);        
+        $user_time = new DateTime("now", $user_tz);
 
         $offset_min= floor($user_tz->getOffset($user_time)/60);
-            $sgn = ($offset_min < 0 ? '-' : '+');  
-            $mins = abs($offset_min%60);  
+            $sgn = ($offset_min < 0 ? '-' : '+');
+            $mins = abs($offset_min%60);
             if ($mins<10) $mins='0'.$mins;
-            $hrs = floor(abs($offset_min) / 60);  
+            $hrs = floor(abs($offset_min) / 60);
 
         return $sgn.$hrs.':'.$mins;
     }

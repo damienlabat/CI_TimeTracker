@@ -17,6 +17,27 @@ body {
     margin-bottom: 0;
 }
 
+.window {
+    border: 1px solid @gray;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding:15px;
+
+
+    > h1 {
+        background: @gray;
+        color: @white;
+        font-size: 21px;
+        margin: -15px -15px 15px -15px;
+        padding: 0px 15px;
+    }
+}
+
+.window.activities > h1 { background:@blue; }
+.window.todolist > h1   { background:@orange; }
+.window.values > h1     { background:@green; }
+
+
 
 #title_time {
     display: block;

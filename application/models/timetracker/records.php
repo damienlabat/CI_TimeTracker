@@ -342,7 +342,9 @@ class Records extends CI_Model {
 
 
         $record[ 'tags' ]  = $this->tags->get_record_tags( $record[ 'id' ] );
-        $record[ 'value' ] = $this->values->get_record_value( $record[ 'id' ] );
+
+        // TODO get record comments
+        // TODO get record friends viewing this
 
         $record[ 'tag_path' ] = '';
         if ( $record[ 'tags' ] )
@@ -352,12 +354,8 @@ class Records extends CI_Model {
                 $record[ 'tag_path' ] .= $tag[ 'tag' ];
             }
 
-        if ( $record[ 'value' ] ) {
-            $record[ 'value' ][ 'value_path' ] = '#'.$record[ 'value' ]['title'].'='.$record[ 'value' ]['value'];
-            $record[ 'value_title' ] = $record[ 'value' ]['title'];
-            $record[ 'value_data' ] = $record[ 'value' ]['value'];
-            }
-
+        if ($record[ 'type_of_record' ] == 'value')
+            $record[ 'value' ]  = $this->values->get_value( $record[ 'id' ] );
 
         $record[ 'activity' ] = $this->activities->get_activity_by_id_full( $record[ 'activity_ID' ] );
 

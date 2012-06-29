@@ -11,7 +11,7 @@ class Values extends CI_Model {
      * get value
      *
      * @record_ID     int
-     * @return          array
+     * @return        string
      */
     function get_value( $record_id ) {
 
@@ -19,7 +19,7 @@ class Values extends CI_Model {
 
         $query = $this->db->get( $this->values_table );
         if ( $query->num_rows() == 1 )
-            return $query->row_array();
+            return json_decode( $query->row()->value );
         return NULL;
     }
 
