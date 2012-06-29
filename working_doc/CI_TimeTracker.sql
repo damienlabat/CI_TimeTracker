@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Serveur: localhost
--- Généré le : Jeu 28 Juin 2012 à 16:20
+-- Généré le : Ven 29 Juin 2012 à 10:31
 -- Version du serveur: 5.1.63
 -- Version de PHP: 5.3.3-7+squeeze13
 
@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS `activities` (
 
 CREATE TABLE IF NOT EXISTS `categories` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `parent` int(10) unsigned DEFAULT NULL,
   `title` varchar(100) COLLATE utf8_bin NOT NULL,
   `description` text COLLATE utf8_bin NOT NULL,
   `isshown` int(1) unsigned NOT NULL DEFAULT '1',
@@ -64,6 +65,47 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
   `user_data` text COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `comments`
+--
+
+CREATE TABLE IF NOT EXISTS `comments` (
+  `id` int(10) unsigned NOT NULL,
+  `record_ID` int(10) unsigned NOT NULL,
+  `user_ID` int(10) unsigned NOT NULL,
+  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `message` text COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MRG_MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `friends`
+--
+
+CREATE TABLE IF NOT EXISTS `friends` (
+  `user1_ID` int(10) NOT NULL,
+  `user2_ID` int(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `invite`
+--
+
+CREATE TABLE IF NOT EXISTS `invite` (
+  `id` int(11) unsigned NOT NULL,
+  `from_user` int(11) unsigned NOT NULL,
+  `to_email` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `message` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  KEY `id` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -118,16 +160,17 @@ CREATE TABLE IF NOT EXISTS `l_records_tags` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `l_records_values`
+-- Structure de la table `messages`
 --
 
-CREATE TABLE IF NOT EXISTS `l_records_values` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `value` varchar(200) COLLATE utf8_bin NOT NULL,
-  `record_ID` int(10) unsigned NOT NULL,
-  `valuetype_ID` int(10) unsigned NOT NULL,
+CREATE TABLE IF NOT EXISTS `messages` (
+  `id` int(10) unsigned NOT NULL,
+  `from_user` int(10) unsigned NOT NULL,
+  `to_user` int(10) unsigned NOT NULL,
+  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `message` text COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=MRG_MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -138,6 +181,7 @@ CREATE TABLE IF NOT EXISTS `l_records_values` (
 CREATE TABLE IF NOT EXISTS `records` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `description` text COLLATE utf8_bin NOT NULL,
+  `status` varchar(256) COLLATE utf8_bin NOT NULL,
   `start_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `duration` int(11) unsigned NOT NULL,
   `running` int(1) unsigned NOT NULL DEFAULT '1',
@@ -187,18 +231,6 @@ CREATE TABLE IF NOT EXISTS `tags` (
   `user_ID` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `todo_class`
---
-
-CREATE TABLE IF NOT EXISTS `todo_class` (
-  `activity_ID` int(11) unsigned NOT NULL,
-  `class` varchar(250) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`activity_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -256,15 +288,12 @@ CREATE TABLE IF NOT EXISTS `user_profiles` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `valuetypes`
+-- Structure de la table `values`
 --
 
-CREATE TABLE IF NOT EXISTS `valuetypes` (
+CREATE TABLE IF NOT EXISTS `values` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `title` varchar(100) COLLATE utf8_bin NOT NULL,
-  `description` text COLLATE utf8_bin NOT NULL,
-  `type` varchar(100) COLLATE utf8_bin NOT NULL,
-  `isshow` int(1) unsigned NOT NULL DEFAULT '1',
-  `user_ID` int(10) unsigned NOT NULL,
+  `value` varchar(256) COLLATE utf8_bin NOT NULL,
+  `record_ID` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
