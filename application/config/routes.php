@@ -48,67 +48,76 @@ $route['logout'] =      'auth/logout';
 $route['help'] =        'staticpages/help';
 $route['account'] =     'auth/account';
 
-/*
- TODO! user params and shared categories
- */
+//---
 
 $regx=array(
-    'date'              =>   '(\d{4}-\d{2}-\d{2}|all)',
-    'type_of_record'    =>   '(activity|todo|value)',
-    'type_of_obj'       =>   '(categorie|tag|valuetype)',
-    'type_of_button'    =>   '(summary|graph|export|log)',
-    'group_by'          =>   '(minute|hour|day|week)',
-    'export_format'     =>   '(summary|graph|export)' // add log
+    'export_format'     =>      '(json|csv|txt)',
+    'username'     		=>      '([^\/]+)',
+    'objfile'           =>      '(categorie|activity|record|todo|value|tag|comment)'
     );
 
+//---
+$route['tt/'.$regx['username']]                 =     'timetracker/$1';
 
-$route['tt/([^\/]+)/'.$regx['type_of_record'].'/(:num)/edit'] =       'timetracker/generic_activity_edit/$1/$2/$3';
-$route['tt/([^\/]+)/'.$regx['type_of_record'].'/(:num)/(:num)'] =     'timetracker/generic_activity_show/$1/$2/$3/$4'; // $4=page
-$route['tt/([^\/]+)/'.$regx['type_of_record'].'/(:num)'] =            'timetracker/generic_activity_show/$1/$2/$3';
-$route['tt/([^\/]+)/'.$regx['type_of_record'].'/new'] =               'timetracker/generic_activity_new/$1/$2';
-$route['tt/([^\/]+)/'.$regx['type_of_record'].'/stopandnew'] =        'timetracker/generic_activity_new/$1/$2/1';
-$route['tt/([^\/]+)/'.$regx['type_of_record'].'/stopall'] =           'timetracker/stop_all/$1/$2';
+$route['tt/'.$regx['username'].'/settings']     =     'timetracker/settings/$1';
 
-$route['tt/([^\/]+)/'.$regx['type_of_obj']] =                  'timetracker/$2/$1';
-$route['tt/([^\/]+)/'.$regx['type_of_obj'].'/(:num)'] =        'timetracker/$2/$1/$3';
-$route['tt/([^\/]+)/'.$regx['type_of_obj'].'/(:num)/(:num)'] = 'timetracker/$2/$1/$3/$4'; // $4=page
-$route['tt/([^\/]+)/'.$regx['type_of_obj'].'/(:num)/edit'] =   'timetracker/$2_edit/$1/$3';
+//---
+
+$route['tt/'.$regx['username'].'/activities']                           =       'timetracker/activities/$1';
+$route['tt/'.$regx['username'].'/activities/summary']                   =       'timetracker/activities_settings/$1';
+$route['tt/'.$regx['username'].'/activities/graph']                     =       'timetracker/activities_graph/$1';
+$route['tt/'.$regx['username'].'/activities.'.$regx['export_format']]   =       'timetracker/activities_export/$1/$2';
+
+$route['tt/'.$regx['username'].'/todolist']                             =       'timetracker/todolist/$1';
+$route['tt/'.$regx['username'].'/todolist.'.$regx['export_format']]     =       'timetracker/todolist_export/$1/$2';
+
+$route['tt/'.$regx['username'].'/values']                               =       'timetracker/values/$1';
+$route['tt/'.$regx['username'].'/values.'.$regx['export_format']]       =       'timetracker/values_export/$1/$2';
+
+//---
+
+$route['tt/'.$regx['username'].'/record/new']                           =       'timetracker/record_new/$1';
+$route['tt/'.$regx['username'].'/todo/new']                             =       'timetracker/todo_new/$1';
+$route['tt/'.$regx['username'].'/value/new']                            =       'timetracker/value_new/$1';
+
+//---
+
+$route['tt/'.$regx['username'].'/'.$regx['objfile'].'_(:num)']          =       'timetracker/$2/$1/$3';
+$route['tt/'.$regx['username'].'/'.$regx['objfile'].'_(:num)/edit']     =       'timetracker/$2_edit/$1/$3';
+$route['tt/'.$regx['username'].'/'.$regx['objfile'].'_(:num)/delete']   =       'timetracker/$2_delete/$1/$3';
+
+//---
+
+$route['tt/'.$regx['username'].'/record_(:num)/stop']                   =       'timetracker/record_stop/$1/$2';
+$route['tt/'.$regx['username'].'/todo_(:num)/done']                     =       'timetracker/todo_done/$1/$2';
+
+$route['tt/'.$regx['username'].'/records/stopall']                      =       'timetracker/records_stopall/$1';
+
+//---
+
+$route['json/'.$regx['username'].'/activities/graph']                   =       'timetracker/json_activities_graph/$1';
+$route['json/'.$regx['username'].'/activities/summary']                 =       'timetracker/json_activities_summary/$1';
+
+/*
+TODO
+
+/tt/{username}/(categorie|record|todo|value)/addcomment
+
+/friends
+/friends/invite
+/friends/sharedrequests
+/friends/sharedrequest/{id}
+/friend/{username}
+
+/messages/
+/messages/send
+/message/{id}
+/message/{id}/delete
+
+tt/{username}/categorie_{id}/share
 
 
-
-$route['tt/([^\/]+)/record/(:num)'] =                           'timetracker/record/$1/$2';
-$route['tt/([^\/]+)/record/(:num)/edit'] =                      'timetracker/edit_record/$1/$2';
-$route['tt/([^\/]+)/record/(:num)/delete'] =                    'timetracker/delete_record/$1/$2';
-$route['tt/([^\/]+)/record/(:num)/restart'] =                   'timetracker/restart/$1/$2';
-$route['tt/([^\/]+)/record/(:num)/stop'] =                      'timetracker/stop/$1/$2';
-
-
-
-
-
-
-$route['tt/([^\/]+)/'.$regx['type_of_button']] =                                 'timetracker_viz/$2/$1';
-$route['tt/([^\/]+)/'.$regx['type_of_button'].'/([^\/]+)'] =                     'timetracker_viz/$2/$1/$3';
-$route['tt/([^\/]+)/'.$regx['type_of_button'].'/([^\/]+)/([^\/]+)'] =            'timetracker_viz/$2/$1/$3/$4';    // $4=id
-
-
-$route['tt/([^\/]+)/export/([^\/]+)/([^\/]+)/([^\/]+)/([^\.]+).'.$regx['export_format']] =                      'timetracker_viz/export/$1/$2/$3/$4/$5/$6';
-
-$route['tt/([^\/]+)/histo/([^\/]+)/([^\/]+)/'.$regx['date'].'_'.$regx['date'].'/'.$regx['group_by'].'.json'] =  'timetracker_viz/histo_json/$1/$2/$3/$4/$5/$6';
-//ex: http://127.0.0.1/damien/CI_TimeTracker/tt/damien/histo/categorie/all/all/day.json      // user type id plagedat
-
-
-
-
-
-$route['tt/([^\/]+)/settings'] =     'timetracker/settings/$1';
-
-$route['tt/([^\/]+)'] =              'timetracker/index/$1';
-$route['tt/([^\/]+)/(:num)'] =       'timetracker/index/$1/$2'; // $2=page
-$route['tt'] =                       'timetracker/index';
-
-
-
+*/
 
 
 /* End of file routes.php */
