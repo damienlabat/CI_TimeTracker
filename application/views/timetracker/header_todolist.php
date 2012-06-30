@@ -1,4 +1,6 @@
-<div class='span6 window todolist'>
+<div class='window todolist<?php
+if ($tt_layout=='tt_home') echo ' span6';
+?>'>
         <h1><a href='<?=site_url('tt/'.$user['name'].'/todolist')?>'>Todo list</a></h1>
 <?php
 

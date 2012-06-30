@@ -12,6 +12,8 @@ class Timetracker extends CI_Controller {
         $this->timetracker_lib->checkuser();
         $this->timetracker_lib->get_alerts();
 
+        $this->data['current']['action']= 'record';
+
         if ( $_POST ) {
             $res = $this->_fromPOST( $_POST );
             if ( isset( $res[ 'alerts' ] ) )
@@ -37,7 +39,6 @@ class Timetracker extends CI_Controller {
 
     public function home( $username = NULL ) {
 
-
         $this->timetracker_lib->checkUsername( $username );
 
         $this->data[ 'tt_layout' ] = 'tt_home';
@@ -46,48 +47,106 @@ class Timetracker extends CI_Controller {
         $this->data[ 'last_activities' ] =  $this->records->get_records_full($this->user_id, array( 'type_of_record' => 'activity', 'running' => 0 ) ,0 , $count );
         $this->data[ 'last_values' ] =      $this->records->get_records_full($this->user_id, array( 'type_of_record' => 'value' ) ,0 , $count );
 
-      /*  $this->load->library('pagination');
-
-        $list=array();
-        $list[ 'count' ][ 'activity' ]    = $this->records->get_records_count($this->user_id, array( 'type_of_record' => 'activity',    'datefrom' => $this->data[ 'current' ]['datefrom'], 'dateto' => $this->data[ 'current' ]['dateto'] ) );
-        $list[ 'count' ][ 'todo' ]        = $this->records->get_records_count($this->user_id, array( 'type_of_record' => 'todo',        'datefrom' => $this->data[ 'current' ]['datefrom'], 'dateto' => $this->data[ 'current' ]['dateto'] ) );
-        $list[ 'count' ][ 'value' ]       = $this->records->get_records_count($this->user_id, array( 'type_of_record' => 'value',       'datefrom' => $this->data[ 'current' ]['datefrom'], 'dateto' => $this->data[ 'current' ]['dateto'] ) );
+        $this->timetracker_lib->render();
+    }
 
 
+    public function activities( $username = NULL ) {
 
+        $this->timetracker_lib->checkUsername( $username );
 
+        $page = isset($_GET['page']) ? $_GET['page']: 1;
 
-        $config['base_url'] = site_url('tt/'.$username.'/');
-        $config['total_rows'] = $list[ 'count' ][ $this->data[ 'current' ]['tab'] ];
+        $this->data[ 'current' ]['tab'] = 'activity';
+        $this->data[ 'current' ]['cat'] = 'categorie';
+        $this->data[ 'current' ]['id']  = NULL;
+
+        $count = $this->config->item('headerbloc_perpage');
+        $this->data[ 'last_activities' ] =  $this->records->get_records_full($this->user_id, array( 'type_of_record' => 'activity', 'running' => 0 ) ,0 , $count );
+
+        $this->load->library('pagination');
+
+        $config['base_url'] = site_url('tt/'.$username.'/activities?');
+        $config['total_rows'] = $this->records->get_records_count($this->user_id, array( 'type_of_record'=>'activity' ) );
 
         $this->pagination->initialize($config);
 
         $per_page=$this->pagination->per_page;
         $offset= ( $page-1 ) * $per_page;
 
-        $this->data[ 'current' ]['cat'] = 'categorie';
-        $this->data[ 'current' ]['id'] = NULL;
 
-        $this->data[ 'tt_layout' ]      = 'tt_board';
+        $this->data['list'][ 'activity_records' ]        = $this->records->get_records_full($this->user_id, array(  'type_of_record'=>'activity' ), $offset, $per_page );
+        $this->data[ 'pager']               = $this->pagination->create_links();
 
-        $list[ $this->data[ 'current' ]['tab'] . '_records']       = $this->records->get_records_full(
-            $this->user_id,
-            array(
-                'type_of_record' => $this->data[ 'current' ]['tab'],
-                'datefrom' => $this->data[ 'current' ]['datefrom'],
-                'dateto' => $this->data[ 'current' ]['dateto']
-                ),
-            $offset ,
-            $per_page );
-
-        $this->data['list']= $list;
-
-        $this->data[ 'pager']           = $this->pagination->create_links();
-        $this->data[ 'tabs' ]           = tabs_buttons ( $username, $this->data['current'], $list[ 'count' ] );*/
+        $this->data[ 'tt_layout' ] = 'tt_activities';
 
         $this->timetracker_lib->render();
     }
 
+
+
+
+    public function todolist( $username = NULL ) {
+
+        $this->timetracker_lib->checkUsername( $username );
+
+        $page = isset($_GET['page']) ? $_GET['page']: 1;
+
+        $this->data[ 'current' ]['tab'] = 'todo';
+        $this->data[ 'current' ]['cat'] = 'categorie';
+        $this->data[ 'current' ]['id']  = NULL;
+
+        $this->load->library('pagination');
+
+        $config['base_url'] = site_url('tt/'.$username.'/todolist?');
+        $config['total_rows'] = $this->records->get_records_count($this->user_id, array( 'type_of_record'=>'todo' ) );
+
+        $this->pagination->initialize($config);
+
+        $per_page=$this->pagination->per_page;
+        $offset= ( $page-1 ) * $per_page;
+
+
+        $this->data['list'][ 'todo_records' ]        = $this->records->get_records_full($this->user_id, array(  'type_of_record'=>'todo' ), $offset, $per_page );
+        $this->data[ 'pager']               = $this->pagination->create_links();
+
+        $this->data[ 'tt_layout' ] = 'tt_todolist';
+
+        $this->timetracker_lib->render();
+    }
+
+
+    public function values( $username = NULL ) {
+
+        $this->timetracker_lib->checkUsername( $username );
+
+        $page = isset($_GET['page']) ? $_GET['page']: 1;
+
+        $this->data[ 'current' ]['tab'] = 'value';
+        $this->data[ 'current' ]['cat'] = 'categorie';
+        $this->data[ 'current' ]['id']  = NULL;
+
+        $count = $this->config->item('headerbloc_perpage');
+        $this->data[ 'last_values' ] =  $this->records->get_records_full($this->user_id, array( 'type_of_record' => 'value', 'running' => 0 ) ,0 , $count );
+
+        $this->load->library('pagination');
+
+        $config['base_url'] = site_url('tt/'.$username.'/values?');
+        $config['total_rows'] = $this->records->get_records_count($this->user_id, array( 'type_of_record'=>'value' ) );
+
+        $this->pagination->initialize($config);
+
+        $per_page=$this->pagination->per_page;
+        $offset= ( $page-1 ) * $per_page;
+
+
+        $this->data['list'][ 'value_records' ]        = $this->records->get_records_full($this->user_id, array(  'type_of_record'=>'value' ), $offset, $per_page );
+        $this->data[ 'pager']               = $this->pagination->create_links();
+
+        $this->data[ 'tt_layout' ] = 'tt_values';
+
+        $this->timetracker_lib->render();
+    }
 
 
     /*****
@@ -117,7 +176,7 @@ class Timetracker extends CI_Controller {
 
         $this->data[ 'current' ]['cat'] = 'record';
         $this->data[ 'current' ]['id'] = $record_id;
-        $this->data['hidemenu'] = TRUE;
+
         $this->timetracker_lib->getCurrentObj();
 
 
@@ -257,7 +316,7 @@ class Timetracker extends CI_Controller {
         $offset= ( $page-1 ) * $per_page;
 
 
-        $this->data['list'][ $type_of_record.'_records' ]        = $this->records->get_records_full($this->user_id, array( 'activity'=>$activity_id, 'type_of_record'=>$type_of_record ) );
+        $this->data['list'][ $type_of_record.'_records' ]        = $this->records->get_records_full($this->user_id, array( 'activity'=>$activity_id, 'type_of_record'=>$type_of_record ), $offset, $per_page );
         $this->data[ 'pager']               = $this->pagination->create_links();
         $this->data[ 'tt_layout' ]          = 'tt_activity';
 

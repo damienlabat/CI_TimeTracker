@@ -30,8 +30,8 @@ if (isset($user)) : /* PRIVATE NAVBAR */
                         ?></a>
                     </li>
                     <li>
-                        <a href="<?=site_url('tt/'.$user['name'].'/todolist')?>">to-do list<?php
-                        if (count($running['todos'])>0) echo ' <span class="badge badge-info">'.count($running['todos']).'</span>';
+                        <a href="<?=site_url('tt/'.$user['name'].'/todolist')?>">todo list<?php
+                        if (count($running['todos'])>0) echo ' <span class="badge badge-warning">'.count($running['todos']).'</span>';
                         ?></a>
                     </li>
                     <li>

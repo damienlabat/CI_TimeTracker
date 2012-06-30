@@ -1,4 +1,6 @@
-<div class='span6 window values'>
+<div class='window values<?php
+if ($tt_layout=='tt_home') echo ' span6';
+?>'>
     <h1><a href='<?=site_url('tt/'.$user['name'].'/values')?>'>Values</a></h1>
         <?php
 
@@ -19,7 +21,7 @@
 
     ?>
     </table>
-
+    <?php if ($tt_layout=='tt_home'): ?>
      <div class="btn-group pull-right">
           <button data-toggle="dropdown" class="btn dropdown-toggle">view more <span class="caret"></span></button>
           <ul class="dropdown-menu">
@@ -28,5 +30,6 @@
           </ul>
         </div>
     <?php endif; ?>
+<?php endif; ?>
     <a href='<?=site_url('tt/'.$user['name'].'/value/new')?>' class='btn btn-success'>Record new value</a>
 </div>

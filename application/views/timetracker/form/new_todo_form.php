@@ -9,7 +9,7 @@ echo validation_errors();
 
     <div class="row-fluid">
         <label for="activity">todo</label>
-        <input type="text" placeholder="activity" name="start"  id="activity" value="">
+        <input type="text" placeholder="todo" name="start"  id="activity" value="">
     </div>
 
 
@@ -23,7 +23,7 @@ echo validation_errors();
 
     <input type="hidden" name="type_of_record"  value="<?=$current['cat']?>">
 
-    <button type="submit" class="btn btn-large btn-primary">Start</button>
+    <button type="submit" class="btn btn-large btn-primary">start</button>
 
 
 </form>
