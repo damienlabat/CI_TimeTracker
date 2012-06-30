@@ -315,14 +315,22 @@ if ( ! function_exists('tag'))
 if ( ! function_exists('value'))
 {
     function value($value) {
-        $html='';
 
-        foreach ( $value as $value_item )
+
+        if (count($value)==1)
+            $html='<span class="value">'.$value[0].'</span>';
+        else
         {
-            if ($html!='') $html.=', ';
-            $html.='<span class="value">'.$value_item.'</span>';
+            $html='[';
+            foreach ( $value as $value_item )
+            {
+                if ($html!='[') $html.=', ';
+                $html.='<span class="value">'.$value_item.'</span>';
+            }
+            $html.=']';
 
         }
+
 
         return $html;
     }

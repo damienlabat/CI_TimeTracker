@@ -1,10 +1,10 @@
 <div class='span6 window todolist'>
-        <h1>todo list</h1>
-        <?php
+        <h1><a href='<?=site_url('tt/'.$user['name'].'/todolist')?>'>Todo list</a></h1>
+<?php
 
     if ( count($running['todos'])>0 ):
 
-    ?>
+?>
 
         <table class='table'>
     <?php
@@ -18,8 +18,12 @@
 
     ?>
     </table>
-    <?php else: ?>
+<?php
+
+    else:
+
+?>
     <div>just relax :-)</div><br/>
     <?php endif; ?>
-    <a href='<?=site_url('tt/'.$user['name'].'/todo/new')?>' class='btn'>Add new things Todo</a>
+    <a href='<?=site_url('tt/'.$user['name'].'/todo/new')?>' class='btn btn-warning'>Add new things Todo</a>
     </div>

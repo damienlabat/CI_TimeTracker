@@ -13,12 +13,19 @@ body {
    Author:
    ========================================================================== */
 
+
+[class^="icon-"], [class*=" icon-"] {
+    text-indent: 10000px;
+    overflow: hidden;
+}
+
 .navbar-fixed-top {
     margin-bottom: 0;
 }
 
 .window {
-    border: 1px solid @gray;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    border:1px solid @grayLighter;
     margin-top: 10px;
     margin-bottom: 20px;
     padding:15px;
@@ -26,24 +33,38 @@ body {
 
     > h1 {
         background: @gray;
-        color: @white;
         font-size: 21px;
         margin: -15px -15px 15px -15px;
         padding: 0px 15px;
+
+        > a {
+            color: @white;
+            display:block;
+        }
     }
 }
 
-.window.activities > h1 { background:@blue; }
-.window.todolist > h1   { background:@orange; }
-.window.values > h1     { background:@green; }
+.window.activities {
+    border-color:@blue;
+    > h1 { background:@blue; }
+ }
+.window.todolist {
+    border-color:@orange;
+    > h1   { background:@orange; }
+ }
+.window.values {
+    border-color:@green;
+    > h1 { background:@green; }
+ }
+
+/***  ***/
+
+#footer {
+    margin-top:5px;
+    text-align:center;
+    }
 
 
-
-#title_time {
-    display: block;
-    font-size: 0.6em;
-    text-align: right;
-}
 
 
 #content {

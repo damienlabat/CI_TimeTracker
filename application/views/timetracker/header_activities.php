@@ -1,5 +1,5 @@
 <div class="window activities">
-    <h1>Activities</h1>
+    <h1><a href='<?=site_url('tt/'.$user['name'].'/activities')?>'>Activities</a></h1>
 
     <div class="row-fluid">
         <div class='span6'>
@@ -33,7 +33,7 @@
 
 
     <?php endif; ?>
-    <a href='<?=site_url('tt/'.$user['name'].'/activity/new')?>' class='btn btn-success'>Add new activity</a>
+    <a href='<?=site_url('tt/'.$user['name'].'/activity/new')?>' class='btn btn-primary'>Add new activity</a>
         </div>
 
         <div class='span6'>
@@ -53,7 +53,26 @@
 
     ?>
     </table>
-    <a class='pull-right' href='<?=site_url('tt/'.$user['name'].'/activities')?>'>view more</a>
+    <?php
+
+    if ( $tt_layout == 'tt_home' ) :
+
+    ?>
+
+        <div class="btn-group pull-right">
+          <button data-toggle="dropdown" class="btn dropdown-toggle">view more <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a href="<?=site_url('tt/'.$user['name'].'/activities')?>">last activities</a></li>
+            <li><a href="<?=site_url('tt/'.$user['name'].'/activities/summary')?>">summary</a></li>
+            <li><a href="<?=site_url('tt/'.$user['name'].'/activities/graph')?>">graph</a></li>
+          </ul>
+        </div>
+    <?php
+
+    endif;
+
+    ?>
+
         </div>
 
     </div>

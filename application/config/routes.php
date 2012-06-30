@@ -72,6 +72,7 @@ $route['tt/'.$regx['username'].'/todolist']                             =       
 $route['tt/'.$regx['username'].'/todolist.'.$regx['export_format']]     =       'timetracker/todolist_export/$1/$2';
 
 $route['tt/'.$regx['username'].'/values']                               =       'timetracker/values/$1';
+$route['tt/'.$regx['username'].'/values/graph']                         =       'timetracker/values_graph/$1';
 $route['tt/'.$regx['username'].'/values.'.$regx['export_format']]       =       'timetracker/values_export/$1/$2';
 
 //---

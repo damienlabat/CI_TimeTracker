@@ -1,5 +1,5 @@
 <div class='span6 window values'>
-        <h1>values</h1>
+    <h1><a href='<?=site_url('tt/'.$user['name'].'/values')?>'>Values</a></h1>
         <?php
 
     if ( count($last_values)>0 ):
@@ -19,7 +19,14 @@
 
     ?>
     </table>
-    <a class='pull-right' href='<?=site_url('tt/'.$user['name'].'/values')?>'>view more</a>
+
+     <div class="btn-group pull-right">
+          <button data-toggle="dropdown" class="btn dropdown-toggle">view more <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a href="<?=site_url('tt/'.$user['name'].'/values')?>">last values</a></li>
+            <li><a href="<?=site_url('tt/'.$user['name'].'/values/graph')?>">graph</a></li>
+          </ul>
+        </div>
     <?php endif; ?>
-    <a href='<?=site_url('tt/'.$user['name'].'/value/new')?>' class='btn'>Record new value</a>
+    <a href='<?=site_url('tt/'.$user['name'].'/value/new')?>' class='btn btn-success'>Record new value</a>
 </div>

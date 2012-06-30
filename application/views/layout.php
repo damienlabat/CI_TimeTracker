@@ -45,8 +45,9 @@
                     <?php $this->load->view('bloc/breadcrumb'); ?>
                     <?php $this->load->view('bloc/alerts'); ?>
                     <?=@$content?>
-                    <?php $this->load->view('bloc/footer'); ?>
+
                 </div>
+                <?php $this->load->view('bloc/footer'); ?>
             </div>
         </div>
     </div> <!-- /container -->
