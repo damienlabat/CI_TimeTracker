@@ -26,14 +26,6 @@ class Records extends CI_Model {
 
         $query = $this->db->get();
 
-
-        /*  $this->db->select($this->activities_table.'.title,type_of_record,categorie_ID,'.$this->records_table.'.*');
-        $this->db->from($this->records_table);
-        $this->db->join($this->activities_table, $this->activities_table.'.id = '. $this->records_table.'.activity_ID');
-        $this->db->where($this->records_table.'.id',$record_id);
-
-        $query = $this->db->get();*/
-
         if ( $query->num_rows() >= 1 )
             return $query->row_array();
         return NULL;
@@ -270,11 +262,11 @@ class Records extends CI_Model {
 
 
     function get_record_by_id_full( $record_id ) {
-        $activitie = $this->get_record_by_id( $record_id );
-        if ( $activitie )
-            $activitie = $this->complete_record_info( $activitie );
+        $record = $this->get_record_by_id( $record_id );
+        if ( $record )
+            $record = $this->complete_record_info( $record );
 
-        return $activitie;
+        return $record;
     }
 
 
@@ -354,10 +346,11 @@ class Records extends CI_Model {
                 $record[ 'tag_path' ] .= $tag[ 'tag' ];
             }
 
-        if ($record[ 'type_of_record' ] == 'value')
+        $record[ 'activity' ] = $this->activities->get_activity_by_id_full( $record[ 'activity_ID' ] );
+
+        if ($record[ 'activity' ][ 'type_of_record' ] == 'value')
             $record[ 'value' ]  = $this->values->get_value( $record[ 'id' ] );
 
-        $record[ 'activity' ] = $this->activities->get_activity_by_id_full( $record[ 'activity_ID' ] );
 
 
         return $record;

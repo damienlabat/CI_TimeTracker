@@ -1,6 +1,4 @@
-<?php
-$this->load->view( 'timetracker/tab_buttons' );
-?>
+
 <div class='ttgraph' data-graph='<?=json_encode($datagraph)?>'></div>
 
 

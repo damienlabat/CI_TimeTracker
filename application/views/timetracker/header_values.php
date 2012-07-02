@@ -14,7 +14,7 @@ if ($tt_layout=='tt_home') echo ' span6';
         foreach($last_values as $last_values_item) {
                 echo "<tr>";
                 echo "<td>".$last_values_item['start_time']."</td>";
-                echo "<td><a href='".site_url('tt/'.$user['name'].'/value_'.$last_values_item['id'])."'>".$last_values_item['activity']['activity_path']." = ".value( $last_values_item['value'] )."</a></td>";
+                echo "<td><a href='".site_url('tt/'.$user['name'].'/record_'.$last_values_item['id'])."'>".$last_values_item['activity']['activity_path'].value( $last_values_item ).'</a>'."</td>";
 
                 echo "</tr>";
                 }

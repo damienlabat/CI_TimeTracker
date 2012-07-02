@@ -29,6 +29,10 @@ class Timetracker_lib
             'timetracker/records'
         ) );
 
+
+
+
+
         //$this->ci->output->enable_profiler( TRUE );
 
         $this->ci->data['title'] = '';
@@ -128,6 +132,21 @@ class Timetracker_lib
 
          /** get data **/
 
+
+         // GET VAR
+
+        $this->ci->data[ 'current' ]['page']= element('page', $_GET, '1');
+
+        $this->ci->data[ 'current' ]['tab']= element('tab', $_GET, 'activity');
+
+        $this->ci->data[ 'current' ]['datefrom']= element('datefrom', $_GET, $this->ci->data[ 'firstdata_date' ]);
+        $this->ci->data[ 'current' ]['dateto']= element('dateto', $_GET, $this->ci->data['server_date']);
+        $this->ci->data[ 'current' ]['categorie']= element('categorie', $_GET, NULL);
+        $this->ci->data[ 'current' ]['tag']= element('tag', $_GET, NULL);
+        $this->ci->data[ 'current' ]['groupby']= element('groupby', $_GET, 'day');
+        $this->ci->data[ 'current' ]['graphid']= element('graphid', $_GET, NULL);
+
+
          $this->getRunnings();
     }
 
@@ -141,6 +160,7 @@ class Timetracker_lib
         $current=$this->ci->data['current'];
 
         if ( $current['id'] !=NULL ) {
+
 
             if ( in_array( $current['cat'], array('activity','todo','value') ) )
                 $this->ci->data[ 'activity' ]       = $res = $this->ci->activities->get_activity_by_id_full( $current['id'] );

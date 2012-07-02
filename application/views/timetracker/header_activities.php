@@ -16,7 +16,7 @@
 
         foreach($running['activities'] as $record) {
                 echo "<tr>";
-                echo "<td><a href='".site_url('tt/'.$user['name'].'/activity_'.$record['activity']['id'])."'>".$record['activity']['activity_path']."</a></td>";
+                echo "<td><a href='".site_url('tt/'.$user['name'].'/record_'.$record['id'])."'>".$record['activity']['activity_path']."</a></td>";
                 echo "<td>".running_time($record)."</td>";
                 echo "<td><a href='".site_url('tt/'.$user['name'].'/record_'.$record['id'])."/stop' class='btn btn-danger btn-mini'>STOP</a></td>";
                 echo "</tr>";

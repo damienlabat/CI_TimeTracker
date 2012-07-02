@@ -116,36 +116,19 @@ class Timetracker_viz extends CI_Controller {
 
 
 
-     public function graph( $username = NULL, $type_cat = 'categories', $id = NULL, $type_graph = 'histo' ) {
+     public function graph( $username = NULL ) {
 
          // TODO gestion date bugue
 
         $this->timetracker_lib->checkUsername( $username );
 
-        $groupby = $this->input->get( 'groupby', TRUE );
-            if ( $groupby===FALSE ) $groupby='day';
 
 
-        $this->data['current']['action']=       'graph';
-        $this->data['current']['cat']=          $type_cat;
-        $this->data['current']['id']=           $id;
-        $this->data['current']['type_graph']=   $type_graph;
-        $this->data['current']['groupby']=      $groupby;
-        $this->timetracker_lib->getCurrentObj();
-
-        $list=array();
-
-        if ( !in_array( $type_cat, array('activity','todo','value') ) ) {
-            $list[ 'count' ][ 'activity' ]    = $this->records->get_records_count($this->user_id, array( 'categorie'=>$id, 'type_of_record' => 'activity',    'datefrom' => $this->data[ 'current' ]['datefrom'], 'dateto' => $this->data[ 'current' ]['dateto'] ) );
-            $list[ 'count' ][ 'todo' ]        = $this->records->get_records_count($this->user_id, array( 'categorie'=>$id, 'type_of_record' => 'todo',        'datefrom' => $this->data[ 'current' ]['datefrom'], 'dateto' => $this->data[ 'current' ]['dateto'] ) );
-            $list[ 'count' ][ 'value' ]       = $this->records->get_records_count($this->user_id, array( 'categorie'=>$id, 'type_of_record' => 'value',       'datefrom' => $this->data[ 'current' ]['datefrom'], 'dateto' => $this->data[ 'current' ]['dateto'] ) );
-
-            $this->data[ 'tabs' ] = tabs_buttons ( $username, $this->data['current'], $list[ 'count' ] );
-        }
 
 
         $this->data['datagraph']= $this->data['current'];
-        unset($this->data['datagraph']["action"]);
+        unset($this->data['datagraph']["page"]);
+        unset($this->data['datagraph']["tab"]);
         $this->data['datagraph']['username']=$username;
 
 

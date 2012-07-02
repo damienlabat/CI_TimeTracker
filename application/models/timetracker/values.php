@@ -18,8 +18,12 @@ class Values extends CI_Model {
         $this->db->where( 'record_ID', $record_id );
 
         $query = $this->db->get( $this->values_table );
-        if ( $query->num_rows() == 1 )
-            return json_decode( $query->row()->value );
+        if ( $query->num_rows() == 1 ) {
+            if (is_numeric($query->row()->value))
+                return array($query->row()->value);
+            else
+                return json_decode( $query->row()->value );
+        }
         return NULL;
     }
 
@@ -60,7 +64,7 @@ class Values extends CI_Model {
      *
      * @record_id       int
      * @value           string
-     * @return          array
+     * @return          boolean
      */
     function update_value( $record_id, $value ) {
         $this->db->where( 'record_ID', $record_id );

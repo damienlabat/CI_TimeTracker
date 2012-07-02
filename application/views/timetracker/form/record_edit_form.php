@@ -1,6 +1,6 @@
 <?php echo validation_errors();
 ?>
-<?= form_open( 'tt/' . $user['name'] . '/record/'.$record[ 'id' ].'/edit', array(
+<?= form_open( 'tt/' . $user['name'] . '/record_'.$record[ 'id' ].'/edit', array(
      'id' => 'classicform'
 ) ) ?>
 
@@ -12,16 +12,14 @@
         <label for="tags">tags</label>
         <input type="text" placeholder="tags" name="tags" id="tags" value="<?= $record[ 'tag_path' ] ?>">
 
+<?php if ($record['activity']['type_of_record']=='value'): ?>
 
 
-        <label for="value_name">value name</label>
-        <input type="text" placeholder="value name" name="value_name" id="value_name" value="<?= $record[ 'value' ][ 'title' ] ?>">
-        =
         <label for="value">value</label>
-        <input type="text" placeholder="value" name="value" id="value" value="<?= $record[ 'value' ][ 'value' ] ?>">
+        <input type="text" placeholder="value" name="value" id="value" value="<?= value($record,TRUE) ?>">
 
 
-
+<?php endif; ?>
         <br/><textarea class="" placeholder="description..." name="description" id="description"><?= $record[ 'description' ] ?></textarea>
 
 

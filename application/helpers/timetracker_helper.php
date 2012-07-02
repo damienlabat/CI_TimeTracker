@@ -105,7 +105,7 @@ if ( ! function_exists('record_li'))
 
     $html.= record_time($record,$username);
     $html.= activity_path($record['activity'],$username);
-    $html.= value($record,$username);
+    $html.= value($record);
     $html.= tag_list($record['tags'],$username);
     $html.= record_buttons($record,$username);
 
@@ -131,7 +131,7 @@ if ( ! function_exists('record_div'))
 
     $html.= record_time($record,$username);
     $html.= activity_path($record['activity'],$username);
-    $html.= value($record,$username);
+    $html.= value($record);
     $html.= tag_list($record['tags'],$username);
     $html.= record_buttons($record,$username,TRUE);
 
@@ -157,7 +157,7 @@ if ( ! function_exists('record_tr'))
     $html.= "'>";
 
     $html.= "<td>".record_time($record,$username)."</td>";
-    $html.= "<td>".activity_path($record['activity'],$username).value($record,$username)."</td>";
+    $html.= "<td>".activity_path($record['activity'],$username).value($record)."</td>";
     $html.= "<td>".tag_list($record['tags'],$username)."</td>";
     $html.= "<td>".record_buttons($record,$username,TRUE,TRUE)."</td>";
 
@@ -178,7 +178,7 @@ if ( ! function_exists('record_time'))
       $html=  '<span class="record-time">';
 
       $html.= '<span class="record-period">';
-      $html.= '<a href="'.site_url('tt/'.$username.'/record/'.$record['id']).'"><time datetime=\''.$record['start_time'].'\'>'.date2human($record['start_time']).'</time>';
+      $html.= '<a href="'.site_url('tt/'.$username.'/record_'.$record['id']).'"><time datetime=\''.$record['start_time'].'\'>'.date2human($record['start_time']).'</time>';
       if ((!$record['running'])&&($record['duration']>0))  $html.= ' - <time datetime=\''.$record['stop_at'].'\'>'.date2human($record['stop_at']).'</time>';
       $html.= '</a></span>';
 
@@ -224,8 +224,8 @@ if ( ! function_exists('activity_path'))
       $html= ' <span class="activity-path">';
       $html.= '<span class="activity-item">';
 
-      $html.= "<a href='".site_url('tt/'.$username.'/'.$activity['type_of_record'].'/'.$activity['id'])."'>".$activity['title']."</a>";
-     // if (isset($activity['value']))  $html.=value($record['value'],$username);
+      $html.= "<a href='".site_url('tt/'.$username.'/'.$activity['type_of_record'].'_'.$activity['id'])."'>".$activity['title']."</a>";
+     // if (isset($activity['value']))  $html.=value($record['value']);
       $html.= "</span>";
 
       $html.= categorie_a($activity['categorie'],$username);
@@ -251,16 +251,16 @@ if ( ! function_exists('record_buttons'))
 
         $html.= ' <span class="buttons btn-group">';
         if ($record['running'])
-              $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/stop')."' title='stop'><i class='icon-stop'></i></a>";
+              $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record_'.$record['id'].'/stop')."' title='stop'><i class='icon-stop'></i></a>";
 
-        $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/edit')."' title='edit'><i class='icon-pencil'></i></a>";
+        $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record_'.$record['id'].'/edit')."' title='edit'><i class='icon-pencil'></i></a>";
         if (!$record['running'])
-            $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/restart')."' title='restart'><i class='icon-repeat'></i></a>";
-        if ($show_delete) $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete')."' title='delete'><i class='icon-trash'></i></a>";
+            $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record_'.$record['id'].'/restart')."' title='restart'><i class='icon-repeat'></i></a>";
+        if ($show_delete) $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record_'.$record['id'].'/delete')."' title='delete'><i class='icon-trash'></i></a>";
 
         $html.= '</span>';
 
-          if (element('delete_confirm',$record)==TRUE)    $html.= "<div><a class='btn btn-mini btn-danger' href='".site_url('tt/'.$username.'/record/'.$record['id'].'/delete?delete=true')."' title='delete'><i class='icon-trash'></i> delete ! confirmed ?</a></div>";
+          if (element('delete_confirm',$record)==TRUE)    $html.= "<div><a class='btn btn-mini btn-danger' href='".site_url('tt/'.$username.'/record_'.$record['id'].'/delete?delete=true')."' title='delete'><i class='icon-trash'></i> delete ! confirmed ?</a></div>";
     }
 
 
@@ -279,7 +279,7 @@ if ( ! function_exists('categorie_a'))
     {
       if ($categorie['title']=='')  return '';
 
-      $html="@<a href='".site_url('tt/'.$username.'/categorie/'.$categorie['id'])."' class='category'>".$categorie['title']."</a>";
+      $html="@<a href='".site_url('tt/'.$username.'/categorie_'.$categorie['id'])."' class='category'>".$categorie['title']."</a>";
       return $html;
     }
 }
@@ -304,7 +304,7 @@ if ( ! function_exists('tag'))
 {
     function tag($tag,$username)
     {
-      $html= "<a href='".site_url('tt/'.$username.'/tag/'.$tag['id'])."'>".$tag['tag']."</a>";
+      $html= "<a href='".site_url('tt/'.$username.'/tag_'.$tag['id'])."'>".$tag['tag']."</a>";
       return $html;
     }
 }
@@ -314,36 +314,57 @@ if ( ! function_exists('tag'))
 
 if ( ! function_exists('value'))
 {
-    function value($value) {
+    function value( $record, $raw= FALSE ) {
 
 
-        if (count($value)==1)
-            $html='<span class="value">'.$value[0].'</span>';
+
+        if ( isset($record['value'])) {
+                $value=$record['value'];
+                $html = '';
+            }
+            else return '';
+
+        if (count($value)==1) {
+            if ($raw) $html.= $value[0];
+                else $html.='<span class="value">'.$value[0].'</span>';
+            }
         else
         {
-            $html='[';
+            $html.='[';
             foreach ( $value as $value_item )
             {
                 if ($html!='[') $html.=', ';
-                $html.='<span class="value">'.$value_item.'</span>';
+                if ($raw) $html.= $value_item;
+                    else $html.='<span class="value">'.$value_item.'</span>';
             }
             $html.=']';
 
         }
 
 
-        return $html;
+        if ($raw) return $html;
+            else return ' = '.$html;
     }
 }
 
 
 
+if ( ! function_exists('format_categorie'))
+{
+    function format_categorie($categorie) {
+        if ($categorie['title']=='') return '(no categorie)';
+            else return $categorie['title'];
+
+    }
+}
+
 
 if ( ! function_exists('tt_url'))
 {
-    function tt_url($username,$type,$current, $change=array() )
+    function tt_url($username,$type,$current, $change=NULL, $add_get=FALSE )
     {
-        $url='tt/'.$username.'/'.$type;
+        if ($change===NULL) $change=array();
+        $url='tt/'.$username;
         $get_part=array();
         $ext_part="";
         $posturl="";
@@ -360,23 +381,16 @@ if ( ! function_exists('tt_url'))
         if (isset($current['datefrom']))   $get_part[]= array('datefrom',$current['datefrom']);
         if (isset($current['dateto']))     $get_part[]= array('dateto',$current['dateto']);
         if (isset($current['graph']))      $get_part[]= array('graph',$current['graph']);
-        if (isset($current['tab']))        $get_part[]= array('tab',$current['tab']);
+
+        if (isset($current['tab']))
+            if ($current['tab']!='activity') $get_part[]= array('tab',$current['tab']);
 
 
 
-        /* if ( ($current['cat']!='categorie') OR (isset($current['id'])) ) {
-            if (isset($current['cat']))    $url.='/'.$current['cat'];
-            if (isset($current['id']))     $url.='/'.$current['id'];
-        }*/
 
-        if ($type=='record') {
-             if ($current['cat']==NULL) $url='tt/'.$username;
-                elseif ($current['id']==NULL) $url='tt/'.$username;
-                    else  $url='tt/'.$username.'/'.$current['cat'].'/'.$current['id'];
-        }
-        else
-            if ( ($current['cat']!=NULL) && ($current['id']!=NULL) )
-                $url.='/'.$current['cat'].'/'.$current['id'];
+
+        if ( ($current['cat']!=NULL) && ($current['id']!=NULL) )
+            $url.='/'.$current['cat'].'_'.$current['id'];
 
 
         if ($type=='export') {
@@ -384,8 +398,10 @@ if ( ! function_exists('tt_url'))
             $get_part=array();
         }
 
+        if ( (count($get_part)>0) OR $add_get ) $posturl='?';
+
         if (count($get_part)>0) {
-            $posturl='?';
+
             foreach ($get_part as $gu)
             if ($gu) {
                 if ($posturl!='?') $posturl.='&';
@@ -394,6 +410,8 @@ if ( ! function_exists('tt_url'))
         }
 
          $url .= $ext_part . $posturl;
+
+
 
 
         return site_url($url);
@@ -426,6 +444,11 @@ if ( ! function_exists('tabs_buttons'))
     {
 
         $tab_titles=array('activity','todo','value');
+        $class_badge= array(
+            'activity'=>'info',
+            'todo'=>'warning',
+            'value'=>'success');
+
 
         foreach ($tab_titles AS $tab_title) {
 
@@ -436,7 +459,8 @@ if ( ! function_exists('tabs_buttons'))
             if ($count_array!=NULL) {
                 $title .= ' ';
                 if ( $count_array[$tab_title] == 0 ) $title .= '<span class="badge">0</span>';
-                    else $title .= '<span class="badge badge-info">'.$count_array[$tab_title].'</span>';
+                    else $title .= '<span class="badge badge-'.$class_badge[$tab_title].'">'.$count_array[$tab_title].'</span>';
+
             }
 
             $tabs[$tab_title]   =       array( 'url'=> $url,  'title'=> $title );

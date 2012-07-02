@@ -65,7 +65,7 @@ $route['tt/'.$regx['username'].'/settings']     =     'timetracker/settings/$1';
 
 $route['tt/'.$regx['username'].'/activities']                           =       'timetracker/activities/$1';
 $route['tt/'.$regx['username'].'/activities/summary']                   =       'timetracker/activities_settings/$1';
-$route['tt/'.$regx['username'].'/activities/graph']                     =       'timetracker/activities_graph/$1';
+$route['tt/'.$regx['username'].'/activities/graph']                     =       'timetracker_viz/graph/$1';
 $route['tt/'.$regx['username'].'/activities.'.$regx['export_format']]   =       'timetracker/activities_export/$1/$2';
 
 $route['tt/'.$regx['username'].'/todolist']                             =       'timetracker/todolist/$1';
@@ -84,21 +84,20 @@ $route['tt/'.$regx['username'].'/value/new']                            =       
 //---
 
 $route['tt/'.$regx['username'].'/'.$regx['objfile'].'_(:num)']          =       'timetracker/generic_activity_show/$1/$2/$3';
-$route['tt/'.$regx['username'].'/'.$regx['objfile'].'_(:num)/edit']     =       'timetracker/edit_record/$1/$3';
-$route['tt/'.$regx['username'].'/'.$regx['objfile'].'_(:num)/delete']   =       'timetracker/delete_record/$1/$3';
+$route['tt/'.$regx['username'].'/'.$regx['objfile'].'_(:num)/edit']     =       'timetracker/generic_activity_edit/$1/$2/$3';
+$route['tt/'.$regx['username'].'/'.$regx['objfile'].'_(:num)/delete']   =       'timetracker/generic_activity_delete/$1/$2/$3';
+
 
 //---
 
 $route['tt/'.$regx['username'].'/record_(:num)/stop']                   =       'timetracker/stop/$1/$2';
-$route['tt/'.$regx['username'].'/todo_(:num)/done']                     =       'timetracker/stop/$1/$2';
 
 $route['tt/'.$regx['username'].'/record_(:num)/restart']                =       'timetracker/restart/$1/$2';
 $route['tt/'.$regx['username'].'/records/stopall']                      =       'timetracker/stop_all/$1/activity';
 
 //---
 
-$route['json/'.$regx['username'].'/activities/graph']                   =       'timetracker/json_activities_graph/$1';
-$route['json/'.$regx['username'].'/activities/summary']                 =       'timetracker/json_activities_summary/$1';
+$route['json/'.$regx['username'].'/histo/(:any)/(:any)/(:any)/(:any).json']                   =       'timetracker/json_activities_graph/$1';
 
 /*
 TODO

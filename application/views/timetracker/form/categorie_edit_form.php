@@ -1,5 +1,5 @@
 <?php echo validation_errors(); ?>
-<?= form_open( 'tt/' . $user['name'] . '/categorie/' . $categorie[ 'id' ] . '/edit', array(
+<?= form_open( 'tt/' . $user['name'] . '/categorie_' . $categorie[ 'id' ] . '/edit', array(
      'id' => 'classicform'
 ) ) ?>
 
@@ -8,8 +8,8 @@
 
          <br/><textarea class="" placeholder="description..." name="description" id="description"><?= $categorie[ 'description' ] ?></textarea>
 
-         <br/>show in menus  <input type="checkbox" name="isshow" id="isshow" value="1"<?php
-if ( $categorie[ 'isshow' ] )
+         <br/>show in menus  <input type="checkbox" name="isshown" id="isshown" value="1"<?php
+if ( $categorie[ 'isshown' ] )
     echo " CHECKED";
 ?>>
 

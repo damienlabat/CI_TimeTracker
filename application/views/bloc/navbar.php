@@ -25,17 +25,17 @@ if (isset($user)) : /* PRIVATE NAVBAR */
 
                 <ul class="nav">
                     <li>
-                        <a href="<?=site_url('tt/'.$user['name'].'/activities')?>">activities<?php
+                        <a href="<?=site_url('tt/'.$user['name'].'/activities')?>">Activities<?php
                         if (count($running['activities'])>0) echo ' <span class="badge badge-info">'.count($running['activities']).'</span>';
                         ?></a>
                     </li>
                     <li>
-                        <a href="<?=site_url('tt/'.$user['name'].'/todolist')?>">todo list<?php
+                        <a href="<?=site_url('tt/'.$user['name'].'/todolist')?>">Todo list<?php
                         if (count($running['todos'])>0) echo ' <span class="badge badge-warning">'.count($running['todos']).'</span>';
                         ?></a>
                     </li>
                     <li>
-                        <a href="<?=site_url('tt/'.$user['name'].'/values')?>">values</a>
+                        <a href="<?=site_url('tt/'.$user['name'].'/values')?>">Values</a>
                     </li>
                 </ul>
 
@@ -45,8 +45,8 @@ if (isset($user)) : /* PRIVATE NAVBAR */
                         <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" id='user_logged' data-user-id='<?$user['id']?>'><?=$user['name']?> <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href='<?=site_url('account')?>'>account</a></li>
-                            <li><a href='<?=site_url('tt/'.$user['name'].'/settings')?>'>settings</a></li>
+                            <li><a href='<?=site_url('account')?>'>Account</a></li>
+                            <li><a href='<?=site_url('tt/'.$user['name'].'/settings')?>'>Settings</a></li>
                         </ul>
                         </li>
                     </ul>

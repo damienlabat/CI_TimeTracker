@@ -1,5 +1,5 @@
 <?php echo validation_errors(); ?>
-<?= form_open( 'tt/' . $user['name'] . '/tag/' . $tag[ 'id' ] . '/edit', array(
+<?= form_open( 'tt/' . $user['name'] . '/tag_' . $tag[ 'id' ] . '/edit', array(
      'id' => 'classicform'
 ) ) ?>
 
@@ -7,8 +7,8 @@
         <input type="text" placeholder="tag" name="tag"  id="tag" value="<?= $tag[ 'tag' ] ?>">
 
 
-         <br/>show in menus  <input type="checkbox" name="isshow" id="isshow" value="1"<?php
-if ( $tag[ 'isshow' ] )
+         <br/>show in menus  <input type="checkbox" name="isshown" id="isshown" value="1"<?php
+if ( $tag[ 'isshown' ] )
     echo " CHECKED";
 ?>>
 

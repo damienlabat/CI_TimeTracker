@@ -13,10 +13,10 @@ echo validation_errors();
     </div>
 
 
-    <div class="row-fluid">
+    <!--div class="row-fluid">
         <label for="tags">tags</label>
         <input type="text" placeholder="tags" name="tags" id="tags" value="">
-    </div>
+    </div-->
 
     <label for="description">description</label>
     <textarea class="" placeholder="description..." name="description" id="description"></textarea><br/>
