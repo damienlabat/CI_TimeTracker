@@ -123,6 +123,8 @@ class Timetracker_viz extends CI_Controller {
         $this->timetracker_lib->checkUsername( $username );
 
 
+        $count = $this->config->item('headerbloc_perpage');
+        $this->data[ 'last_activities' ] =  $this->records->get_records_full($this->user_id, array( 'type_of_record' => 'activity', 'running' => 0 ) ,0 , $count );
 
 
 
@@ -211,8 +213,9 @@ class Timetracker_viz extends CI_Controller {
 
 // JSON Graphs
 
- public function histo_json( $username, $type_cat, $id, $datefrom, $dateto, $group_by ) {
+ public function json_activities_graph( $username,  $id, $datefrom, $dateto, $group_by ) {
 
+        $type_cat='categorie';
         $this->load->helper('download');
         $this->timetracker_lib->checkUsername( $username );
 

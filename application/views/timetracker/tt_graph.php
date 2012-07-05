@@ -1,4 +1,7 @@
-
+<?php
+    $this->load->view( 'timetracker/header_activities' );
+    $this->load->view( 'timetracker/tt_menu' );
+?>
 <div class='ttgraph' data-graph='<?=json_encode($datagraph)?>'></div>
 
 

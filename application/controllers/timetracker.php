@@ -1068,9 +1068,6 @@ class Timetracker extends CI_Controller {
 
         //$this->load->model( 'tank_auth/users' );
 
-        $this->users->update_timezone($this->user_id, $post['timezone']);
-
-        //$params=array();
         foreach( $post as $pst_key => $post_val )
              if ( preg_match( '/^(param_)/', $pst_key ))
                 $params[ trim( $pst_key , 'param_') ] = $post_val;

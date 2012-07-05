@@ -64,7 +64,7 @@ $route['tt/'.$regx['username'].'/settings']     =     'timetracker/settings/$1';
 //---
 
 $route['tt/'.$regx['username'].'/activities']                           =       'timetracker/activities/$1';
-$route['tt/'.$regx['username'].'/activities/summary']                   =       'timetracker/activities_settings/$1';
+$route['tt/'.$regx['username'].'/activities/summary']                   =       'timetracker_viz/summary/$1';
 $route['tt/'.$regx['username'].'/activities/graph']                     =       'timetracker_viz/graph/$1';
 $route['tt/'.$regx['username'].'/activities.'.$regx['export_format']]   =       'timetracker/activities_export/$1/$2';
 
@@ -97,7 +97,7 @@ $route['tt/'.$regx['username'].'/records/stopall']                      =       
 
 //---
 
-$route['json/'.$regx['username'].'/histo/(:any)/(:any)/(:any)/(:any).json']                   =       'timetracker/json_activities_graph/$1';
+$route['json/'.$regx['username'].'/histo/(:any)/(:any)/(:any)/(:any).json']                   =       'timetracker_viz/json_activities_graph/$1/$2/$3/$4/$5';
 
 /*
 TODO
