@@ -33,8 +33,15 @@
 
 
     <?php endif; ?>
+    
     <a href='<?=site_url('tt/'.$user['name'].'/activity/new')?>' class='btn btn-primary'>Add new activity</a>
         </div>
+        
+    <?php
+
+    if ( count($last_activities)>0 ):
+
+    ?>
 
         <div class='span6'>
             <h6>Last activities</h6>
@@ -53,6 +60,7 @@
 
     ?>
     </table>
+    
     <?php
 
     if ( $tt_layout == 'tt_home' ) :
@@ -68,7 +76,10 @@
           </ul>
         </div>
     <?php
+        else: 
 
+
+        endif;
     endif;
 
     ?>

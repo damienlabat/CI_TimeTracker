@@ -283,22 +283,7 @@ class Timetracker extends CI_Controller {
 
     }
 
-    public function stop_all( $username, $type_of_record, $redirect=TRUE ) {
-        $this->timetracker_lib->checkUsername( $username );
 
-        $runnings= $this->records->get_records_full($this->user_id, array( 'type_of_record' => $type_of_record,      'running' => TRUE ) );
-
-        if (isset($runnings))
-        foreach($runnings as $running) {
-            $stopped = $this->records->stop_record( $running['id'] );
-            // TODO add alerts message
-        }
-
-        if ($redirect)
-            redirect( 'tt/' . $username, 'location' );
-
-
-    }
 
     public function generic_activity_edit( $username, $type_of_record, $activity_id =NULL ) {
         $this->timetracker_lib->checkUsername( $username );
@@ -631,7 +616,7 @@ class Timetracker extends CI_Controller {
         if ( element( 'update_valuetype', $post ) )
             $res = $this->_update_valuetype( $post );
 
-        if ( element( 'timezone', $post ) )
+        if ( element( 'param_timezone', $post ) )
             $res = $this->_update_params( $post );
 
         return $res;
@@ -641,7 +626,9 @@ class Timetracker extends CI_Controller {
 
     function _start_record( $post ) {
         $this->form_validation->set_rules( 'start', 'Activity', 'trim|required' );
-        $this->form_validation->set_rules( 'value', 'value', 'callback_value_check' );
+        
+        if ($post[ 'type_of_record' ]=='value')
+                $this->form_validation->set_rules( 'value', 'value', 'callback_value_check' );
 
         $res= array();
 
@@ -705,7 +692,21 @@ class Timetracker extends CI_Controller {
                     'alert' => 'start new activity: ' . $res[ 'activity' ][ 'title' ]
                 )
             );
-
+            
+            if ($this->user_params['startactivitymode']=='one_at_the_time') {
+                $records= $this->records->get_records($this->user_id, array('type_of_record'=>'activity', 'running'=>true));
+                foreach ($records as $r)   
+                        if ($r['id']!=$res[ 'activity' ][ 'record' ][ 'id' ])
+                                $this->records->stop_record( $r['id'] );
+            }            
+            elseif ($this->user_params['startactivitymode']=='one_by_categorie') {
+                $records= $this->records->get_records($this->user_id, array('type_of_record'=>'activity', 'running'=>true, 'categorie'=>$res[ 'activity' ]['categorie_ID']));
+                foreach ($records as $r)   
+                          if ($r['id']!=$res[ 'activity' ][ 'record' ][ 'id' ])
+                                $this->records->stop_record( $r['id'] );
+            }            
+            
+            
             if ( isset( $tags ) )
                 foreach ( $tags as $k => $tag )
                     $this->tags->add_tag_record( $this->user_id, $res[ 'activity' ][ 'record' ][ 'id' ], trim( $tag ) ); // add tags
@@ -736,9 +737,9 @@ class Timetracker extends CI_Controller {
         $this->form_validation->set_rules( 'update_record', 'Record id', 'required|integer' );
         $this->form_validation->set_rules( 'activity', 'Activity', 'trim|required' );
         $this->form_validation->set_rules( 'start_time', 'Start time', 'required' );
-        $this->form_validation->set_rules( 'value', 'value', 'callback_value_check' );
-        //$this->form_validation->set_rules( 'start_time', 'Start time', 'required' ); TODO! add dureation check, check start and end date
-
+        if ($post[ 'type_of_record' ]=='value')
+                $this->form_validation->set_rules( 'value', 'value', 'callback_value_check' );
+       
 
          $res= array();
 

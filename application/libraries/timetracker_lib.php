@@ -109,15 +109,14 @@ class Timetracker_lib
         $this->ci->user_name = $this->ci->tank_auth->get_username();
         $this->ci->user_profile = $this->ci->tank_auth->get_profile();
 
-        $this->ci->user_params = json_decode( $this->ci->user_profile['params'], true );
+        $this->ci->user_params = $this->getUserParam(); 
 
         $this->ci->data[ 'user' ][ 'name' ] =        $this->ci->user_name;
         $this->ci->data[ 'user' ][ 'id' ]   =        $this->ci->user_id;
         $this->ci->data[ 'user' ][ 'params' ]   =    $this->ci->user_params;
-        $this->ci->data[ 'user' ][ 'timezone' ]   =  $this->ci->user_profile['timezone'];
 
 
-        $this->ci->db->query( "SET time_zone= '". timezone2UTCdiff( $this->ci->user_profile['timezone'] ) ."'" );
+        $this->ci->db->query( "SET time_zone= '". timezone2UTCdiff( $this->ci->user_params['timezone'] ) ."'" );
 
 
         $query = $this->ci->db->query( "SELECT NOW() as now" );
@@ -152,7 +151,18 @@ class Timetracker_lib
 
 
 
-
+    function getUserParam() {
+        $def_val= array(
+                'timezone'      =>      'Europe/Paris',
+                'language'      =>      'en',
+                'startactivitymode'  => 'by_categorie'
+        );
+        $json_param= json_decode( $this->ci->user_profile['params'], true );
+        foreach ($def_val as $k=>$v)
+                if ( !isset( $json_param[$k] ) ) 
+                        $json_param[$k] = $v;
+        return $json_param;
+    }
 
 
 

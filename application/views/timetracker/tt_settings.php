@@ -1,6 +1,6 @@
 <?php
 
-  	$list = DateTimeZone::listAbbreviations();
+    $list = DateTimeZone::listAbbreviations();
     $idents = DateTimeZone::listIdentifiers();
 
     $data = array();
@@ -36,6 +36,8 @@
     }
 
 
+
+
 ?>
 
 <?= form_open( 'tt/' . $user['name'] . '/settings' , array(
@@ -45,16 +47,16 @@
 	<fieldset>
 
 	  <div class="control-group">
-	  	<a name='timezone'></a>
-	    <label for="timezone" class="control-label">timezone</label>
+	  	<a name='param_timezone'></a>
+	    <label for="param_timezone" class="control-label">timezone</label>
 	    <div class="controls">
-	      <select id="timezone" name='timezone'>
+	      <select id="param_timezone" name='param_timezone'>
 	        <?
 	        foreach ($options as $TZ_region => $TZ_cities ) {
 	        	echo '<optgroup label="'.$TZ_region.'">';
 	        	foreach ($TZ_cities as $TZ_city) {
 					echo "<option value='".$TZ_city['value']."'";
-					if ( $TZ_city['value'] ==  $user['timezone'] ) echo " selected='selected'";
+					if ( $TZ_city['value'] ==  $user[ 'params' ]['timezone'] ) echo " selected='selected'";
 					echo ">".$TZ_city['title']."</option>";
 				}
 				echo '</optgroup>';
@@ -64,22 +66,46 @@
 	      </select>
 	      <?php
 
-				$z = new DateTimeZone($user['timezone']);
+				$z = new DateTimeZone($user[ 'params' ]['timezone']);
                 $c = new DateTime(null, $z);
 
 	      ?>
-	      current: <?=$user['timezone']?> <?=timezone2UTCdiff($user['timezone'])?>GMT (<span class='current_time'><?=$c->format('H:i')?></span>) 
+	      current: <?=$user[ 'params' ]['timezone']?> <?=timezone2UTCdiff($user[ 'params' ]['timezone'])?>GMT (<span class='current_time'><?=$c->format('H:i')?></span>) 
 	    </div>
 	  </div>
 
 
 	  <div class="control-group">
-	  	<a name='language'></a>
-	    <label for="language" class="control-label">language</label>
+	  	<a name='param_language'></a>
+	    <label for="param_language" class="control-label">language</label>
 	    <div class="controls">
-	      <select id="language" name='param_language'>
+	      <select id="param_language" name='param_language'>
 	        <option value='en'>english</option>
 	      </select>
+	    </div>
+	  </div>
+	  
+	  
+	  <div class="control-group">
+	  	<a name='param_startactivitymode'></a>
+	    <label for="param_startactivitymode" class="control-label">activity mode</label>
+	    <div class="controls">
+	      <select id="param_startactivitymode" name='param_startactivitymode'><?php
+	      
+	      $param=array(
+	        'one_at_the_time'       => 'only one running activity at the time',
+	        'one_by_categorie'      => 'only one running activity at the time in the same categorie',
+	        'no_restriction'        => 'no restriction'
+	      );
+	      
+	      foreach ($param as $k=>$v) {
+	        echo "<option value='".$k."'";
+	        if ( $k ==  $user[ 'params' ][ 'startactivitymode' ] ) echo " selected='selected'";
+	        echo ">".$v."</option>"; 
+	        }
+	      
+	      ?>	       
+	      </select> change to radiobox
 	    </div>
 	  </div>
 	 
