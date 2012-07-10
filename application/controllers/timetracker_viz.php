@@ -27,7 +27,9 @@ class Timetracker_viz extends CI_Controller {
         // TODO gestion date bugue
 
         $this->timetracker_lib->checkUsername( $username );
-
+        
+        $count = $this->config->item('headerbloc_perpage');
+        $this->data[ 'last_activities' ] =  $this->records->get_records_full($this->user_id, array( 'type_of_record' => 'activity', 'running' => 0 ) ,0 , $count );
 
         $this->data['current']['action']=       'summary';
         $this->data['current']['cat']=          $type_cat;
@@ -109,6 +111,12 @@ class Timetracker_viz extends CI_Controller {
 
 
         $this->data[ 'tt_layout' ]          = 'tt_summary';
+        
+        $this->data[ 'tabs' ]  =  array(
+            array( 'title'=>'records', 'url'=>site_url('tt/'.$username.'/activities') ) ,
+            array( 'title'=>'summary', 'url'=>site_url('tt/'.$username.'/activities/summary'), 'active'=>TRUE ) ,
+            array( 'title'=>'graph', 'url'=>site_url('tt/'.$username.'/activities/graph')  )
+           );
 
 
         $this->timetracker_lib->render();
@@ -132,6 +140,12 @@ class Timetracker_viz extends CI_Controller {
         unset($this->data['datagraph']["page"]);
         unset($this->data['datagraph']["tab"]);
         $this->data['datagraph']['username']=$username;
+        
+        $this->data[ 'tabs' ]  =  array(
+            array( 'title'=>'records', 'url'=>site_url('tt/'.$username.'/activities') ) ,
+            array( 'title'=>'summary', 'url'=>site_url('tt/'.$username.'/activities/summary') ) ,
+            array( 'title'=>'graph', 'url'=>site_url('tt/'.$username.'/activities/graph'), 'active'=>TRUE  )
+           );
 
 
         $this->data[ 'tt_layout' ]          = 'tt_graph';
