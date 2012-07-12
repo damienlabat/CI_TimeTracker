@@ -16,5 +16,4 @@
     }
 
 ?></select>
-<a id='prevbtn' class="btn" href="#"><i class='icon-chevron-left'></i> Prev</a><a id='nextbtn' class="btn" href="#">Next <i class='icon-chevron-right'></i></a>
 <?php
