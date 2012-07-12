@@ -693,18 +693,21 @@ class Timetracker extends CI_Controller {
                 )
             );
             
-            if ($this->user_params['startactivitymode']=='one_at_the_time') {
-                $records= $this->records->get_records($this->user_id, array('type_of_record'=>'activity', 'running'=>true));
-                foreach ($records as $r)   
-                        if ($r['id']!=$res[ 'activity' ][ 'record' ][ 'id' ])
-                                $this->records->stop_record( $r['id'] );
-            }            
-            elseif ($this->user_params['startactivitymode']=='one_by_categorie') {
-                $records= $this->records->get_records($this->user_id, array('type_of_record'=>'activity', 'running'=>true, 'categorie'=>$res[ 'activity' ]['categorie_ID']));
-                foreach ($records as $r)   
-                          if ($r['id']!=$res[ 'activity' ][ 'record' ][ 'id' ])
-                                $this->records->stop_record( $r['id'] );
-            }            
+            if ( $type_record == 'activity' )
+            {
+                    if ($this->user_params['startactivitymode']=='one_at_the_time') {
+                        $records= $this->records->get_records($this->user_id, array('type_of_record'=>'activity', 'running'=>true));
+                        foreach ($records as $r)   
+                                if ($r['id']!=$res[ 'activity' ][ 'record' ][ 'id' ])
+                                        $this->records->stop_record( $r['id'] );
+                    }            
+                    elseif ($this->user_params['startactivitymode']=='one_by_categorie') {
+                        $records= $this->records->get_records($this->user_id, array('type_of_record'=>'activity', 'running'=>true, 'categorie'=>$res[ 'activity' ]['categorie_ID']));
+                        foreach ($records as $r)   
+                                  if ($r['id']!=$res[ 'activity' ][ 'record' ][ 'id' ])
+                                        $this->records->stop_record( $r['id'] );
+                    }  
+            }          
             
             
             if ( isset( $tags ) )

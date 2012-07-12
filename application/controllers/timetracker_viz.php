@@ -140,6 +140,7 @@ class Timetracker_viz extends CI_Controller {
         unset($this->data['datagraph']["page"]);
         unset($this->data['datagraph']["tab"]);
         $this->data['datagraph']['username']=$username;
+        $this->data['datagraph']['type_graph']='histo';
         
         $this->data[ 'tabs' ]  =  array(
             array( 'title'=>'records', 'url'=>site_url('tt/'.$username.'/activities') ) ,
