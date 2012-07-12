@@ -254,7 +254,7 @@ class Timetracker extends CI_Controller {
             $this->load->library('pagination');
 
             $config['base_url'] = site_url('tt/'.$username.'/'.$type_of_record.'/'.$activity_id);
-            $config['total_rows'] = $this->records->get_records_count($this->user_id, array( 'activity'=>$activity_id, 'type_of_record'=>$type_of_record ) );
+            $config['total_rows'] = $this->records->get_records_count($this->user_id, array( 'activity'=>$activity_id, 'type_of_record'=>$type_of_record,    'datefrom' => $this->data[ 'current' ]['datefrom'], 'dateto' => $this->data[ 'current' ]['dateto'] ) );
             $config['uri_segment'] = 5; // autodetection dont work ???
 
             $this->pagination->initialize($config);
@@ -263,7 +263,7 @@ class Timetracker extends CI_Controller {
             $offset= ( $page-1 ) * $per_page;
 
 
-            $this->data['list'][ $type_of_record.'_records' ]        = $this->records->get_records_full($this->user_id, array( 'activity'=>$activity_id, 'type_of_record'=>$type_of_record ), $offset, $per_page );
+            $this->data['list'][ $type_of_record.'_records' ]        = $this->records->get_records_full($this->user_id, array( 'activity'=>$activity_id, 'type_of_record'=>$type_of_record,    'datefrom' => $this->data[ 'current' ]['datefrom'], 'dateto' => $this->data[ 'current' ]['dateto'] ), $offset, $per_page );
             $this->data[ 'pager']               = $this->pagination->create_links();
             $this->data[ 'tt_layout' ]          = 'tt_activity';
         }

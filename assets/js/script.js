@@ -349,6 +349,8 @@ function init_graph(obj) {
 
     /* histograph */
     self.histograph=function() {
+    
+    log('toto');
 
         var histograph_obj={};
         self.mousepos=[0,0];
