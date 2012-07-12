@@ -21,7 +21,7 @@ $(function() {
     }
 
 
-        /*** TEST ***/
+    $('.popme').popover( { placement:'bottom' } );
 
 
 

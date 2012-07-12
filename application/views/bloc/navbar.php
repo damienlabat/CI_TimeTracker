@@ -25,12 +25,24 @@ if (isset($user)) : /* PRIVATE NAVBAR */
 
                 <ul class="nav">
                     <li>
-                        <a href="<?=site_url('tt/'.$user['name'].'/activities')?>">Activities<?php
+                        <a href="<?=site_url('tt/'.$user['name'].'/activities')?>"<?php
+                        if (count($running['activities'])>0) {
+                                $text='';
+                                foreach( $running['activities'] as $record ) $text.='<li><strong>'.$record['activity']['activity_path'].'</strong> '.running_time($record).'</li>';
+                                echo ' data-content=\'<ul>'.$text.'</ul>\' rel="popover" class="popme" data-original-title="running"';
+                                }
+                        ?>>Activities<?php
                         if (count($running['activities'])>0) echo ' <span class="badge badge-info">'.count($running['activities']).'</span>';
                         ?></a>
                     </li>
                     <li>
-                        <a href="<?=site_url('tt/'.$user['name'].'/todolist')?>">Todo list<?php
+                        <a href="<?=site_url('tt/'.$user['name'].'/todolist')?>"<?php
+                        if (count($running['activities'])>0) {
+                                $text='';
+                                foreach( $running['todos'] as $record ) $text.='<li><strong>'.$record['activity']['activity_path'].'</strong></li>';
+                                echo ' data-content=\'<ul>'.$text.'</ul>\' rel="popover" class="popme" data-original-title="todo list"';
+                                }
+                        ?>>Todo list<?php
                         if (count($running['todos'])>0) echo ' <span class="badge badge-warning">'.count($running['todos']).'</span>';
                         ?></a>
                     </li>
