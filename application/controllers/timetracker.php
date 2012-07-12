@@ -787,6 +787,9 @@ class Timetracker extends CI_Controller {
                     'start_time' => $post[ 'start_time' ],
                     'activity_ID' => $res ['activity']['id']
                 );
+                
+            if ( element( 'tags', $post ) )
+                $tags = preg_split( '/,/', $post[ 'tags' ], -1, PREG_SPLIT_NO_EMPTY ); // get tags from input
 
             if ( isset( $post[ 'duration' ] ) ) $update_params['duration'] = $post[ 'duration' ];
             if ( isset( $post[ 'running' ] ) ) $update_params['running'] = $post[ 'running' ];
