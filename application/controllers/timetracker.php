@@ -552,6 +552,35 @@ class Timetracker extends CI_Controller {
     }
 
 
+    /************
+     * JSON
+     * *************/
+    
+    
+    public function json_activities( $username, $type_of_records ) {
+        $this->output->enable_profiler( FALSE );
+        
+        $this->timetracker_lib->checkUsername( $username );
+        $activities = $this->activities->getActivitiespathList( $this->user_id, $type_of_records );
+        
+        $content= json_encode($activities);
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output( $content );
+    }
+    
+    public function json_tags( $username ) {
+        $this->output->enable_profiler( FALSE );
+        
+        $this->timetracker_lib->checkUsername( $username );
+        $tags = $this->tags->get_tag_list( $this->user_id );
+        
+        $content= json_encode($tags);
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output( $content );
+    }
+
 
 
 

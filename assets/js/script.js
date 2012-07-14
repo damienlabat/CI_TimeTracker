@@ -18,6 +18,8 @@ $(function() {
          $('div.ttgraph').each(function() {
             graph=init_graph( $(this) );
         });
+        
+        init_typeahead();
     }
 
 
@@ -133,6 +135,26 @@ format_time= function(d) {
 
 
     return curr_hour + ':' + curr_min + ':' + curr_sec;
+}
+
+
+/*** typeahead ***/
+init_typeahead= function(){
+        if ($('input#activity').length) {
+                var url= BASE_URL+'json/'+ username +'/'+ $('input#type_of_record').val() +'_list.json';
+                $.getJSON(url, function(data) {  
+                        var options= {source:data};   
+                        $('input#activity').typeahead(options);
+                 });
+        }
+        
+        if ($('input#tags').length) {
+                var url= BASE_URL+'json/'+ username +'/tag_list.json';
+                $.getJSON(url, function(data) {  
+                        var options= {source:data, mode: 'multiple'};   
+                        $('input#tags').typeahead(options);
+                 });
+        }
 }
 
 

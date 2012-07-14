@@ -130,6 +130,26 @@ class Activities extends CI_Model {
 
 
 
+    function getActivitiespathList( $user_id, $type_of_record ) {
+        $this->db->select( $this->activities_table . '.title, ' . $this->categories_table . '.title as categorie_title' );
+        $this->db->join( $this->categories_table, $this->activities_table . '.categorie_ID = ' . $this->categories_table . '.id' );
+        $this->db->where( 'user_ID', $user_id );
+        $this->db->where( 'type_of_record', $type_of_record );        
+        $this->db->order_by( 'title, categorie_title' );
+        $query = $this->db->get( $this->activities_table );
+        
+        $res=array();
+        foreach ( $query->result_array() as $activity) {
+                if ( $activity[ 'categorie_title' ] != '' )
+                    $res[] = $activity[ 'title' ] . '@' . $activity[ 'categorie_title' ];
+                else
+                    $res[] = $activity[ 'title' ];
+        }
+        
+        return $res;
+        
+    }
+
 
     /* =============
      * TOOLS

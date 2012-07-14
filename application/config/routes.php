@@ -52,7 +52,8 @@ $route['account'] =     'auth/account';
 
 $regx=array(
     'export_format'     =>      '(json|csv|txt)',
-    'username'     		=>      '([^\/]+)',
+    'username'          =>      '([^\/]+)',
+    'type_of_record'    =>      '(activity|todo|value)',   
     'objfile'           =>      '(categorie|activity|record|todo|value|tag|comment)'
     );
 
@@ -98,6 +99,9 @@ $route['tt/'.$regx['username'].'/records/stopall']                      =       
 //---
 
 $route['json/'.$regx['username'].'/histo/(:any)/(:any)/(:any)/(:any).json']                   =       'timetracker_viz/json_activities_graph/$1/$2/$3/$4/$5';
+
+$route['json/'.$regx['username'].'/'.$regx['type_of_record'].'_list.json']                    =       'timetracker/json_activities/$1/$2';
+$route['json/'.$regx['username'].'/tag_list.json']                                            =       'timetracker/json_tags/$1';
 
 /*
 TODO

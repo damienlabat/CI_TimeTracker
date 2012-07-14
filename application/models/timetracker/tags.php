@@ -49,16 +49,19 @@ class Tags extends CI_Model {
     function get_tag_list( $user_id ) {
         //'SELECT tags . * , count( activity_id ) AS count
         $query = $this->db->query( //TODO
-            'SELECT tags . * , count( 1 ) AS count
+            'SELECT tags . tag
             FROM tags
-                LEFT JOIN l_activities_tags ON tags.id = l_activities_tags.tag_ID
+                LEFT JOIN l_records_tags ON tags.id = l_records_tags.tag_ID
             WHERE user_ID="' . $user_id . '"
             GROUP BY id
             ORDER BY tag' );
 
-        if ( $query->num_rows() >= 1 )
-            return $query->result_array();
-        return NULL;
+        
+        $res=array();
+        foreach ( $query->result_array() as $tag)                 
+                    $res[] = $tag[ 'tag' ];
+        
+        return $res;
     }
 
 
@@ -71,6 +74,7 @@ class Tags extends CI_Model {
      */
     function create_tag( $user_id, $tag ) {
         $tag = url_title( $tag );
+        
         if ( $this->db->insert( $this->tags_table, array(
              'tag' => $tag,
             'user_ID' => $user_id
@@ -120,12 +124,30 @@ class Tags extends CI_Model {
      * @tag_id          int
      * @return          boolean
      */
-    function add_tag( $record_id, $tag_id ) {
-        return $this->db->insert( $this->l_records_tags_table, array(
+    function add_tag( $record_id, $tag_id ) {   
+    
+        if ( !$this->has_tag( $record_id, $tag_id ) )
+        $this->db->insert( $this->l_records_tags_table, array(
              'record_ID' => $record_id,
             'tag_ID' => $tag_id
         ) );
-
+    }
+    
+    
+    
+     /**
+     * has tag
+     *
+     * @activity_id     int
+     * @tag_id          int
+     * @return          boolean
+     */
+    function has_tag( $record_id, $tag_id ) {           
+        $this->db->where( 'record_ID', $record_id );
+        $this->db->where( 'tag_ID', $tag_id );
+        $query = $this->db->get( $this->l_records_tags_table);        
+        
+        return ( $query->num_rows() >= 1 );
     }
 
     /**

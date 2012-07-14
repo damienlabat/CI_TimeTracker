@@ -5,12 +5,12 @@
 ) ) ?>
 
         <label for="activity">activity</label>
-        <input type="text" placeholder="activity" name="activity"  id="activity" value="<?= $record['activity'][ 'activity_path' ] ?>">
+        <input type="text" placeholder="activity" name="activity"  id="activity" value="<?= $record['activity'][ 'activity_path' ] ?>" autocomplete="off">
 
 
 
         <label for="tags">tags</label>
-        <input type="text" placeholder="tags" name="tags" id="tags" value="<?= $record[ 'tag_path' ] ?>">
+        <input type="text" placeholder="tags" name="tags" id="tags" value="<?= $record[ 'tag_path' ] ?>" autocomplete="off">
 
 <?php if ($record['activity']['type_of_record']=='value'): ?>
 
@@ -45,7 +45,7 @@ if ( $record[ 'running' ] )
 
 <?php endif; ?>
 
-        <input type="hidden" name="type_of_record"  value="<?=$record['activity']['type_of_record']?>">
+        <input type="hidden" name="type_of_record" id="type_of_records"  value="<?=$record['activity']['type_of_record']?>">
         <input type="hidden" name="update_record" value="<?= $record[ 'id' ] ?>">
 
     <button type="submit" class="btn btn-large btn-primary">Change</button>
