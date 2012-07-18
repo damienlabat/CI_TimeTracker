@@ -374,6 +374,7 @@ if ( ! function_exists('tt_url'))
         }
 
 
+        if ( !isset($current['cat']))    $current['cat']=NULL;
         if ( !isset($current['id']))     $current['id']=NULL;
 
 

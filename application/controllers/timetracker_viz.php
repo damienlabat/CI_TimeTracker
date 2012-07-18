@@ -126,8 +126,10 @@ class Timetracker_viz extends CI_Controller {
 
      public function graph( $username = NULL ) {
 
-         // TODO gestion date bugue
-
+        $this->data['current']['action']=       'graph';
+        $this->data['current']['cat']=          NULL;
+        $this->data['current']['id']=           NULL;
+        
         $this->timetracker_lib->checkUsername( $username );
 
 

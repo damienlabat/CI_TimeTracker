@@ -43,9 +43,7 @@ class Timetracker_lib
 
 
     function render( ) {
-
-       // $this->ci->data['cattree'] = $this->getCattree();
-
+        $this->getTitleAndBreadcrumb();
         $this->ci->data[ 'content' ] = $this->ci->load->view( 'timetracker/layout', $this->ci->data, true );
         $this->ci->load->view( 'layout', $this->ci->data );
 
@@ -55,47 +53,6 @@ class Timetracker_lib
              echo'</pre>';
          }
     }
-
-
-
-    function getCattree() {
-
-        $res = $this->ci->categories->get_categories( $this->ci->user_id );
-        $current = $this->ci->data['current'];
-        $cat_id = $current_cat = $current_activity =NULL;
-
-
-        if ( ( $current['cat'] == 'categorie' ) && ( $current['id'] != NULL ) )  $current_cat = $cat_id = $current['id'];
-
-        if ( in_array( $current['cat'], array('activity','todo','value') ) )
-            if (isset($this->ci->data['activity'])){
-                $cat_id = $this->ci->data['activity']['categorie_ID'];
-                $current_activity = $this->ci->data['activity']['id'];
-        }
-
-        if ( $current['cat'] == 'record' ) {
-            $cat_id = $this->ci->data['record']['activity']['categorie_ID'];
-            $current_activity = $this->ci->data['record']['activity']['id'];
-        }
-
-        if ( $cat_id != NULL ) {
-            $activities =  $this->ci->activities->get_categorie_activities($cat_id);
-
-            if ($current_activity != NULL )
-                foreach( $activities as $k=>$activity)
-                    if ( $activity['id'] ==  $current_activity )
-                        $activities[$k]['active'] = TRUE;
-
-            foreach( $res as $k=>$cat) {
-                if ( $cat['id'] ==  $cat_id )
-                    $res[$k]['activities'] = $activities;
-                if ( $cat['id'] == $current_cat) $res[$k]['active'] = TRUE;
-            }
-        }
-
-        return $res;
-    }
-
 
 
 
@@ -111,7 +68,7 @@ class Timetracker_lib
 
         $this->ci->user_params = $this->getUserParam(); 
 
-        $this->ci->data[ 'user' ][ 'name' ] =        $this->ci->user_name;
+        $this->ci->data[ 'user' ][ 'name' ] =   $this->ci->data[ 'current' ][ 'username' ] =       $this->ci->user_name;
         $this->ci->data[ 'user' ][ 'id' ]   =        $this->ci->user_id;
         $this->ci->data[ 'user' ][ 'params' ]   =    $this->ci->user_params;
 
@@ -188,6 +145,85 @@ class Timetracker_lib
             if ( !$res )  show_404();
 
         }
+    }
+    
+    
+    function getTitleAndBreadcrumb(){    
+        $current=$this->ci->data['current'];
+        $username=$current['username'];  
+        //print_r($current);
+    
+        $title = $subtitle = '';
+        $breadcrumb= array();
+        $breadcrumb[]= array( 'title'=> 'home', 'url'=>site_url('tt/'.$username) );       
+        
+        
+            
+        
+        if ($current['cat']=='record') {
+                $record=$this->ci->data['record'];
+                
+                switch ($record['activity']['type_of_record']) {
+                    case 'activity':
+                        $breadcrumb[]=  array( 'title'=> 'activities', 'url'=>site_url('tt/'.$username.'/activities') ); 
+                        break;
+                    case 'todo':
+                        $breadcrumb[]=  array( 'title'=> 'todo list', 'url'=>site_url('tt/'.$username.'/todolist') ); 
+                        break;
+                    case 'value':
+                        $breadcrumb[]=  array( 'title'=> 'values', 'url'=>site_url('tt/'.$username.'/values') );  
+                        break;
+                }
+               $breadcrumb[]=  array( 'title'=> format_categorie($record[ 'activity' ]['categorie']),   'url'=>tt_url($username,'record',$current, array('cat'=>'categorie', 'id'=>$record[ 'activity' ]['categorie_ID'])) );
+               $breadcrumb[]=  array( 'title'=> $record[ 'activity' ]['title'],                'url'=>tt_url($username,'record',$current, array('cat'=>$record[ 'activity' ]['type_of_record'],'id'=>$record[ 'activity' ]['id'])) );
+               $breadcrumb[]=  array( 'title'=> 'start at : '.$record[ 'start_time' ],         'url'=>tt_url($username,'record',$current ));
+               $title=$record[ 'activity' ]['title'];
+               $subtitle='start at : '.$record[ 'start_time' ];
+        }
+        
+        if ($current['cat']=='activity') {
+                $activity=$this->ci->data['activity'];
+                
+                switch ($activity['type_of_record']) {
+                    case 'activity':
+                        $breadcrumb[]=  array( 'title'=> 'activities', 'url'=>site_url('tt/'.$username.'/activities') ); 
+                        break;
+                    case 'todo':
+                        $breadcrumb[]=  array( 'title'=> 'todo list', 'url'=>site_url('tt/'.$username.'/todolist') ); 
+                        break;
+                    case 'value':
+                        $breadcrumb[]=  array( 'title'=> 'values', 'url'=>site_url('tt/'.$username.'/values') );  
+                        break;
+                }
+               $breadcrumb[]=  array( 'title'=> format_categorie($activity['categorie']),   'url'=>tt_url($username,'record',$current, array('cat'=>'categorie', 'id'=>$activity['categorie_ID'])) );
+               $breadcrumb[]=  array( 'title'=> $activity['title'],                'url'=>tt_url($username,'record',$current) );   
+               $title=$activity['title'];           
+        }
+        
+        if (($current['cat']=='categorie')&&($current['id']!=NULL)) {
+               $category=$this->ci->data['categorie'];
+               $breadcrumb[]=  array( 'title'=> format_categorie($category),   'url'=>tt_url($username,'record',$current) );
+               $title=format_categorie($category);
+       
+        }
+        
+        if ($current['cat']=='tag') {
+               $breadcrumb[]=  array( 'title'=> 'tag: '.$this->ci->data[ 'tag' ]['tag'], 'url'=>'');
+               $title= 'tag: '.$this->ci->data[ 'tag' ]['tag'];
+        }
+        
+        if ($current['page']=='activities') $breadcrumb[]=  array( 'title'=> 'activities', 'url'=>site_url('tt/'.$username.'/activities') ); 
+        if ($current['page']=='todolist') $breadcrumb[]=  array( 'title'=> 'todo list', 'url'=>site_url('tt/'.$username.'/todolist') ); 
+        if ($current['page']=='values') $breadcrumb[]=  array( 'title'=> 'values', 'url'=>site_url('tt/'.$username.'/values') ); 
+        
+        if ($current['page']=='settings') {
+                $breadcrumb[]=  array( 'title'=> 'settings',    'url'=>site_url('tt/'.$username.'/settings') );
+                $title= 'settings';
+                }
+    
+        $this->ci->data[ 'breadcrumb' ] = $breadcrumb;
+        $this->ci->data[ 'title' ] = $title;
+        $this->ci->data[ 'subtitle' ] = $subtitle;
     }
 
 
