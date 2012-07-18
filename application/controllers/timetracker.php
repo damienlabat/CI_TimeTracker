@@ -311,6 +311,8 @@ class Timetracker extends CI_Controller {
         $this->data[ 'current' ]['cat'] = $type_of_record;
         $this->data[ 'current' ]['id'] = $activity_id;
         $this->data[ 'current' ]['username'] = $username;
+        
+        $this->data[ 'current' ]['subtitle'] = 'edit';
 
         $this->timetracker_lib->getCurrentObj();
 
@@ -349,8 +351,7 @@ class Timetracker extends CI_Controller {
      *  */
     public function _record( ) {
         $this->data[ 'tt_layout' ] = 'tt_record';
-        $username=$this->data[ 'current' ]['username'];        
-       $type_of_record= $this->data['record']['activity']['type_of_record'];  
+        $username=$this->data[ 'current' ]['username'];         
    }
 
 

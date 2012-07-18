@@ -151,7 +151,6 @@ class Timetracker_lib
     function getTitleAndBreadcrumb(){    
         $current=$this->ci->data['current'];
         $username=$current['username'];  
-        //print_r($current);
     
         $title = $subtitle = '';
         $breadcrumb= array();
@@ -177,8 +176,8 @@ class Timetracker_lib
                $breadcrumb[]=  array( 'title'=> format_categorie($record[ 'activity' ]['categorie']),   'url'=>tt_url($username,'record',$current, array('cat'=>'categorie', 'id'=>$record[ 'activity' ]['categorie_ID'])) );
                $breadcrumb[]=  array( 'title'=> $record[ 'activity' ]['title'],                'url'=>tt_url($username,'record',$current, array('cat'=>$record[ 'activity' ]['type_of_record'],'id'=>$record[ 'activity' ]['id'])) );
                $breadcrumb[]=  array( 'title'=> 'start at : '.$record[ 'start_time' ],         'url'=>tt_url($username,'record',$current ));
-               $title=$record[ 'activity' ]['title'];
-               $subtitle='start at : '.$record[ 'start_time' ];
+               $title=$record[ 'activity' ]['title']. ' record start at '.$record[ 'start_time' ];
+
         }
         
         if ($current['cat']=='activity') {
@@ -220,6 +219,9 @@ class Timetracker_lib
                 $breadcrumb[]=  array( 'title'=> 'settings',    'url'=>site_url('tt/'.$username.'/settings') );
                 $title= 'settings';
                 }
+               
+                
+        if (isset($current['subtitle'])) $subtitle=$current['subtitle'];
     
         $this->ci->data[ 'breadcrumb' ] = $breadcrumb;
         $this->ci->data[ 'title' ] = $title;
