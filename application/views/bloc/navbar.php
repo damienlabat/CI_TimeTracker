@@ -37,7 +37,7 @@ if (isset($user)) : /* PRIVATE NAVBAR */
                     </li>
                     <li>
                         <a href="<?=site_url('tt/'.$user['name'].'/todolist')?>"<?php
-                        if (count($running['activities'])>0) {
+                        if (count($running['todos'])>0) {
                                 $text='';
                                 foreach( $running['todos'] as $record ) $text.='<li><strong>'.$record['activity']['activity_path'].'</strong></li>';
                                 echo ' data-content=\'<ul>'.$text.'</ul>\' rel="popover" class="popme" data-original-title="todo list"';

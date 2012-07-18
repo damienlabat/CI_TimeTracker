@@ -168,7 +168,7 @@ class Timetracker extends CI_Controller {
     public function stop( $username, $record_id ) {
         $this->timetracker_lib->checkUsername( $username );
 
-        $record= $this->records->get_record_by_id( $record_id );
+        $record= $this->records->get_record_by_id_full( $record_id );
         if ( !$record )
             show_404();
 
@@ -176,7 +176,14 @@ class Timetracker extends CI_Controller {
 
         if ( isset( $stopped[ 'alerts' ] ) )
             $this->session->set_flashdata( 'alerts', $stopped[ 'alerts' ] );
-        redirect( 'tt/' . $username, 'location' );
+       
+            if     ( $record['activity']['type_of_record'] == 'activity' ) 
+                    redirect( 'tt/' . $this->user_name . '/activities' , 'location' );
+            elseif ( $record['activity']['type_of_record'] == 'todo' ) 
+                    redirect( 'tt/' . $this->user_name . '/todolist' , 'location' );
+            elseif ( $record['activity']['type_of_record'] == 'value' ) 
+                    redirect( 'tt/' . $this->user_name . '/values' , 'location' );     
+        //redirect( 'tt/' . $username, 'location' );
     }
 
 
@@ -199,6 +206,10 @@ class Timetracker extends CI_Controller {
         $this->data[ 'current' ]['cat'] = 'categorie';
         $this->data[ 'current' ]['id'] = NULL;
         $this->timetracker_lib->getCurrentObj();
+        
+        $record= $this->records->get_record_by_id_full( $record_id );
+        if ( !$record )
+            show_404();
 
         if ( $this->records->restart_record( $record_id ) )
             $alert = array(
@@ -216,7 +227,12 @@ class Timetracker extends CI_Controller {
             );
 
         $this->session->set_flashdata( 'alerts', $alert );
-        redirect( 'tt/' . $username, 'location' );
+         if     ( $record['activity']['type_of_record'] == 'activity' ) 
+                    redirect( 'tt/' . $this->user_name . '/activities' , 'location' );
+            elseif ( $record['activity']['type_of_record'] == 'todo' ) 
+                    redirect( 'tt/' . $this->user_name . '/todolist' , 'location' );
+            elseif ( $record['activity']['type_of_record'] == 'value' ) 
+                    redirect( 'tt/' . $this->user_name . '/values' , 'location' );  
 
     }
 
@@ -747,7 +763,14 @@ class Timetracker extends CI_Controller {
                 $this->values->add_value(  $res[ 'activity' ][ 'record' ][ 'id' ], $post[ 'value' ] ); // add value
 
             $this->session->set_flashdata( 'alerts', $res[ 'alerts' ] );
-            redirect( 'tt/' . $this->user_name , 'location' );
+            
+            if ( $type_record == 'activity' ) 
+                    redirect( 'tt/' . $this->user_name . '/activities' , 'location' );
+            elseif ( $type_record == 'todo' ) 
+                    redirect( 'tt/' . $this->user_name . '/todolist' , 'location' );
+            elseif ( $type_record == 'value' ) 
+                    redirect( 'tt/' . $this->user_name . '/values' , 'location' );                                        
+                    
         }
         else {
             $res[ 'alerts' ]   = array(
