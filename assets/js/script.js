@@ -197,7 +197,9 @@ $(document).ready(function() {
                 } else {
                         $.get(href, function(data) {
                         $('<div class="modal" >' + data + '</div>').modal();
-                }).success(function() { $('input:text:visible:first').focus(); });
+                }).success(function() { 
+                        init_typeahead(); // init typehead on tags and activities
+                        $('input:text:visible:first').focus(); });
                 }
         });
 
