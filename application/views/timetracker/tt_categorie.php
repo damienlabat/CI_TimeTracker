@@ -5,7 +5,7 @@ if ( $categorie['description']!='' ) echo "<div class='description'>".$categorie
 
 if ( $categorie['title']!=''):
 ?>
-<a class='btn btn-mini' href='<?=site_url('tt/'.$user['name'].'/categorie_'.$categorie['id'].'/edit');?>'>edit</a>
+<a class='btn btn-mini' href='<?=site_url('tt/'.$user['name'].'/categorie_'.$categorie['id'].'/edit');?>' data-toggle='modal'>edit</a>
 <?php
 endif;
 $this->load->view( 'timetracker/tt_menu' );

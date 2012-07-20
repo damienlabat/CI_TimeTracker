@@ -320,6 +320,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'current' ]['id'] = $activity_id;
         $this->data[ 'current' ]['username'] = $username;
         
+        $this->data[ 'modal' ] = $this->input->is_ajax_request();        
         $this->data[ 'current' ]['subtitle'] = 'edit';
 
         $this->timetracker_lib->getCurrentObj();

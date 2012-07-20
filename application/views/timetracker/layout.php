@@ -1,5 +1,5 @@
 
-<?php if ($title != '') : ?>
+<?php if ( ($title != '') && (!$modal) ) : ?>
 <div class="page-header">
     <h1><?=@$title?><?php
     if ($subtitle != '') echo " <small>".$subtitle."</small>";

@@ -253,7 +253,7 @@ if ( ! function_exists('record_buttons'))
         if ($record['running'])
               $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record_'.$record['id'].'/stop')."' title='stop'><i class='icon-stop'></i></a>";
 
-        $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record_'.$record['id'].'/edit')."' title='edit'><i class='icon-pencil'></i></a>";
+        $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record_'.$record['id'].'/edit')."' title='edit' data-toggle='modal'><i class='icon-pencil'></i></a>";
         if (!$record['running'])
             $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record_'.$record['id'].'/restart')."' title='restart'><i class='icon-repeat'></i></a>";
         if ($show_delete) $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record_'.$record['id'].'/delete')."' title='delete'><i class='icon-trash'></i></a>";

@@ -33,7 +33,7 @@ class Timetracker_lib
 
 
 
-
+        $this->ci->data['modal'] = FALSE;
         $this->ci->data['title'] = '';
         $this->ci->data['subtitle'] = '';
 
@@ -43,15 +43,28 @@ class Timetracker_lib
 
     function render( ) {
         $this->getTitleAndBreadcrumb();
-        $this->ci->data[ 'content' ] = $this->ci->load->view( 'timetracker/layout', $this->ci->data, true );
-        $this->ci->load->view( 'layout', $this->ci->data );
+        if ( $this->ci->input->is_ajax_request() ) {
+                
+                if ( (isset($this->ci->data['modal'])) && ($this->ci->data['modal']) ) {
+                       $this->ci->data[ 'content' ] = $this->ci->load->view( 'timetracker/layout', $this->ci->data, true ); 
+                       $this->ci->load->view( 'modal', $this->ci->data );
+                }
+                else
+                        $this->ci->load->view( 'timetracker/layout', $this->ci->data );
+                }
+        else {
+    
+               
+                $this->ci->data[ 'content' ] = $this->ci->load->view( 'timetracker/layout', $this->ci->data, true );
+                $this->ci->load->view( 'layout', $this->ci->data );
 
-        if ( 0 ) { //DEBUG
-            echo '<pre>';
-             print_r($this->ci->data);
-             echo'</pre>';
-         }
-    }
+                if ( 0 ) { //DEBUG
+                    echo '<pre>';
+                     print_r($this->ci->data);
+                     echo'</pre>';
+                 }
+            }
+      }
 
 
 
