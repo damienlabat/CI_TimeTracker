@@ -31,5 +31,6 @@ if ($tt_layout=='tt_home') echo ' span6';
         </div>
     <?php endif; ?>
 <?php endif; ?>
-    <a href='<?=site_url('tt/'.$user['name'].'/value/new')?>' class='btn btn-success'>Record new value</a>
+    <a id='new_value_button' href='<?=site_url('tt/'.$user['name'].'/value/new')?>' class='btn btn-success'>Record new value</a>
+    <div id='new_value_ajax'></div>
 </div>

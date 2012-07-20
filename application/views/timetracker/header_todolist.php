@@ -27,5 +27,6 @@ if ($tt_layout=='tt_home') echo ' span6';
 ?>
     <div>just relax :-)</div><br/>
     <?php endif; ?>
-    <a href='<?=site_url('tt/'.$user['name'].'/todo/new')?>' class='btn btn-warning'>Add new things Todo</a>
+    <a id='new_todo_button' href='<?=site_url('tt/'.$user['name'].'/todo/new')?>' class='btn btn-warning'>Add new things Todo</a>
+    <div id='new_todo_ajax'></div>
     </div>

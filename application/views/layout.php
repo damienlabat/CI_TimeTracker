@@ -60,10 +60,11 @@
 
 
 <script>
-    var BASE_URL='<?=site_url()?>';
-    var mysql_time='<?=@$server_time?>';
-    var loading_time=new Date();
-    var username='<?=@$user['name']?>';
+    var TTDATA={};
+    TTDATA.BASE_URL='<?=site_url()?>';
+    TTDATA.mysql_time='<?=@$server_time?>';
+    TTDATA.loading_time=new Date();
+    TTDATA.username='<?=@$user['name']?>';
 
 </script>
 

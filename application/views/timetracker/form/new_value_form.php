@@ -29,7 +29,7 @@ echo validation_errors();
 
     <input type="hidden" name="type_of_record" id="type_of_record" value="<?=$current['cat']?>">
 
-    <button type="submit" class="btn btn-large btn-primary">Save</button>
+    <button type="submit" class="btn btn-large btn-success">Save</button>
 
 
 </form>

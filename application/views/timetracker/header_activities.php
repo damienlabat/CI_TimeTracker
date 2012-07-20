@@ -34,7 +34,8 @@
 
     <?php endif; ?>
     
-    <a href='<?=site_url('tt/'.$user['name'].'/activity/new')?>' class='btn btn-primary'>Add new activity</a>
+    <a id='new_activity_button' href='<?=site_url('tt/'.$user['name'].'/activity/new')?>' class='btn btn-primary'>Add new activity</a>
+    <div id='new_activity_ajax'></div>
         </div>
         
     <?php

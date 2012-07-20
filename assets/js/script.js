@@ -4,12 +4,14 @@
 
 $(function() {
 
-    user_logged = ( username!='' ) ? true : false;
+    user_logged = ( TTDATA.username!='' ) ? true : false;
 
     if (user_logged) {
         checktimezone();
         setInterval( updateTimerunning , 250);
 
+
+        // INIT
         $('table.piechart-data').each(function() {
            var cpt_line= $(this).find('tbody tr').length;
            if (cpt_line>1) init_piechart( $(this) );
@@ -20,7 +22,10 @@ $(function() {
         });
         
         init_typeahead();
-    }
+        init_ajaxform();
+        
+        
+    } // end user_logged
 
 
     $('.popme').popover( { placement:'bottom' } );
@@ -48,9 +53,9 @@ window.log = function(){
 
 // check timezone with js browser date
 checktimezone = function() {
-    var diff = loading_time - mysqlDate2time(mysql_time);
+    var diff = TTDATA.loading_time - mysqlDate2time(TTDATA.mysql_time);
     if ( Math.abs(diff) > 1000*60) // if > 1 minute diff
-        showalert('Are you shure this time is correct <span class="current_time"></span> ? Please check your <a href="'+BASE_URL+'tt/'+username+'/settings#timezone">timezone setting</a>','warning');
+        showalert('Are you shure this time is correct <span class="current_time"></span> ? Please check your <a href="'+TTDATA.BASE_URL+'tt/'+TTDATA.username+'/settings#timezone">timezone setting</a>','warning');
 }
 
 
@@ -77,7 +82,7 @@ function updateTimerunning() {
 
         var starttime=$(this).data('start-time');
         var now= new Date();
-        var duration= now - mysqlDate2time(starttime) + ( mysqlDate2time(mysql_time) - loading_time );
+        var duration= now - mysqlDate2time(starttime) + ( mysqlDate2time(TTDATA.mysql_time) - TTDATA.loading_time );
         $(this).html( format_duration(duration/1000) );
 
         });
@@ -85,7 +90,7 @@ function updateTimerunning() {
     $('.current_time').each(function(){
 
         var now= new Date();
-        var duration= now*1 + ( mysqlDate2time(mysql_time) - loading_time );
+        var duration= now*1 + ( mysqlDate2time(TTDATA.mysql_time) - TTDATA.loading_time );
         var time= new Date(duration);
         $(this).html( format_time(time) );
 
@@ -141,7 +146,7 @@ format_time= function(d) {
 /*** typeahead ***/
 init_typeahead= function(){
         if ($('input#activity').length) {
-                var url= BASE_URL+'json/'+ username +'/'+ $('input#type_of_record').val() +'_list.json';
+                var url= TTDATA.BASE_URL+'json/'+ TTDATA.username +'/'+ $('input#type_of_record').val() +'_list.json';
                 $.getJSON(url, function(data) {  
                         var options= {source:data};   
                         $('input#activity').typeahead(options);
@@ -149,7 +154,7 @@ init_typeahead= function(){
         }
         
         if ($('input#tags').length) {
-                var url= BASE_URL+'json/'+ username +'/tag_list.json';
+                var url= TTDATA.BASE_URL+'json/'+ TTDATA.username +'/tag_list.json';
                 $.getJSON(url, function(data) {  
                         var options= {source:data, mode: 'multiple'};   
                         $('input#tags').typeahead(options);
@@ -157,6 +162,23 @@ init_typeahead= function(){
         }
 }
 
+/*** ajaxform ***/
+
+var init_ajaxform = function() {
+        var tobj=['activity','todo','value'];
+        
+        $.each(tobj, function(k,value) { 
+               $('#new_'+value+'_button').click(function(event) {                       
+                       event.preventDefault();
+                       $(this).remove();
+                       $.get(TTDATA.BASE_URL+'tt/'+ TTDATA.username +'/'+value+'/new', function(data) {
+                          $('#new_'+value+'_ajax').html(data);
+                          init_typeahead();
+                        });
+               });
+        });
+        
+}
 
 
 /*** datepicker ***/
@@ -307,7 +329,7 @@ function init_graph(obj) {
 
     self.loadJson= function( callback ) {
         if (self.json_param.categorie==null) self.json_param.categorie='all';
-        var url= BASE_URL+'json/'+self.json_param.username+'/histo/'+self.json_param.categorie+'/'+self.json_param.datefrom+'/'+self.json_param.dateto+'/'+self.json_param.groupby+'.json';
+        var url= TTDATA.BASE_URL+'json/'+self.json_param.username+'/histo/'+self.json_param.categorie+'/'+self.json_param.datefrom+'/'+self.json_param.dateto+'/'+self.json_param.groupby+'.json';
         if (self.json_param.tags!=null) url+='?tags='+self.json_param.tags;
 
         $.getJSON(url, function(data) {  self.data=data; callback()   });

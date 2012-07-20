@@ -6,7 +6,7 @@ class Timetracker extends CI_Controller {
     function __construct( ) {
         parent::__construct();
 
-        $this->output->enable_profiler(TRUE);
+        if ( !$this->input->is_ajax_request() ) $this->output->enable_profiler(TRUE);
 
         $this->load->library( 'timetracker_lib' );
         $this->timetracker_lib->checkuser();
@@ -299,7 +299,15 @@ class Timetracker extends CI_Controller {
         $this->data[ 'tt_layout' ] = 'tt_new';
 
         if ($stopall) $this->stop_all( $username, $type_of_record, FALSE );
-        $this->timetracker_lib->render();
+                
+        if ( $this->input->is_ajax_request() ) {
+                $this->load->view( 'timetracker/form/new_'.$type_of_record.'_form_ajax', $this->data );
+        
+        }
+        else {
+                
+                $this->timetracker_lib->render();
+        }
 
     }
 

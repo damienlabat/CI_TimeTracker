@@ -33,7 +33,6 @@ class Timetracker_lib
 
 
 
-        //$this->ci->output->enable_profiler( TRUE );
 
         $this->ci->data['title'] = '';
         $this->ci->data['subtitle'] = '';
