@@ -171,6 +171,7 @@ var init_ajaxform = function() {
                $('#new_'+value+'_button').click(function(event) {                       
                        event.preventDefault();
                        $(this).remove();
+                       $('#new_'+value+'_ajax').html('<span class="loading">loading ...</span>');
                        $.get(TTDATA.BASE_URL+'tt/'+ TTDATA.username +'/'+value+'/new', function(data) {
                           $('#new_'+value+'_ajax').html(data);
                           init_typeahead();
