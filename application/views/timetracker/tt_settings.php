@@ -90,7 +90,9 @@
 	  	<a name='param_startactivitymode'></a>
 	    <label for="param_startactivitymode" class="control-label">activity mode</label>
 	    <div class="controls">
-	      <select id="param_startactivitymode" name='param_startactivitymode'><?php
+	      <?php
+
+	      //<select id="param_startactivitymode" name='param_startactivitymode'>
 	      
 	      $param=array(
 	        'one_at_the_time'       => 'only one running activity at the time',
@@ -99,13 +101,16 @@
 	      );
 	      
 	      foreach ($param as $k=>$v) {
-	        echo "<option value='".$k."'";
-	        if ( $k ==  $user[ 'params' ][ 'startactivitymode' ] ) echo " selected='selected'";
-	        echo ">".$v."</option>"; 
+	      	//<input type="radio" name="sex" value="male" /> Male<br />
+	        echo "<label><input type=\"radio\" name='param_startactivitymode' value='".$k."'";
+	        if ( $k ==  $user[ 'params' ][ 'startactivitymode' ] ) echo " checked='checked'";
+	        echo "> ".$v."</label>"; 
 	        }
 	      
+
+	      // </select> change to radiobox
 	      ?>	       
-	      </select> change to radiobox
+	     
 	    </div>
 	  </div>
 	 

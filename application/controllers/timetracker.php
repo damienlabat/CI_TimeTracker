@@ -524,8 +524,6 @@ class Timetracker extends CI_Controller {
         $this->data[ 'tabs' ]                      = tabs_buttons ( $username, $this->data['current'], $list[ 'count' ] );
         $this->data[ 'tt_layout' ]                 = 'tt_tag';
 
-        $this->data[ 'TODO' ] = "tag " . $tag_id . " page";
-
     }
 
 
