@@ -6,7 +6,7 @@ class Timetracker extends CI_Controller {
     function __construct( ) {
         parent::__construct();
 
-        if ( !$this->input->is_ajax_request() ) $this->output->enable_profiler(TRUE);
+       // if ( !$this->input->is_ajax_request() ) $this->output->enable_profiler(TRUE);
 
         $this->load->library( 'timetracker_lib' );
         $this->timetracker_lib->checkuser();
@@ -221,7 +221,7 @@ class Timetracker extends CI_Controller {
             $alert = array(
                  array(
                      'type' => 'success',
-                    'alert' => 'start new record !'
+                    'alert' => 'start new ' . $record['activity']['type_of_record'] . ' record !  "' . $record['activity']['activity_path'] . '"'
                 )
             );
         else
@@ -300,7 +300,7 @@ class Timetracker extends CI_Controller {
 
         if ($stopall) $this->stop_all( $username, $type_of_record, FALSE );
                 
-        if ( $this->input->is_ajax_request() ) {
+        if ( $this->data['ajax'] ) {
                 $this->load->view( 'timetracker/form/new_'.$type_of_record.'_form_ajax', $this->data );
         
         }
@@ -320,7 +320,7 @@ class Timetracker extends CI_Controller {
         $this->data[ 'current' ]['id'] = $activity_id;
         $this->data[ 'current' ]['username'] = $username;
         
-        $this->data[ 'modal' ] = $this->input->is_ajax_request();        
+        $this->data[ 'modal' ] = $this->data[ 'ajax' ];        
         $this->data[ 'current' ]['subtitle'] = 'edit';
 
         $this->timetracker_lib->getCurrentObj();
@@ -343,12 +343,19 @@ class Timetracker extends CI_Controller {
         $this->data[ 'current' ]['cat'] = $type_of_record;
         $this->data[ 'current' ]['id'] = $activity_id;
         $this->data[ 'current' ]['username'] = $username;
+        $this->data['subtitle'] = 'delete'; // FIXME
 
         $this->timetracker_lib->getCurrentObj();
         if ($type_of_record=='record')
             $this->_record_delete();
         else show_404();
 
+        if ( $this->data['ajax'] ) {
+                $this->data[ 'modal' ] = TRUE;
+                $this->data[ 'tt_layout' ] = 'tt_record_delete_ajax';
+                }
+        
+               
         $this->timetracker_lib->render();
     }
 
@@ -394,8 +401,8 @@ class Timetracker extends CI_Controller {
             if ( $this->records->delete_record( $record_id ) ) {
                 $alert = array(
                      array(
-                        'type' => 'success',
-                        'alert' => 'record deleted !'
+                        'type' => 'block',
+                        'alert' => $record['activity']['type_of_record'] . ' record deleted ! "' . $record['activity']['activity_path'] . '"'
                     )
                 );
                 $this->session->set_flashdata( 'alerts', $alert );
@@ -668,10 +675,9 @@ class Timetracker extends CI_Controller {
                 $type_record = 'todo';
             if ( $post[ 'start' ][ 0 ] == '.' )
                 $param[ 'running' ] = 0; // ping
-            if ( element( 'value_name', $post ) ) {
-                $type_record        = 'value';
+            if ( element( 'value', $post ) OR ($post[ 'start' ][ 0 ] == '$') ) 
                 $param[ 'running' ] = 0;
-            }
+
 
             preg_match( '/\[{1}.+\]{1}/i', $post[ 'start' ], $path_tags ); // get tags from path
             if ( ( $path_tags ) && ( !element( 'tags', $post ) ) )
@@ -683,17 +689,17 @@ class Timetracker extends CI_Controller {
             $post[ 'start' ] = preg_replace( '/(\!|\.|\[{1}.+\]{1})*/i', '', $post[ 'start' ] ); // clean activity path phase1
 
             if ( $type_record != 'value' ) {
-                preg_match( '/\#{1}.+\={1}.+/i', $post[ 'start' ], $path_value ); // get value from path
+                preg_match( '/\${1}.+\={1}.+/i', $post[ 'start' ], $path_value ); // get value from path
                 if ( $path_value ) {
                     $path_value_array     = preg_split( '/=/', $path_value[ 0 ], -1, PREG_SPLIT_NO_EMPTY );
-                    $post[ 'value_name' ] = trim( $path_value_array[ 0 ], '# ' );
+                    $post[ 'start' ]      = trim( $path_value_array[ 0 ], '$ ' );
                     $post[ 'value' ]      = trim( $path_value_array[ 1 ] );
                     $type_record          = 'value';
                     $param[ 'running' ]   = 0;
                 }
             }
 
-            $post[ 'start' ] = preg_replace( '/\#{1}.+\={1}.+/i', '', $post[ 'start' ] ); // clean activity path phase2
+            $post[ 'start' ] = preg_replace( '/\${1}.+\={1}.+/i', '', $post[ 'start' ] ); // clean activity path phase2
 
             if ( strpos( $post[ 'start' ], '@' ) === FALSE ) {
                 $categorie  = '';
@@ -712,7 +718,7 @@ class Timetracker extends CI_Controller {
             $res[ 'alerts' ]   = array(
                  array(
                      'type' => 'success',
-                    'alert' => 'start new activity: ' . $res[ 'activity' ][ 'title' ]
+                    'alert' => 'start new ' . $type_record . ' record: "' . $res[ 'activity' ][ 'activity_path' ] . '"'
                 )
             );
             
@@ -811,6 +817,7 @@ class Timetracker extends CI_Controller {
             $cat = $this->categories->getorcreate_categorie( $this->user_id, $categorie );
 
             $res ['activity'] = $this->activities->getorcreate_activity( $cat[ 'id' ], $title, $type_record );
+            $res ['activity'] = $this->activities->get_activity_by_id_full(  $res['activity']['id'] );
 
             $update_params=array(
                      'description' => $post[ 'description' ],
@@ -839,8 +846,8 @@ class Timetracker extends CI_Controller {
 
             $res[ 'alerts' ]   = array(
                  array(
-                     'type' => 'success',
-                    'alert' => 'update activity: ' . $res[ 'activity' ][ 'title' ]
+                     'type' => 'info',
+                    'alert' => 'update ' . $res[ 'activity' ][ 'type_of_record' ] . ' record: "' . $res[ 'activity' ][ 'activity_path' ] . '"'
                 )
             );
             $this->session->set_flashdata( 'alerts', $res[ 'alerts' ] );
@@ -924,8 +931,8 @@ class Timetracker extends CI_Controller {
 
             $res[ 'alerts' ]   = array(
                  array(
-                     'type' => 'success',
-                    'alert' => 'update activity: ' . $res[ 'activity' ][ 'title' ]
+                     'type' => 'info',
+                    'alert' => 'update ' . $res[ 'activity' ][ 'type_of_record' ] . ': "' . $res[ 'activity' ][ 'activity_path' ] . '"'
                 )
             );
             $this->session->set_flashdata( 'alerts', $res[ 'alerts' ] );
@@ -998,8 +1005,8 @@ class Timetracker extends CI_Controller {
 
             $res[ 'alerts' ]   = array(
                  array(
-                     'type' => 'success',
-                    'alert' => 'update categorie: ' . $res[ 'categorie' ][ 'title' ]
+                     'type' => 'info',
+                    'alert' => 'update categorie: "' . $res[ 'categorie' ][ 'title' ] . '"'
                 )
             );
 
@@ -1057,8 +1064,8 @@ class Timetracker extends CI_Controller {
 
             $res[ 'alerts' ]   = array(
                  array(
-                     'type' => 'success',
-                    'alert' => 'update tag: ' . $res[ 'tag' ][ 'tag' ]
+                     'type' => 'info',
+                    'alert' => 'update tag: "' . $res[ 'tag' ][ 'tag' ] . '"'
                 )
             );
 
@@ -1113,7 +1120,7 @@ class Timetracker extends CI_Controller {
 
         $res[ 'alerts' ]   = array(
             array(
-                'type' => 'success',
+                'type' => 'info',
                 'alert' => 'user params updated'
             )
         );

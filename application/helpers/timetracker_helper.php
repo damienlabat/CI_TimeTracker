@@ -187,7 +187,6 @@ if ( ! function_exists('record_time'))
       if ($record['running']==1) $html.= running_time($record);
         else if ($record['duration']>0) $html.= duration2human($record['duration']);
             else if (($record['activity']['type_of_record']!='value')&&(!$record['running'])) $html.=" <span class='label label-info'>PING!</span>";
-                else if ($record['activity']['type_of_record']=='value') $html.=" <span class='label label-info'>Value</span>";
 
       if ($record['activity']['type_of_record']=='activity')
             if ($record['running'])  $html.=" <span class='label label-success'>running</span>";
@@ -256,7 +255,7 @@ if ( ! function_exists('record_buttons'))
         $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record_'.$record['id'].'/edit')."' title='edit' data-toggle='modal'><i class='icon-pencil'></i></a>";
         if (!$record['running'])
             $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record_'.$record['id'].'/restart')."' title='restart'><i class='icon-repeat'></i></a>";
-        if ($show_delete) $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record_'.$record['id'].'/delete')."' title='delete'><i class='icon-trash'></i></a>";
+        if ($show_delete) $html.= "<a class='btn btn-mini' href='".site_url('tt/'.$username.'/record_'.$record['id'].'/delete')."' title='delete'  data-toggle='modal'><i class='icon-trash'></i></a>";
 
         $html.= '</span>';
 

@@ -33,6 +33,7 @@ class Timetracker_lib
 
 
 
+        $this->ci->data['ajax'] = $this->ci->input->is_ajax_request();
         $this->ci->data['modal'] = FALSE;
         $this->ci->data['title'] = '';
         $this->ci->data['subtitle'] = '';
@@ -43,7 +44,7 @@ class Timetracker_lib
 
     function render( ) {
         $this->getTitleAndBreadcrumb();
-        if ( $this->ci->input->is_ajax_request() ) {
+        if ( $this->ci->data['ajax'] ) {
                 
                 if ( (isset($this->ci->data['modal'])) && ($this->ci->data['modal']) ) {
                        $this->ci->data[ 'content' ] = $this->ci->load->view( 'timetracker/layout', $this->ci->data, true ); 
