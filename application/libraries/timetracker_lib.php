@@ -242,6 +242,15 @@ class Timetracker_lib
     }
 
 
+    function redirect_type_of_record($type_of_record) {
+        if ( $type_of_record == 'activity' ) 
+                    redirect( 'tt/' . $this->ci->user_name . '/activities' , 'location' );
+            elseif ( $type_of_record == 'todo' ) 
+                    redirect( 'tt/' . $this->ci->user_name . '/todolist' , 'location' );
+            elseif ( $type_of_record == 'value' ) 
+                    redirect( 'tt/' . $this->ci->user_name . '/values' , 'location' );
+    }
+
     function getRunnings(){
         $this->ci->data[ 'running' ][ 'activities' ]    = $this->ci->records->get_records_full($this->ci->user_id, array( 'type_of_record' => 'activity',  'running' => TRUE ) );
         $this->ci->data[ 'running' ][ 'todos' ]         = $this->ci->records->get_records_full($this->ci->user_id, array( 'type_of_record' => 'todo',      'running' => TRUE ) );

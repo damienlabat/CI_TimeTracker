@@ -329,14 +329,14 @@ if ( ! function_exists('value'))
             }
         else
         {
-            $html.='[';
+            $html.='';
             foreach ( $value as $value_item )
             {
-                if ($html!='[') $html.=', ';
+                if ($html!='') $html.=', ';
                 if ($raw) $html.= $value_item;
                     else $html.='<span class="value">'.$value_item.'</span>';
             }
-            $html.=']';
+            
 
         }
 

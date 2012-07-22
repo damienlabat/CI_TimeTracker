@@ -14,6 +14,8 @@ class Timetracker extends CI_Controller {
 
         $this->data['current']['action']= 'record';
 
+
+
         if ( $_POST ) {
             $res = $this->_fromPOST( $_POST );
             if ( isset( $res[ 'alerts' ] ) )
@@ -182,14 +184,8 @@ class Timetracker extends CI_Controller {
 
         if ( isset( $stopped[ 'alerts' ] ) )
             $this->session->set_flashdata( 'alerts', $stopped[ 'alerts' ] );
-       
-            if     ( $record['activity']['type_of_record'] == 'activity' ) 
-                    redirect( 'tt/' . $this->user_name . '/activities' , 'location' );
-            elseif ( $record['activity']['type_of_record'] == 'todo' ) 
-                    redirect( 'tt/' . $this->user_name . '/todolist' , 'location' );
-            elseif ( $record['activity']['type_of_record'] == 'value' ) 
-                    redirect( 'tt/' . $this->user_name . '/values' , 'location' );     
-        //redirect( 'tt/' . $username, 'location' );
+  
+        $this->timetracker_lib->redirect_type_of_record($record[ 'activity' ]['type_of_record']);
     }
 
 
@@ -234,12 +230,7 @@ class Timetracker extends CI_Controller {
 
         $this->session->set_flashdata( 'alerts', $alert );
         
-           if     ( $record['activity']['type_of_record'] == 'activity' ) 
-                    redirect( 'tt/' . $this->user_name . '/activities' , 'location' );
-            elseif ( $record['activity']['type_of_record'] == 'todo' ) 
-                    redirect( 'tt/' . $this->user_name . '/todolist' , 'location' );
-            elseif ( $record['activity']['type_of_record'] == 'value' ) 
-                    redirect( 'tt/' . $this->user_name . '/values' , 'location' );  
+        $this->timetracker_lib->redirect_type_of_record($record[ 'activity' ]['type_of_record']);
 
     }
 
@@ -406,14 +397,9 @@ class Timetracker extends CI_Controller {
                     )
                 );
                 $this->session->set_flashdata( 'alerts', $alert );
-                
-            if     ( $record['activity']['type_of_record'] == 'activity' ) 
-                    redirect( 'tt/' . $this->user_name . '/activities' , 'location' );
-            elseif ( $record['activity']['type_of_record'] == 'todo' ) 
-                    redirect( 'tt/' . $this->user_name . '/todolist' , 'location' );
-            elseif ( $record['activity']['type_of_record'] == 'value' ) 
-                    redirect( 'tt/' . $this->user_name . '/values' , 'location' );  
-                redirect( 'tt/' . $username, 'location' );
+
+            $this->timetracker_lib->redirect_type_of_record($record[ 'activity' ]['type_of_record']);
+           
             }
         }
 
@@ -562,11 +548,11 @@ class Timetracker extends CI_Controller {
      * *************/
     
     
-    public function json_activities( $username, $type_of_records ) {
+    public function json_activities( $username, $type_of_record ) {
         $this->output->enable_profiler( FALSE );
         
         $this->timetracker_lib->checkUsername( $username );
-        $activities = $this->activities->getActivitiespathList( $this->user_id, $type_of_records );
+        $activities = $this->activities->getActivitiespathList( $this->user_id, $type_of_record );
         
         $content= json_encode($activities);
         $this->output
@@ -747,13 +733,9 @@ class Timetracker extends CI_Controller {
                 $this->values->add_value(  $res[ 'activity' ][ 'record' ][ 'id' ], $post[ 'value' ] ); // add value
 
             $this->session->set_flashdata( 'alerts', $res[ 'alerts' ] );
+
+            $this->timetracker_lib->redirect_type_of_record( $type_record );         
             
-            if ( $type_record == 'activity' ) 
-                    redirect( 'tt/' . $this->user_name . '/activities' , 'location' );
-            elseif ( $type_record == 'todo' ) 
-                    redirect( 'tt/' . $this->user_name . '/todolist' , 'location' );
-            elseif ( $type_record == 'value' ) 
-                    redirect( 'tt/' . $this->user_name . '/values' , 'location' );                                        
                     
         }
         else {
@@ -851,7 +833,8 @@ class Timetracker extends CI_Controller {
                 )
             );
             $this->session->set_flashdata( 'alerts', $res[ 'alerts' ] );
-            redirect( 'tt/' . $this->user_name . '/record_'.$res[ 'activity' ][ 'record' ][ 'id' ], 'location' );
+            //redirect( 'tt/' . $this->user_name . '/record_'.$res[ 'activity' ][ 'record' ][ 'id' ], 'location' );
+            $this->timetracker_lib->redirect_type_of_record( $res[ 'activity' ][ 'type_of_record' ] );
         }
         else {
             $res[ 'alerts' ]   = array(
@@ -871,9 +854,9 @@ class Timetracker extends CI_Controller {
 
        if (preg_match("/^((\d|\-|\.)+)$/i", $str)) return TRUE;
 
-       if (preg_match("/^\[((\d|\-|\.)+){1}(,((\d|\-|\.)+))*]$/i", $str)) return TRUE;
+       if (preg_match("/^((\d|\-|\.)+){1}(,[ ]((\d|\-|\.)+))*$/i", $str)) return TRUE;
 
-       $this->form_validation->set_message('value_check', 'The %s field should be a numeric or a group of numeric (ie. [12.5,15.5] ) ');
+       $this->form_validation->set_message('value_check', 'The %s field should be a numeric or a group of numeric seperate by a comma (ie. 12.5,15.5 ) ');
        return FALSE;
     }
 
@@ -936,7 +919,8 @@ class Timetracker extends CI_Controller {
                 )
             );
             $this->session->set_flashdata( 'alerts', $res[ 'alerts' ] );
-            redirect( 'tt/' . $this->user_name . '/'.$res[ 'activity' ]['type_of_record'].'/'.$res[ 'activity' ][ 'id' ], 'location' );
+            //redirect( 'tt/' . $this->user_name . '/'.$res[ 'activity' ]['type_of_record'].'/'.$res[ 'activity' ][ 'id' ], 'location' );
+            $this->timetracker_lib->redirect_type_of_record($res[ 'activity' ]['type_of_record']);
 
         }
         else {

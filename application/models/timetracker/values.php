@@ -37,6 +37,8 @@ class Values extends CI_Model {
      * @return          boolean
      */
     function add_value( $record_id, $value ) {
+        //if (!is_numeric($value))
+            $value = '[' . $value . ']';
         return $this->db->insert( $this->values_table, array(
             'record_ID' => $record_id,
             'value' => $value
@@ -67,6 +69,7 @@ class Values extends CI_Model {
      * @return          boolean
      */
     function update_value( $record_id, $value ) {
+        $value = '[' . $value . ']';
         $this->db->where( 'record_ID', $record_id );
         if ( $this->db->update( $this->values_table, array(
              'value' => $value
