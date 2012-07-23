@@ -55,10 +55,11 @@ if (isset($user)) : /* PRIVATE NAVBAR */
                 <ul class="nav pull-right">
                     <ul class="nav">
                         <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" id='user_logged' data-user-id='<?$user['id']?>'><?=$user['name']?> <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" id='user_logged' data-user-id='<?$user['id']?>'><?=get_gravatar($user['email'])?> <?=$user['name']?> <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li><a href='<?=site_url('account')?>'>Account</a></li>
                             <li><a href='<?=site_url('tt/'.$user['name'].'/settings')?>'>Settings</a></li>
+                            <li><a href='<?=site_url('tt/'.$user['name'].'/friends')?>'>Friends</a></li>
                         </ul>
                         </li>
                     </ul>

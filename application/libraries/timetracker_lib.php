@@ -81,8 +81,9 @@ class Timetracker_lib
 
         $this->ci->user_params = $this->getUserParam(); 
 
-        $this->ci->data[ 'user' ][ 'name' ] =   $this->ci->data[ 'current' ][ 'username' ] =       $this->ci->user_name;
-        $this->ci->data[ 'user' ][ 'id' ]   =        $this->ci->user_id;
+        $this->ci->data[ 'user' ][ 'name' ]     =    $this->ci->data[ 'current' ][ 'username' ] =       $this->ci->user_name;
+        $this->ci->data[ 'user' ][ 'id' ]       =    $this->ci->user_id;
+        $this->ci->data[ 'user' ][ 'email' ]    =     $this->ci->users->get_user_by_username( $this->ci->user_name )->email;
         $this->ci->data[ 'user' ][ 'params' ]   =    $this->ci->user_params;
 
 

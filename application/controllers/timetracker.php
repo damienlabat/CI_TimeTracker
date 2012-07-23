@@ -55,6 +55,22 @@ class Timetracker extends CI_Controller {
     }
 
 
+     /******
+     * tt account
+     * */
+
+    public function account() {
+
+       
+        $this->data[ 'current' ]['cat'] = NULL;
+
+        $this->data[ 'tt_layout' ] = 'account';
+        
+        $this->timetracker_lib->render();
+    }
+
+
+
     public function activities( $username = NULL ) {
 
         $this->timetracker_lib->checkUsername( $username );

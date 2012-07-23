@@ -46,7 +46,12 @@ $route['signup'] =      'auth/register';
 $route['login'] =       'auth/login';
 $route['logout'] =      'auth/logout';
 $route['help'] =        'staticpages/help';
-$route['account'] =     'auth/account';
+$route['account'] =     'timetracker/account';
+$route['account/password'] =     'auth/change_password';
+$route['account/email']    =     'auth/change_email';
+$route['account/unregister']     =     'auth/unregister';
+
+
 
 //---
 
@@ -58,6 +63,7 @@ $regx=array(
     );
 
 //---
+
 $route['tt/'.$regx['username']]                 =     'timetracker/home/$1';
 
 $route['tt/'.$regx['username'].'/settings']     =     'timetracker/settings/$1';
