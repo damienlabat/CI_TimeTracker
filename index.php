@@ -179,7 +179,8 @@ if (defined('ENVIRONMENT'))
     // The path to the "application" folder
     if (is_dir($application_folder))
     {
-        define('APPPATH', $application_folder.'/');
+        //define('APPPATH', $application_folder.'/');
+         define('APPPATH', realpath($application_folder) . '/');
     }
     else
     {
