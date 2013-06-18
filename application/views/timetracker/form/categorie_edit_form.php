@@ -19,5 +19,3 @@ if ( $categorie[ 'isshown' ] )
 
 
 </form>
-TODO! JS to manage running/stop at/duration/ping
-+ local time

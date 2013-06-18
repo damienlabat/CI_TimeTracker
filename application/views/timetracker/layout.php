@@ -15,7 +15,7 @@ if ( isset( $tt_layout ) )
 if ( isset( $TODO ) ):
 
 ?>
-<div class='alert alert-block'><h1>DEV TODO!!!!!</h1> <?= $TODO ?></div>
+<!--div class='alert alert-block'><h1>DEV TODO!!!!!</h1> <?= $TODO ?></div-->
 <?php
 
 endif;
