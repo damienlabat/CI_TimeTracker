@@ -7,6 +7,3 @@ HTML5, CSS3, Initializr, Modernizr, jQuery, Responsive Bootstrap
 ![CI_Timetraker](https://raw.github.com/damienlabat/persolab/master/Public/asset/img/timetraker.jpg)
 
 Demo: http://lab.damienlabat.fr/timetraker
-
-WORK IN PROGRESS
---------------
