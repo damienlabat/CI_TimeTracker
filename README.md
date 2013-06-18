@@ -4,5 +4,7 @@ CodeIgniter, MySQL DB
 
 HTML5, CSS3, Initializr, Modernizr, jQuery, Responsive Bootstrap
 
+Demo: http://lab.damienlabat.fr/timetraker
+
 WORK IN PROGRESS
-==============
+--------------
